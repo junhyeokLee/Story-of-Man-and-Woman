@@ -1,3 +1,19 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">사연남녀</string>
+    <string name="feed">Feed</string>
+    <string name="total_feed"># 모든사연</string>
+
+    <string name="dashboard_tab_1">test</string>
+    <string name="dashboard_tab_2">test2</string>
+    <string name="dashboard_tab_3">test3</string>
+    <string name="dashboard_tab_4">test</string>
+
+    <string name="appbar_scrolling_view_behavior" translatable="false">
+        com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior
+    </string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
 </resources>

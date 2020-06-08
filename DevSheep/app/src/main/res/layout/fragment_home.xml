@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragment.HomeFragment">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:fitsSystemWindows="true">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            >
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_tag"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_margin="6dp"
+                android:background="@color/white"
+                android:overScrollMode="never"
+                app:layoutManager="GridLayoutManager"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                tools:itemCount="7"
+                tools:listitem="@layout/adpater_tag"
+                tools:spanCount="4"></androidx.recyclerview.widget.RecyclerView>
+            />
+
+
+        </LinearLayout>
+
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="end"
+            android:layout_marginTop="-44dp"
+            android:layout_marginEnd="-38dp"
+            android:adjustViewBounds="true"
+            android:alpha="0.2"
+            android:background="@drawable/ic_gender2" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="260dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="-48dp"
+            android:layout_marginRight="8dp"
+            android:alpha="0.25"
+            android:layout_gravity="end"
+            android:adjustViewBounds="true"
+            android:gravity="center|right"
+            app:fontFamily="@font/circularstd_bold"
+            android:text="사연남녀"
+            android:textSize="26sp" />
+
+        <!-- 상단바 -->
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:background="@android:color/transparent"
+            android:fitsSystemWindows="false"
+            app:elevation="0dp">
+
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="false"
+                app:collapsedTitleTextAppearance="@style/AppTheme.Title.Collapsed"
+                app:expandedTitleTextAppearance="@style/AppTheme.Title.Expanded"
+                app:layout_scrollFlags="scroll|enterAlways|exitUntilCollapsed">
+
+
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:theme="?attr/actionBarTheme"
+                    android:background="@color/white"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:layout_gravity="bottom|end"
+                    app:elevation="0dp"
+                    app:layout_collapseMode="pin">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/total_feed"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                </androidx.appcompat.widget.Toolbar>
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            >
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@color/lightGrey"
+                android:overScrollMode="never"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                app:layoutManager="GridLayoutManager"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                tools:itemCount="20"
+                tools:listitem="@layout/adapter_feed"
+                tools:spanCount="1" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:layout_gravity="center"
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</FrameLayout>

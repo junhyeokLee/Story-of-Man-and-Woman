@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayoutBackground"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:background="@drawable/background_item_pokemon"
+    android:clickable="true"
+    android:clipToPadding="false"
+    android:focusable="true"
+    android:orientation="vertical">
+
+
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@android:color/transparent"
+        android:padding="8dp"
+        >
+
+        <LinearLayout
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center|right"
+            android:orientation="horizontal"
+            android:layout_alignParentStart="true"
+            android:gravity="center|right"
+            >
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imageView"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentStart="true"
+                android:layout_gravity="center|left"
+                android:src="@drawable/ic_launcher_background"
+                app:civ_border_color="@android:color/transparent"
+                app:civ_border_width="1dp">
+
+            </de.hdodenhof.circleimageview.CircleImageView>
+
+            <TextView
+                android:id="@+id/m_id"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_alignParentStart="true"
+                android:gravity="center|right"
+                android:maxLines="1"
+                android:text="닉네임닉네임닉네임닉네임닉네임닉네임닉네임닉네임닉네임"
+                android:textColor="@color/black"
+                android:textSize="10sp"
+                app:fontFamily="@font/circularstd_bold" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center|right"
+            android:layout_alignParentEnd="true"
+            android:gravity="center|right"
+            >
+
+            <TextView
+                android:id="@+id/time_count"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:gravity="center|right"
+                android:text="1"
+                android:textSize="9sp" />
+
+            <TextView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="1dp"
+                android:gravity="center|right"
+                android:textSize="9sp"
+                android:text="시간 전" />
+
+            <ImageButton
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@color/white"
+                android:src="@drawable/ic_menu"
+                >
+
+
+            </ImageButton>
+
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/relativeLayoutBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1.5"
+        android:background="@color/white"
+        android:clickable="true"
+        android:clipToPadding="false"
+        android:focusable="true"
+        android:padding="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="30dp"
+            android:orientation="vertical"
+            android:background="@color/white">
+            <TextView
+                android:id="@+id/textViewName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/circularstd_bold"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:fontFamily="@font/circularstd_medium"
+                tools:text="Title" />
+
+            <TextView
+                android:id="@+id/tv_body"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="left"
+                android:layout_marginTop="12dp"
+                android:lineSpacingExtra="8sp"
+                app:fontFamily="@font/circularstd_book"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:text="아저아자카차타아저아자카차타 오우우으아으 옹우오오오어웅오!!\n 오우우으아으 옹우오오오어웅오!!  \n 오우우으아으 옹우오오오어웅오!!오우우으아으 옹우오오오어웅오!!오우우으아으 옹우오오오어웅오!!">
+            </TextView>
+
+        </LinearLayout>
+
+
+
+        <TextView
+            android:id="@+id/textViewID"
+            android:layout_width="200dp"
+            android:layout_height="30dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:alpha="0.25"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:gravity="center|right"
+            android:text="#001"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="# 사연남녀" />
+
+
+        <ImageView
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="-6dp"
+            android:layout_marginEnd="-22dp"
+            android:adjustViewBounds="true"
+            android:alpha="0.25"
+            android:src="@drawable/ic_gender" />
+
+        <LinearLayout
+            android:id="@+id/layout_text_like_and_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:gravity="center"
+                android:maxLines="1"
+                android:textColor="@color/gray"
+                android:text="좋아요"
+                android:textSize="11sp"
+                app:fontFamily="@font/circularstd_book" >
+            </TextView>
+
+            <TextView
+                android:id="@+id/like_count"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginLeft="2dp"
+                android:textColor="@color/gray"
+                android:text="1"
+                android:textSize="11sp"
+                app:fontFamily="@font/circularstd_book" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginLeft="12dp"
+                android:textColor="@color/gray"
+                android:text="댓글"
+                android:textSize="11sp"
+                app:fontFamily="@font/circularstd_book" />
+
+            <TextView
+                android:id="@+id/comment_count"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginLeft="2dp"
+                android:text="1"
+                android:textSize="11sp"
+                android:textColor="@color/gray"
+                app:fontFamily="@font/circularstd_book" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginLeft="12dp"
+                android:maxLines="1"
+                android:text="조회수"
+                android:textSize="11sp"
+                android:textColor="@color/gray"
+                app:fontFamily="@font/circularstd_book" />
+
+            <TextView
+                android:id="@+id/view_count"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginLeft="2dp"
+                android:text="1"
+                android:textSize="11sp"
+                android:textColor="@color/gray"
+                app:fontFamily="@font/circularstd_book" />
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="9"
+        android:background="@color/white_tr"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center|left"
+            >
+
+            <TextView
+                android:id="@+id/textViewType"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_margin="6dp"
+                android:background="@drawable/background_item_best_span"
+                android:gravity="center"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="Best"
+                android:textColor="@color/white"
+                android:textSize="11sp"
+                app:fontFamily="@font/circularstd_black" />
+
+            <TextView
+                android:id="@+id/textViewType2"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_margin="6dp"
+                android:background="@drawable/background_item_hot_span"
+                android:gravity="center"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="Hot"
+                android:textColor="@color/white"
+                android:textSize="11sp"
+                app:fontFamily="@font/circularstd_black" />
+
+            <TextView
+                android:id="@+id/textViewType3"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_margin="6dp"
+                android:background="@drawable/background_item_pokemon_span"
+                android:gravity="center"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="남"
+                android:textColor="@color/white"
+                android:textSize="11sp"
+                app:fontFamily="@font/circularstd_black" />
+
+            <TextView
+                android:id="@+id/textViewType5"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_margin="6dp"
+                android:background="@drawable/background_item_pokemon_span"
+                android:gravity="center"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="30 대"
+                android:textColor="@color/white"
+                android:textSize="11sp"
+                app:fontFamily="@font/circularstd_black" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:gravity="right">
+
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/white_tr"
+                android:src="@drawable/ic_like_empty">
+
+            </ImageButton>
+
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/white_tr"
+                android:src="@drawable/ic_chat_empty"
+                android:tint="@color/gray">
+
+
+            </ImageButton>
+
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>
