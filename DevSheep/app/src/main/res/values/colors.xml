@@ -2,12 +2,13 @@
 <resources>
     <color name="colorPrimary">@color/backgroundLight</color>
     <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">@color/red</color>
+    <color name="colorAccent">#cc4013</color>
+
 
     <color name="background">#E8E8E8</color>
     <color name="backgroundLight">#F5F5F5</color>
     <color name="white">#FFFFFF</color>
-
+    <color name="deep_white">#ededed</color>
     <color name="black">#303943</color>
     <color name="blue">#429BED</color>
     <color name="brown">#B1736C</color>
@@ -31,4 +32,11 @@
     <color name="white_tr2">#f5f6ff</color>
     <color name="deep_navi">#142b5d</color>
     <color name="lightNavi">#1c4fb5</color>
+
+    <color name="color_primary_text">#1a162c</color>
+    <color name="color_secondary_text">#bac0d3</color>
+    <color name="color_third_text">#393648</color>
+    <color name="color_fourd_text">#ffa689</color>
+    <color name="switch_color">#ff7346</color>
+
 </resources>

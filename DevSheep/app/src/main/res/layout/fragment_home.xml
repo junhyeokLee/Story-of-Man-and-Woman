@@ -1,147 +1,184 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragment.HomeFragment">
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    >
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
-        android:fitsSystemWindows="true">
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_gravity="center"
+        >
 
-
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView_tag"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true"
-            >
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView_tag"
-                android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:layout_margin="6dp"
-                android:background="@color/white"
-                android:overScrollMode="never"
-                app:layoutManager="GridLayoutManager"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                tools:itemCount="7"
-                tools:listitem="@layout/adpater_tag"
-                tools:spanCount="4"></androidx.recyclerview.widget.RecyclerView>
-            />
-
-
-        </LinearLayout>
-
-
-        <ImageView
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_gravity="end"
-            android:layout_marginTop="-44dp"
-            android:layout_marginEnd="-38dp"
-            android:adjustViewBounds="true"
-            android:alpha="0.2"
-            android:background="@drawable/ic_gender2" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="260dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="-48dp"
-            android:layout_marginRight="8dp"
-            android:alpha="0.25"
-            android:layout_gravity="end"
-            android:adjustViewBounds="true"
-            android:gravity="center|right"
-            app:fontFamily="@font/circularstd_bold"
-            android:text="사연남녀"
-            android:textSize="26sp" />
-
-        <!-- 상단바 -->
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:background="@android:color/transparent"
-            android:fitsSystemWindows="false"
-            app:elevation="0dp">
-
-
-            <com.google.android.material.appbar.CollapsingToolbarLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fitsSystemWindows="false"
-                app:collapsedTitleTextAppearance="@style/AppTheme.Title.Collapsed"
-                app:expandedTitleTextAppearance="@style/AppTheme.Title.Expanded"
-                app:layout_scrollFlags="scroll|enterAlways|exitUntilCollapsed">
-
-
-
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:theme="?attr/actionBarTheme"
-                    android:background="@color/white"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:layout_gravity="bottom|end"
-                    app:elevation="0dp"
-                    app:layout_collapseMode="pin">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/total_feed"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                </androidx.appcompat.widget.Toolbar>
-            </com.google.android.material.appbar.CollapsingToolbarLayout>
-        </com.google.android.material.appbar.AppBarLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
+            android:layout_height="120dp"
+            android:layout_margin="6dp"
+            android:background="@color/white"
+            android:overScrollMode="never"
+            app:layoutManager="GridLayoutManager"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            >
+            tools:itemCount="7"
+            tools:listitem="@layout/adpater_tag"
+            tools:spanCount="4"></androidx.recyclerview.widget.RecyclerView>
+        />
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="end"
+        android:layout_marginTop="-44dp"
+        android:layout_marginEnd="-38dp"
+        android:adjustViewBounds="true"
+        android:alpha="0.2"
+        android:background="@drawable/ic_gender2" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="260dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="-48dp"
+        android:layout_marginRight="8dp"
+        android:alpha="0.25"
+        android:layout_gravity="end"
+        android:adjustViewBounds="true"
+        android:gravity="center|right"
+        app:fontFamily="@font/circularstd_bold"
+        android:text="사연남녀"
+        android:textSize="26sp" />
+
+    <!-- 상단바 -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:background="@android:color/transparent"
+        android:fitsSystemWindows="false"
+        app:elevation="0dp">
 
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="false"
+            app:collapsedTitleTextAppearance="@style/AppTheme.Title.Collapsed"
+            app:expandedTitleTextAppearance="@style/AppTheme.Title.Expanded"
+            app:layout_scrollFlags="scroll|enterAlways|exitUntilCollapsed">
+
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="@color/lightGrey"
-                android:overScrollMode="never"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                app:layoutManager="GridLayoutManager"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                tools:itemCount="20"
-                tools:listitem="@layout/adapter_feed"
-                tools:spanCount="1" />
-
-        </LinearLayout>
-
-        <ProgressBar
-            android:layout_gravity="center"
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleLarge"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+                android:layout_height="?attr/actionBarSize"
+                android:layout_gravity="bottom|end"
+                android:background="@color/white"
+                android:theme="?attr/actionBarTheme"
+                app:elevation="0dp"
+                app:layout_collapseMode="pin">
 
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center|left"
+                    android:text="@string/total_feed"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-</FrameLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|right"
+                    android:fontFamily="@font/roboto_regular"
+                    android:paddingRight="4dp"
+                    android:text="남/최신순"
+                    android:textSize="11sp" />
+
+            </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ProgressBar
+        android:layout_gravity="center"
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        >
+
+        <!-- 스크롤뷰 , 리싸이클러뷰 이중스크롤 방 -->
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:descendantFocusability="blocksDescendants"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:background="@color/white"
+                    >
+
+                        <androidx.viewpager.widget.ViewPager
+                            android:id="@+id/vp"
+                            android:layout_width="match_parent"
+                            android:background="@color/white"
+                            android:layout_height="150dp" >
+
+                        </androidx.viewpager.widget.ViewPager>
+
+                    <me.relex.circleindicator.CircleIndicator
+                        android:id="@+id/indicator"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        app:ci_drawable="@drawable/black_radius"
+                        app:ci_height="4dp"
+                        app:ci_margin="4dp"
+                        app:ci_width="4dp" />
+
+                </RelativeLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@color/gray"
+                    android:overScrollMode="never"
+                    android:nestedScrollingEnabled="false"
+                    app:layoutManager="GridLayoutManager"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    tools:itemCount="20"
+                    tools:listitem="@layout/adapter_feed"
+                    tools:spanCount="1" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

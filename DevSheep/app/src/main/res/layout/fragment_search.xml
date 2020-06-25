@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_write"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="2dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="horizontal"
+            >
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:fontFamily="@font/roboto_bold"
+                android:layout_weight="1"
+                android:hint="검색 (제목,내용)"
+                android:layout_gravity="center"
+                android:id="@+id/toolbar_title"
+                android:background="@null"
+                android:textSize="18sp"
+                android:drawablePadding="6dp"
+                android:drawableLeft="@drawable/ic_hash"
+                android:drawableTint="@color/gray"
+                />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_search"
+                android:layout_marginRight="32dp"
+                android:tint="@color/gray">
+            </ImageView>
+
+
+
+        </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <ProgressBar
+        android:layout_gravity="center"
+        android:id="@+id/progressBar_tag"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+    <!-- 스크롤뷰 , 리싸이클러뷰 이중스크롤 방 -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:descendantFocusability="blocksDescendants"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginLeft="32dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="8dp"
+                >
+
+                <TextView
+                    android:id="@+id/tv_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/typer_roboto_bold_italic"
+                    android:text="# 태그"
+                    android:textColor="@color/black"
+                    android:textSize="26sp">
+
+                </TextView>
+            </RelativeLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_tag"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="6dp"
+                android:background="@color/white"
+                android:overScrollMode="never"
+                app:layoutManager="GridLayoutManager"
+                tools:itemCount="100"
+                tools:listitem="@layout/adpater_tag"
+                tools:spanCount="4"></androidx.recyclerview.widget.RecyclerView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+
+</LinearLayout>

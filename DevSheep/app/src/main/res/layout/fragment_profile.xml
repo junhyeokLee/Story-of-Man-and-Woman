@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundLight"
+    android:fitsSystemWindows="true"
+    >
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="460dp"
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        >
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:fitsSystemWindows="true"
+            app:expandedTitleMarginEnd="64dp"
+            app:expandedTitleMarginStart="48dp"
+            app:contentScrim="?attr/colorPrimary"
+            android:layout_gravity="center"
+            app:expandedTitleGravity="center"
+            app:expandedTitleMarginTop="160dp"
+            app:expandedTitleTextAppearance="@style/ExpandedAppBar"
+            app:collapsedTitleTextAppearance="@style/CollapsingTitleStyle"
+            app:statusBarScrim="@android:color/transparent"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+
+            <ImageView
+                android:id="@+id/expandedImage"
+                android:layout_width="match_parent"
+                android:layout_height="230dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/image"
+                android:fitsSystemWindows="true"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.7" />
+
+            <ImageView
+                android:id="@+id/id_ProfileBackgorund_add"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center|right"
+                android:src="@drawable/ic_add"
+                android:layout_marginRight="6dp"
+                android:layout_marginBottom="16dp"
+                />
+
+            <com.mikhaellopez.circularimageview.CircularImageView
+                android:id="@+id/id_Profile_Image"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:layout_gravity="center"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/poke001"
+                app:civ_border_color="#EEEEEE"
+                app:civ_border_width="2dp"
+                app:civ_shadow="true"
+                app:layout_anchor="@id/app_bar"
+                app:civ_shadow_color="#f4f5f9"
+                app:layout_anchorGravity="center"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.1"
+                app:civ_shadow_radius="10" />
+
+            <ImageView
+                android:id="@+id/id_Profile_add"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_add"
+                android:layout_marginTop="28dp"
+                android:layout_marginLeft="40dp"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|bottom"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_profile_nick"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="junhyeoklee616"
+                    android:textColor="@color/color_primary_text"
+                    android:textSize="16sp"></TextView>
+
+                <TextView
+                    android:id="@+id/tv_edit"
+                    android:layout_width="200dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/background_edit_rounded"
+                    android:fontFamily="@font/roboto_regular"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:text="편 집"
+                    android:textColor="@color/color_third_text"
+                    android:textSize="14sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    >
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_regular"
+                            android:textColor="@color/color_primary_text"
+                            android:text="팔로잉" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:gravity="center"
+                            android:fontFamily="@font/roboto_regular"
+                            android:textColor="@color/color_primary_text"
+                            android:text="0" />
+
+                    </LinearLayout>
+                    <View
+                        android:layout_width="2dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_height="42dp"
+                        android:background="@color/deep_white"/>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_regular"
+                            android:textColor="@color/color_primary_text"
+                            android:text="팔로워" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:gravity="center"
+                            android:fontFamily="@font/roboto_regular"
+                            android:textColor="@color/color_primary_text"
+                            android:text="0" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="2dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_height="42dp"
+                        android:background="@color/deep_white">
+
+                    </View>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_regular"
+                            android:textColor="@color/color_primary_text"
+                            android:text="메세지" />
+
+                        <TextView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginTop="12dp"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:background="@drawable/ic_message"
+
+                            />
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@android:color/transparent"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                >
+
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="6dp"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_primary_text"
+            android:fontFamily="@font/roboto_bold"
+            android:text="최근피드"
+            />
+        </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/lightGrey"
+            android:overScrollMode="never"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            app:layoutManager="GridLayoutManager"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:itemCount="20"
+            tools:listitem="@layout/adapter_feed"
+            tools:spanCount="1" />
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:layout_gravity="center"
+        android:id="@+id/progressBar"
+        android:visibility="gone"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

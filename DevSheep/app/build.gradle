@@ -4,13 +4,13 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 28
     buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "com.dev_sheep.story_of_man_and_woman"
         minSdkVersion 27
-        targetSdkVersion 29
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 
@@ -26,6 +26,12 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    android {
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
+    }
 }
 
 dependencies {
@@ -39,7 +45,7 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:1.1.0-alpha01"
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
     implementation "com.google.android.material:material:1.1.0-alpha02"
-
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha5'
     // Room components
     implementation "android.arch.persistence.room:runtime:1.1.1"
     annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
@@ -71,16 +77,27 @@ dependencies {
 
     // Circle image view
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'com.mikhaellopez:circularimageview:3.2.0'
 
     // 스크롤시 상단바,하단바 안보이게 하기 = coordi layout
     implementation 'com.google.android.material:material:1.0.0'
-
-    // 뷰페이저 슬라이드
-//    implementation 'com.github.shhj1998:android-live-slider:Tag'
-    // 뷰페이저2
-    implementation 'androidx.viewpager2:viewpager2:1.0.0-beta02'
+    // 원형 이미지
     implementation 'me.relex:circleindicator:1.2.2'
+    // floatbutton
+    implementation 'com.leinardi.android:speed-dial:3.1.1'
 
+    //roboto 글씨체
+    implementation 'com.rhexgomez.typer:typer-roboto:2.0.0'
+
+    // 텍스트 편집기 라이브러리 Wysiwyg
+    implementation project(':richwysiwygeditor')
+
+    //image picker
+    implementation 'com.github.esafirm.android-image-picker:imagepicker:2.0.0'
+
+    // MoreType - multiview를 나타내기 위함
+   implementation 'com.werb.moretype:moretype:0.4.0'
+    implementation 'com.facebook.fresco:fresco:1.7.1'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

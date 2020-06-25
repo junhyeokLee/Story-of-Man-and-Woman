@@ -15,11 +15,11 @@
         android:id="@+id/menuWrite"
         android:icon="@drawable/ic_write" />
     <item
-        android:id="@+id/menuAllGen"
+        android:id="@+id/menuNotification"
         android:icon="@drawable/ic_heart" />
 
     <item
-        android:id="@+id/menuAllType"
+        android:id="@+id/menuProfile"
         android:icon="@drawable/ic_user" />
 
 </menu>

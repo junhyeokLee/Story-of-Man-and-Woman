@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@android:color/transparent"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--  Title Toolbar  -->
+        <TextView
+            android:id="@+id/id_fullName_TextView"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:text="# Mohammed Alsudani"
+            android:fontFamily="@font/roboto_bold"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/message_btn"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="12dp"
+            android:src="@drawable/ic_message"
+            ></ImageView>
+
+
+    </RelativeLayout>
+</RelativeLayout>
