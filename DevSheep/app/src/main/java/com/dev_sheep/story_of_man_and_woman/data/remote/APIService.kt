@@ -1,5 +1,6 @@
-package com.dev_sheep.story_of_man_and_woman.service
+package com.dev_sheep.story_of_man_and_woman.data.remote
 
+import com.dev_sheep.story_of_man_and_woman.data.remote.api.TestService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create

@@ -1,4 +1,4 @@
-package com.dev_sheep.story_of_man_and_woman.database
+package com.dev_sheep.story_of_man_and_woman.data.database.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
@@ -6,7 +6,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.dev_sheep.story_of_man_and_woman.data.Test
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
 
 @Dao
 interface TestDAO {
@@ -17,8 +17,11 @@ interface TestDAO {
     @Query("SELECT * FROM Test WHERE id IN(:evolutionIds)")
     fun getEvolutionsByIds(evolutionIds: List<String>): LiveData<List<Test>>
 
-    @Query("SELECT * FROM Test")
+    @Query("SELECT * FROM Test ORDER BY id LIMIT 20" )
     fun all(): LiveData<List<Test>>
+
+    @Query("SELECT * FROM Test ORDER BY id DESC LIMIT :limit OFFSET :offset")
+    fun allList(limit: Int, offset: Int) : LiveData<List<Test>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun add(pokemon: List<Test>)

@@ -1,6 +1,6 @@
 package com.dev_sheep.story_of_man_and_woman.di
 
-import com.dev_sheep.story_of_man_and_woman.service.TestService
+import com.dev_sheep.story_of_man_and_woman.data.remote.api.TestService
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

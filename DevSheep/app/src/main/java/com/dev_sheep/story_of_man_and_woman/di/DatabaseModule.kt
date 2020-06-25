@@ -3,7 +3,7 @@ package com.dev_sheep.story_of_man_and_woman.di
 
 import androidx.room.Room
 import com.dev_sheep.story_of_man_and_woman.R
-import com.dev_sheep.story_of_man_and_woman.database.AppDatabase
+import com.dev_sheep.story_of_man_and_woman.data.database.AppDatabase
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 
