@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.dev_sheep.story_of_man_and_woman.R
 
-class YesOrNoActivity : AppCompatActivity() {
+class SecretStoryActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

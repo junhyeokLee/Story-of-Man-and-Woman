@@ -23,12 +23,14 @@ class Test_tag_Adapter(
             itemView.text_tag.text = "  # "+item.name+"   "
 
 //1 . # 모든사연
-//2 . # 잡담
+//2 . # 아무 이야기
 //3 . # 남과 여
-//4 . # 고민/질문
+//4 . # 고민상담
 //5 . # 남자 이야기
 //6 . # 여자 이야기
-//7 . # Yes or No
+//7 . # 사랑 이야기
+//8 . # Q & A
+
 
 //            val radius = itemView.resources.getDimensionPixelSize(R.dimen.corner_radius)
 

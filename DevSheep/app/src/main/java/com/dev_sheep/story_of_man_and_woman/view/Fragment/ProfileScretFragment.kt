@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.dev_sheep.story_of_man_and_woman.R
 
-class ProfileBookMarkFragment: Fragment() {
+class ProfileScretFragment: Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,

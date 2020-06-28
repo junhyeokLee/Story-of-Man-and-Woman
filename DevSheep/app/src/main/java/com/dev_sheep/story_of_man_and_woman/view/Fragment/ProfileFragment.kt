@@ -24,11 +24,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.view.adapter.ProfileViewpagerAdapter
 import com.dev_sheep.story_of_man_and_woman.viewmodel.TestViewModel
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_profile.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -60,6 +62,8 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     var profileImage: com.mikhaellopez.circularimageview.CircularImageView? = null
     var profileAdd : ImageView? = null
     var backgroundAdd: ImageView? = null
+    var viewpager : ViewPager? = null
+    var tablayout: TabLayout? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,7 +74,6 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         toolbar = view.findViewById(R.id.toolbar) as Toolbar
         appBarLayout = view.findViewById<AppBarLayout>(R.id.app_bar)
         collapsingToolbar = view.findViewById<CollapsingToolbarLayout>(R.id.collapsing_toolbar)
-        viewPagerAdapter = ProfileViewpagerAdapter(this.childFragmentManager)
         messageBtn = view.findViewById<ImageView>(R.id.message_btn)
         recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
         progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
@@ -78,12 +81,49 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         profileImage = view.findViewById<com.mikhaellopez.circularimageview.CircularImageView>(R.id.id_Profile_Image)
         profileAdd = view.findViewById<ImageView>(R.id.id_Profile_add)
         backgroundAdd = view.findViewById<ImageView>(R.id.id_ProfileBackgorund_add)
-
+        viewpager = view.findViewById(R.id.viewPager) as ViewPager
+        tablayout = view.findViewById(R.id.tabLayout) as TabLayout
         recyclerView?.layoutManager = layoutManager
-
-        collapsingToolbarInit()
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
         setHasOptionsMenu(true)
+
+        collapsingToolbarInit()
+
+        tablayout?.apply {
+            addTab(this.newTab().setIcon(R.drawable.ic_write))
+            addTab(this.newTab().setIcon(R.drawable.ic_lock_empty))
+            addTab(this.newTab().setIcon(R.drawable.ic_bookmark_hollow))
+        }
+
+        viewPagerAdapter = ProfileViewpagerAdapter(childFragmentManager,tablayout!!.tabCount)
+        viewpager?.adapter = viewPagerAdapter
+        viewpager?.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tablayout))
+
+        tablayout?.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                viewpager?.setCurrentItem(tab!!.position)
+            }
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+//                viewpager?.setCurrentItem(tab!!.position)
+            }
+            override fun onTabSelected(tab: TabLayout.Tab?)
+            {
+                if(tab!!.position == 0){
+                tablayout?.getTabAt(0)?.setIcon(R.drawable.ic_write)
+                    tablayout?.getTabAt(1)?.setIcon(R.drawable.ic_lock_empty)
+                tablayout?.getTabAt(2)?.setIcon(R.drawable.ic_bookmark_hollow)
+                }else if(tab!!.position == 1){
+                    tablayout?.getTabAt(0)?.setIcon(R.drawable.ic_write_empty)
+                    tablayout?.getTabAt(1)?.setIcon(R.drawable.ic_lock)
+                    tablayout?.getTabAt(2)?.setIcon(R.drawable.ic_bookmark_hollow)
+                }else if(tab!!.position == 2){
+                    tablayout?.getTabAt(0)?.setIcon(R.drawable.ic_write_empty)
+                    tablayout?.getTabAt(1)?.setIcon(R.drawable.ic_lock_empty)
+                    tablayout?.getTabAt(2)?.setIcon(R.drawable.ic_bookmark_filled)
+                }
+                viewpager?.setCurrentItem(tab!!.position)
+            }
+        })
 
         profileImage?.setImageResource(R.mipmap.user)
         profileAdd?.setOnClickListener(this)
@@ -124,18 +164,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                 if (scrollRange == -1){
                     scrollRange = barLayout?.totalScrollRange!!
                 }
-                if (scrollRange + verticalOffset == 0){
-                    showOption(R.id.action_info)
-                    collapsingToolbar?.title = "junhyeoklee616"
-                    isShow = true
-                }else{
-                    collapsingToolbar?.title = ""
-
-                }
-//                else if (isShow){
-//                    hideOption(R.id.action_info)
-//                    isShow = false
-//                }
+                showAndHideOption(R.id.action_info,scrollRange + verticalOffset)
             })
         }
     }
@@ -179,7 +208,6 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         this.menu = menu
         inflater.inflate(R.menu.menu_scrolling,menu)
-//        hideOption(R.id.action_info)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -251,16 +279,21 @@ class ProfileFragment: Fragment(),View.OnClickListener {
 
     }
 
-//    private fun hideOption(id: Int) {
-//        val item = menu!!.findItem(id)
-//        item.isVisible = false
-//    }
-
-    private fun showOption(id: Int) {
-        val item = menu!!.findItem(id)
-        item.isVisible = true
+    private fun showAndHideOption(id: Int,vertical: Int) {
+        if(vertical > 150){
+            if(menu != null) {
+                collapsingToolbar?.title = ""
+                val item = menu!!.findItem(id)
+                item.isVisible = false
+            }
+        }else if(vertical < 150) {
+            if (menu != null) {
+                collapsingToolbar?.title = "junhyeoklee616"
+                val item = menu!!.findItem(id)
+                item.isVisible = true
+            }
+        }
     }
-
     private fun getAlbum() {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"

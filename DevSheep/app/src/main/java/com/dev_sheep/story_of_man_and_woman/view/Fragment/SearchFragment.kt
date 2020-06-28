@@ -20,7 +20,6 @@ class SearchFragment: Fragment() {
     private var recyclerViewTag : RecyclerView? = null
     private val testViewModel: TestViewModel by viewModel()
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -29,15 +28,8 @@ class SearchFragment: Fragment() {
         val view = inflater.inflate(R.layout.fragment_search,null)
         recyclerViewTag = view.findViewById<View>(R.id.recyclerView_tag) as RecyclerView?
         val layoutManager_Tag = GridLayoutManager(view.context,3 )
-        layoutManager_Tag.canScrollVertically().apply { ->
-            false
-        }
         recyclerViewTag?.layoutManager = layoutManager_Tag
-
 //        (recyclerViewTag?.layoutManager as GridLayoutManager).canScrollHorizontally().not()
-
-
-
         testViewModel.getListPokemon().observe(this, Observer {
             val pokemons: List<Test> = it
 

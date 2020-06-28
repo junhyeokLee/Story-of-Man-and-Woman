@@ -12,15 +12,17 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="460dp"
+        android:layout_height="470dp"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_scrollFlags="scroll|enterAlways"
         >
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@color/white"
             android:fitsSystemWindows="true"
             app:expandedTitleMarginEnd="64dp"
@@ -38,7 +40,7 @@
             <ImageView
                 android:id="@+id/expandedImage"
                 android:layout_width="match_parent"
-                android:layout_height="230dp"
+                android:layout_height="180dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/image"
                 android:fitsSystemWindows="true"
@@ -52,19 +54,20 @@
                 android:layout_gravity="center|right"
                 android:src="@drawable/ic_add"
                 android:layout_marginRight="6dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="46dp"
                 />
 
             <com.mikhaellopez.circularimageview.CircularImageView
                 android:id="@+id/id_Profile_Image"
                 android:layout_width="110dp"
                 android:layout_height="110dp"
+                android:layout_marginBottom="28dp"
                 android:layout_gravity="center"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/poke001"
                 app:civ_border_color="#EEEEEE"
-                app:civ_border_width="2dp"
+                app:civ_border_width="0.1dp"
                 app:civ_shadow="true"
                 app:layout_anchor="@id/app_bar"
                 app:civ_shadow_color="#f4f5f9"
@@ -77,6 +80,7 @@
                 android:id="@+id/id_Profile_add"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
+                android:layout_marginBottom="28dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_add"
                 android:layout_marginTop="28dp"
@@ -187,14 +191,13 @@
                             android:textColor="@color/color_primary_text"
                             android:text="메세지" />
 
-                        <TextView
+                        <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_marginTop="12dp"
                             android:gravity="center"
                             android:layout_gravity="center"
-                            android:background="@drawable/ic_message"
-
+                            android:background="@drawable/ic_message_hollow"
                             />
                     </LinearLayout>
 
@@ -218,47 +221,40 @@
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/lightGrey"
+            ></View>
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:tabGravity="fill"
+            app:tabMode="fixed"
+            app:tabIndicatorColor="@color/color_primary_text"
+            app:tabTextColor="@color/gray"
+            app:tabIconTint="@color/gray"
+            app:tabSelectedTextColor="@color/color_primary_text"
+            >
+
+        </com.google.android.material.tabs.TabLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 
-
-    <LinearLayout
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="6dp"
-        android:orientation="vertical"
+        android:background="@color/white"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         >
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            >
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/color_primary_text"
-            android:fontFamily="@font/roboto_bold"
-            android:text="최근피드"
-            />
-        </LinearLayout>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@color/lightGrey"
-            android:overScrollMode="never"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            app:layoutManager="GridLayoutManager"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            tools:itemCount="20"
-            tools:listitem="@layout/adapter_feed"
-            tools:spanCount="1" />
+    </androidx.viewpager.widget.ViewPager>
 
-    </LinearLayout>
+
 
     <ProgressBar
         android:layout_gravity="center"

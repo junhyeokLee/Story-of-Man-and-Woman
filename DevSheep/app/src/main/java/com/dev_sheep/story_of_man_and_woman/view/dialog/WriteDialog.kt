@@ -6,7 +6,7 @@ import android.view.View
 import android.widget.LinearLayout
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.view.MySytotyActivity
-import com.dev_sheep.story_of_man_and_woman.view.YesOrNoActivity
+import com.dev_sheep.story_of_man_and_woman.view.SecretStoryActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class WriteDialog : BottomSheetDialogFragment() {
@@ -24,7 +24,7 @@ class WriteDialog : BottomSheetDialogFragment() {
         }
 
         yesOrNo.setOnClickListener {
-            val lintent = Intent(context, YesOrNoActivity::class.java)
+            val lintent = Intent(context, SecretStoryActivity::class.java)
             startActivity(lintent)
             dismiss()
         }

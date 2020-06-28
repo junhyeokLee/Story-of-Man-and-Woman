@@ -6,10 +6,10 @@
 
     <item
         android:id="@+id/action_info"
-        android:orderInCategory="200"
-        android:title="info"
+        android:icon="@drawable/ic_message_hollow"
         android:iconTint="@color/black"
-        app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_message"/>
+        android:orderInCategory="20"
+        android:title="info"
+        app:showAsAction="ifRoom" />
 
 </menu>

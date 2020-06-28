@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_write"
         android:layout_width="match_parent"
@@ -21,7 +20,6 @@
             android:background="@color/white"
             android:orientation="horizontal"
             >
-
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
@@ -95,11 +93,10 @@
                 android:layout_height="match_parent"
                 android:layout_margin="6dp"
                 android:background="@color/white"
-                android:overScrollMode="never"
                 app:layoutManager="GridLayoutManager"
-                tools:itemCount="100"
+                tools:itemCount="10"
                 tools:listitem="@layout/adpater_tag"
-                tools:spanCount="4"></androidx.recyclerview.widget.RecyclerView>
+                tools:spanCount="3"></androidx.recyclerview.widget.RecyclerView>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

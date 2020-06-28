@@ -106,7 +106,6 @@ class HomeFragment : Fragment() {
             var linearLayoutMnager = LinearLayoutManager(this.context)
             this.layoutManager = linearLayoutMnager
             adapter = mFeedAdapter
-
         }
 
         recyclerViewTag?.apply {
