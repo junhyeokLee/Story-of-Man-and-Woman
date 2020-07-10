@@ -43,21 +43,21 @@ class ProfileFeedFragment: Fragment() {
 //        })
 
         // 페이징 처리
-        testViewModel.getListFirst(limit,offset).observe(this, Observer { test ->
-            setAdapter(test)
-        })
+//        testViewModel.getListFirst(limit,offset).observe(this, Observer { test ->
+//            setAdapter(test)
+//        })
 
     }
-    private fun setAdapter(test:List<Test>) {
-        mTagAdapter = Test_tag_Adapter(test,view!!.context)
-
-
-        recyclerViewTag?.apply {
-            val layoutManager_Tag = LinearLayoutManager(view!!.context )
-            layoutManager = layoutManager_Tag
-            adapter =  mTagAdapter
-        }
-
-    }
+//    private fun setAdapter(test:List<Test>) {
+//        mTagAdapter = Test_tag_Adapter(test,view!!.context)
+//
+//
+//        recyclerViewTag?.apply {
+//            val layoutManager_Tag = LinearLayoutManager(view!!.context )
+//            layoutManager = layoutManager_Tag
+//            adapter =  mTagAdapter
+//        }
+//
+//    }
 
 }

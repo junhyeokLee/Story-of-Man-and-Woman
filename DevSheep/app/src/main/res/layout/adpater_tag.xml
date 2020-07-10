@@ -3,8 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="30dp"
-    android:layout_margin="8dp">
+    android:layout_height="34dp"
+    android:layout_marginRight="4dp"
+    android:layout_marginLeft="4dp">
 
     <TextView
         android:id="@+id/text_tag"
@@ -13,9 +14,9 @@
         android:gravity="center"
         android:singleLine="true"
         android:text="#사연/이별"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        app:fontFamily="@font/sf_bold"
+        android:textColor="@color/main_lightGray"
+        android:textSize="14sp"
+        app:fontFamily="@font/roboto_bold"
         tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

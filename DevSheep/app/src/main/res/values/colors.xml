@@ -2,8 +2,11 @@
 <resources>
     <color name="colorPrimary">@color/backgroundLight</color>
     <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#cc4013</color>
+    <color name="colorAccent">#ed207b</color>
 
+    <color name="main_Accent">#ed207b</color>
+    <color name="main_Primary">#0aaab4</color>
+    <color name="main_lightGray">#e6ebef</color>
 
     <color name="background">#E8E8E8</color>
     <color name="backgroundLight">#F5F5F5</color>
@@ -38,5 +41,10 @@
     <color name="color_third_text">#393648</color>
     <color name="color_fourd_text">#ffa689</color>
     <color name="switch_color">#ff7346</color>
+
+
+    <color name="book_loading_background">#ffffff</color>
+    <color name="book_loading_book">#ff33b5e5</color>
+    <color name="book_loading_page">#ffffff</color>
 
 </resources>

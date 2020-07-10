@@ -5,6 +5,9 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -21,12 +24,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.view.adapter.ProfileViewpagerAdapter
+import com.dev_sheep.story_of_man_and_woman.view.dialog.ImageDialog
 import com.dev_sheep.story_of_man_and_woman.viewmodel.TestViewModel
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
@@ -109,9 +112,9 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             override fun onTabSelected(tab: TabLayout.Tab?)
             {
                 if(tab!!.position == 0){
-                tablayout?.getTabAt(0)?.setIcon(R.drawable.ic_write)
+                    tablayout?.getTabAt(0)?.setIcon(R.drawable.ic_write)
                     tablayout?.getTabAt(1)?.setIcon(R.drawable.ic_lock_empty)
-                tablayout?.getTabAt(2)?.setIcon(R.drawable.ic_bookmark_hollow)
+                    tablayout?.getTabAt(2)?.setIcon(R.drawable.ic_bookmark_hollow)
                 }else if(tab!!.position == 1){
                     tablayout?.getTabAt(0)?.setIcon(R.drawable.ic_write_empty)
                     tablayout?.getTabAt(1)?.setIcon(R.drawable.ic_lock)
@@ -126,6 +129,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         })
 
         profileImage?.setImageResource(R.mipmap.user)
+        profileImage?.setOnClickListener(this)
         profileAdd?.setOnClickListener(this)
 //        val manager: FragmentManager? = activity?.supportFragmentManager
 
@@ -374,13 +378,19 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         when(v?.id){
             R.id.id_Profile_add -> {
                 getAlbum()
+            }
+            R.id.id_Profile_Image -> {
+                Log.e("dwqdwq","dwqdwq");
+                ImageDialog(context!!,R.mipmap.user).start("dqwq")
 
+            }
+        }
 //            val dialog = CameraDialog()
 //        dialog.show(requireFragmentManager(), "")
 //            dialog.show(fragmentManager!!, dialog.tag)
-
-
-//            val pop = PopupMenu(context, view)
+//
+//
+//            val pop = PopupMenu(context!!, view!!)
 //            MenuInflater(context).inflate(R.menu.menu_camera, pop.menu)
 //
 //            pop.setOnMenuItemClickListener { item ->
@@ -395,18 +405,15 @@ class ProfileFragment: Fragment(),View.OnClickListener {
 //                        }
 //                        //기본이미지
 //                        R.id.three -> {
-//                            profileImage.setImageResource(R.mipmap.ic_launcher)
+//                            profileImage?.setImageResource(R.mipmap.ic_launcher)
 //                        }
 //                }
 //                true
 //            }
 //            pop.gravity = Gravity.CENTER
 //            pop.show()
-                checkPermission()
+//                checkPermission()
 
-            }
-        }
     }
-
-
 }
+

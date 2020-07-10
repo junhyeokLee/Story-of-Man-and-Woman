@@ -9,12 +9,13 @@ import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
 import kotlinx.android.synthetic.main.adpater_tag.view.*
 
-class Test_tag_Adapter(
+abstract class Test_tag_Adapter(
     private val list: List<Test>,
     private val context: Context
 ) : RecyclerView.Adapter<Test_tag_Adapter.ViewHolder>() {
 
 
+    abstract fun load()
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -30,6 +31,11 @@ class Test_tag_Adapter(
 //6 . # 여자 이야기
 //7 . # 사랑 이야기
 //8 . # Q & A
+
+
+            // 오늘의 사연, 이달의 사연, 많이 본 사연 , 많은 응원중.., 공지사항
+
+            // 오늘의 베스트 top5, 이달의 베스트 top5
 
 
 //            val radius = itemView.resources.getDimensionPixelSize(R.dimen.corner_radius)
@@ -52,4 +58,7 @@ class Test_tag_Adapter(
     override fun getItemCount(): Int {
         return list.size   // 7개 까지만
     }
+
 }
+
+

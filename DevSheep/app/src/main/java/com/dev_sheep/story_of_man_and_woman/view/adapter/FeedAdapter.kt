@@ -23,6 +23,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
 import com.dev_sheep.story_of_man_and_woman.utils.PokemonColorUtil
+import com.victor.loading.rotate.RotateLoading
 import kotlinx.android.synthetic.main.adapter_feed.view.*
 import kotlinx.android.synthetic.main.progress_loading.view.*
 import java.util.*
@@ -42,33 +43,39 @@ class FeedAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         mcontext = parent.context
-//        val view: View?
+        val view: View?
 //        val viewHolder: RecyclerView.ViewHolder
 //        var viewHolder: RecyclerView.ViewHolder? = null
-//        when(viewType){
-//            VIEW_TYPE_ITEM ->{
-//                val viewLoading =
-//                    LayoutInflater.from(parent.context).inflate(R.layout.progress_loading, parent, false)
-//                    viewHolder = LoadingViewHolder(viewLoading)
-//            }
-//            VIEW_TYPE_LOADING ->{
-//                val viewItem =
-//                    LayoutInflater.from(parent.context).inflate(R.layout.adapter_feed, parent, false)
-//                viewHolder = FeedHolder(viewItem)
-//            }
-//        }
-//        return viewHolder!!
 
-        if(viewType == VIEW_TYPE_ITEM) {
-            val view =
-                LayoutInflater.from(parent.context).inflate(R.layout.adapter_feed, parent, false)
-            return FeedHolder(view)
+        if(list == null){
+            VIEW_TYPE_LOADING
+        }else{
+            VIEW_TYPE_ITEM
         }
-        else{
-            val view =
-                LayoutInflater.from(parent.context).inflate(R.layout.progress_loading, parent, false)
-            return LoadingViewHolder(view)
+
+        return when (viewType) {
+            VIEW_TYPE_ITEM -> {
+                view = LayoutInflater.from(parent.context).inflate(R.layout.adapter_feed, parent, false)
+                FeedHolder(view)
+            }
+            VIEW_TYPE_LOADING -> {
+                view = LayoutInflater.from(parent.context).inflate(R.layout.progress_loading, parent, false)
+                LoadingViewHolder(view)
+            }
+            else -> throw RuntimeException("알 수 없는 뷰 타입 에러")
         }
+
+
+//        if(viewType == VIEW_TYPE_ITEM) {
+//            val view =
+//                LayoutInflater.from(parent.context).inflate(R.layout.adapter_feed, parent, false)
+//            return FeedHolder(view)
+//        }
+//        else {
+//            val view =
+//                LayoutInflater.from(parent.context).inflate(R.layout.progress_loading, parent, false)
+//            return LoadingViewHolder(view)
+//        }
 
 
     }
@@ -76,19 +83,34 @@ class FeedAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
+
+        when(holder.itemViewType){
+            VIEW_TYPE_ITEM -> {
+                val viewHolder : FeedHolder = holder as FeedHolder
+                val feed = list[position]
+                viewHolder.bindView(feed)
+            }
+
+            VIEW_TYPE_LOADING -> {
+                val viewHolder : LoadingViewHolder = holder as LoadingViewHolder
+                viewHolder.bindView()
+            }
+
+        }
+
+
 //        if(holder is FeedHolder){
 //            val list = list[position]
 //            holder.bindView(list)
 //        }
 //        else if(holder is LoadingViewHolder){
-//            holder.progressBar.isIndeterminate = true
+//            val list = list[position]
+//            holder.bindView(list)
 //        }
 
-//        val obj = list[position]
-//
-        val viewHolder: FeedHolder = holder as FeedHolder
-        val item = list[position] // 배너에서 시작을 0 부터 했기때문에 피드가 1부터 시작하는걸 -1 시켜서 0부터 보여지게
-        viewHolder.bindView(item)
+//        val viewHolder: FeedHolder = holder as FeedHolder
+//        val item = list[position] // 배너에서 시작을 0 부터 했기때문에 피드가 1부터 시작하는걸 -1 시켜서 0부터 보여지게
+//        viewHolder.bindView(item)
 
 
     }
@@ -101,6 +123,7 @@ class FeedAdapter(
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
 
     }
+
 
     internal class FeedHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -223,12 +246,14 @@ class FeedAdapter(
     }
 
     internal class LoadingViewHolder(itemView:View):RecyclerView.ViewHolder(itemView){
-        var progressBar = itemView.progressbar_loading
+        private val progressBar : RotateLoading = itemView.findViewById(R.id.rotateloading)
+
+        fun bindView() {
+            progressBar.start()
+        }
+
     }
 
-    fun setLoad(){
-
-    }
 
     fun addData(item:ArrayList<Test>) {
 

@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             R.id.menuWrite ->{
                 showWrite()
             }
-            R.id.menuNotification ->{
+            R.id.menuFavorite ->{
                 supportFragmentManager.beginTransaction().replace(R.id.frameLayout,notificationFragment).commit()
             }
             R.id.menuProfile ->{

@@ -20,6 +20,7 @@
         android:textColor="@color/black"
         android:textSize="12sp"
         app:fontFamily="@font/sf_bold"
+        android:textStyle="italic"
         tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

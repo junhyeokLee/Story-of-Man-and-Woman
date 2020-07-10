@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
@@ -44,10 +45,13 @@ class Test_Searchtag_Adapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = list[position]
+
         holder.bindView(item)
     }
 
     override fun getItemCount(): Int {
         return list.size   // 7개 까지만
     }
+
+
 }

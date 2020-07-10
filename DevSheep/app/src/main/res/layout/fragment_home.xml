@@ -20,10 +20,12 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView_tag"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="40dp"
             android:layout_margin="6dp"
-            android:background="@color/white"
-            android:overScrollMode="never"
+            android:background="#4d000000"
+            android:scrollbars="vertical"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             app:layoutManager="GridLayoutManager"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:itemCount="7"
@@ -33,37 +35,37 @@
 
     </LinearLayout>
 
-    <ImageView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_gravity="end"
-        android:layout_marginTop="-44dp"
-        android:layout_marginEnd="-38dp"
-        android:adjustViewBounds="true"
-        android:alpha="0.2"
-        android:background="@drawable/ic_gender2" />
+    <!--    <ImageView-->
+    <!--        android:layout_width="200dp"-->
+    <!--        android:layout_height="200dp"-->
+    <!--        android:layout_alignParentTop="true"-->
+    <!--        android:layout_alignParentEnd="true"-->
+    <!--        android:layout_gravity="end"-->
+    <!--        android:layout_marginTop="-44dp"-->
+    <!--        android:layout_marginEnd="-38dp"-->
+    <!--        android:adjustViewBounds="true"-->
+    <!--        android:alpha="0.1"-->
+    <!--        android:background="@drawable/ic_gender" />-->
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="260dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="-48dp"
-        android:layout_marginRight="8dp"
-        android:alpha="0.25"
-        android:layout_gravity="end"
-        android:adjustViewBounds="true"
-        android:gravity="center|right"
-        app:fontFamily="@font/circularstd_bold"
-        android:text="사연남녀"
-        android:textSize="26sp" />
+    <!--    <TextView-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="260dp"-->
+    <!--        android:layout_alignParentTop="true"-->
+    <!--        android:layout_alignParentEnd="true"-->
+    <!--        android:layout_marginTop="-48dp"-->
+    <!--        android:layout_marginRight="8dp"-->
+    <!--        android:alpha="0.25"-->
+    <!--        android:layout_gravity="end"-->
+    <!--        android:adjustViewBounds="true"-->
+    <!--        android:gravity="center|right"-->
+    <!--        app:fontFamily="@font/circularstd_bold"-->
+    <!--        android:text="사연남녀"-->
+    <!--        android:textSize="26sp" />-->
 
     <!-- 상단바 -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="100dp"
         android:background="@android:color/transparent"
         android:fitsSystemWindows="false"
         app:elevation="0dp">
@@ -85,16 +87,22 @@
                 android:layout_gravity="bottom|end"
                 android:background="@color/white"
                 android:theme="?attr/actionBarTheme"
-                app:elevation="0dp"
                 app:layout_collapseMode="pin">
-
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center|left"
+                    android:text="# "
+                    android:textColor="@color/color_primary_text"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center|left"
                     android:text="@string/total_feed"
-                    android:textColor="@color/black"
+                    android:textColor="@color/color_primary_text"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -119,6 +127,7 @@
         android:layout_height="wrap_content" />
 
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -136,40 +145,46 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
 
-
-
-                <RelativeLayout
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:background="@color/white"
+                    android:layout_height="6dp"
+                    android:background="@color/main_lightGray"
+                    />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="160dp"
+                    android:background="@android:color/transparent"
                     >
 
-                        <androidx.viewpager.widget.ViewPager
-                            android:id="@+id/vp"
-                            android:layout_width="match_parent"
-                            android:background="@color/white"
-                            android:layout_height="150dp" >
+                    <androidx.viewpager.widget.ViewPager
+                        android:id="@+id/vp"
+                        android:layout_width="match_parent"
+                        android:background="@color/white"
+                        android:layout_height="match_parent" >
 
-                        </androidx.viewpager.widget.ViewPager>
+                    </androidx.viewpager.widget.ViewPager>
 
                     <me.relex.circleindicator.CircleIndicator
                         android:id="@+id/indicator"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/white"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center|top"
+                        android:layout_marginTop="8dp"
+                        android:background="@android:color/transparent"
                         app:ci_drawable="@drawable/black_radius"
                         app:ci_height="4dp"
                         app:ci_margin="4dp"
                         app:ci_width="4dp" />
 
-                </RelativeLayout>
+                </FrameLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:background="@color/gray"
+                    android:background="@color/main_lightGray"
                     android:overScrollMode="never"
                     android:nestedScrollingEnabled="false"
                     app:layoutManager="GridLayoutManager"

@@ -10,13 +10,13 @@
     <item
         android:id="@+id/menuSearch"
         android:icon="@drawable/ic_search"
-      />
+        />
     <item
         android:id="@+id/menuWrite"
         android:icon="@drawable/ic_plus3" />
     <item
-        android:id="@+id/menuNotification"
-        android:icon="@drawable/ic_notification" />
+        android:id="@+id/menuFavorite"
+        android:icon="@drawable/ic_heart" />
 
     <item
         android:id="@+id/menuProfile"

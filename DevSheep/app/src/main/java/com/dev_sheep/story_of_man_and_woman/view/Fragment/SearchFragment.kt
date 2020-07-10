@@ -1,6 +1,7 @@
 package com.dev_sheep.story_of_man_and_woman.view.Fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +28,8 @@ class SearchFragment: Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_search,null)
         recyclerViewTag = view.findViewById<View>(R.id.recyclerView_tag) as RecyclerView?
+
+
         val layoutManager_Tag = GridLayoutManager(view.context,3 )
         recyclerViewTag?.layoutManager = layoutManager_Tag
 //        (recyclerViewTag?.layoutManager as GridLayoutManager).canScrollHorizontally().not()
@@ -47,4 +50,6 @@ class SearchFragment: Fragment() {
 
         return view
     }
+
+
 }

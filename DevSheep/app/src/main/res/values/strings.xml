@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">사연남녀</string>
     <string name="feed">Feed</string>
-    <string name="total_feed"># 모든사연</string>
+    <string name="total_feed">모든사연</string>
 
     <string name="dashboard_tab_1">test</string>
     <string name="dashboard_tab_2">test2</string>

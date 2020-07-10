@@ -18,11 +18,34 @@ class HomeRankFragment(position: Int) : Fragment() {
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_rank,null)
         val tv:TextView = view.findViewById(R.id.tv_number)
+        val rank_img: ImageView = view.findViewById(R.id.iv_rank_img)
+
+        // 오늘의 사연, 이달의 사연, 많이 본 사연 , 많은 응원중.., 공지사항
+
+        // 오늘의 베스트 top5, 이달의 베스트 top5
 
         if (arguments != null) {
             mParam1 = arguments!!.getInt(ARG_PARAM1)
         }
-        tv.setText(""+position)
+        if(position == 1){
+            tv.setText("오늘의 사연")
+            rank_img.setBackgroundResource(R.drawable.chef_cat)
+        }else if(position == 2){
+            tv.setText("이달의 사연")
+            rank_img.setBackgroundResource(R.drawable.chef_cat)
+        }
+        else if(position == 3){
+            tv.setText("화제의 사연")
+            rank_img.setBackgroundResource(R.drawable.image)
+        }
+        else if(position == 4){
+            tv.setText("동이들의 선택")
+            rank_img.setBackgroundResource(R.drawable.chef_cat)
+        }
+        else if(position == 5){
+            tv.setText("공지사항")
+            rank_img.setBackgroundResource(R.drawable.image)
+        }
 
 //                chefImage.drawable.setColorFilter(
 //                    ContextCompat.getColor(view.context, R.color.colorPrimary),
