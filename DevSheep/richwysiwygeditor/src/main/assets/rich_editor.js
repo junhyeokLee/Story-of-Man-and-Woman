@@ -80,8 +80,11 @@ RE.callback = function() {
             items.push('horizontalRule');
         }
         var formatBlock = document.queryCommandValue('formatBlock');
-        if (formatBlock.length > 0) {
-            items.push(formatBlock);
+//        if (formatBlock.length > 0) {
+//            items.push(formatBlock);
+//        }
+        if(document.queryCommandState('formatBlock')){
+        item.push('formatBlock');
         }
 
         window.location.href = re_callback + "re-state://" + encodeURI(items.join(','));
@@ -230,9 +233,17 @@ RE.setJustifyRight = function() {
     document.execCommand('justifyRight', false, null);
 }
 
+//RE.setBlockquote = function() {
+//    document.execCommand('formatBlock', false, '<blockquote>');
+//}
+
 RE.setBlockquote = function() {
-    document.execCommand('formatBlock', false, '<blockquote>');
+//    if(window.getSelection().toString() != "")
+//    var html = '<p style="color: #000 !important;background-color: white !important;border-left: 6px solid #d7dfea !important;padding:10px; height:wrap;">' + window.getSelection().toString() + '</p></br>';
+//    RE.insertHTML(html);
+        document.execCommand('formatBlock', false, '<blockquote>');
 }
+
 
 RE.insertImage = function(url, alt) {
     var html = '<img src="' + url + '" alt="' + alt + '" /><br><br>';
@@ -345,10 +356,14 @@ RE.enabledEditingItems = function(e) {
     if (document.queryCommandState('insertHorizontalRule')) {
         items.push('horizontalRule');
     }
-    var formatBlock = document.queryCommandValue('formatBlock');
-    if (formatBlock.length > 0) {
-        items.push(formatBlock);
-    }
+//    var formatBlock = document.queryCommandValue('formatBlock');
+//    if (formatBlock.length > 0) {
+//        items.push(formatBlock);
+//    }
+    var blockQuote = document.queryCommandValue('formatBlock');
+   if (document.queryCommandState('formatBlock')){
+            item.push('formatBlock');
+        }
 
     window.location.href = "re-state://" + encodeURI(items.join(','));
 }

@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.esafirm.imagepicker.features.ImagePicker;
+import com.lumyjuwon.richwysiwygeditor.R;
 
 public class ImgPicker {
 
@@ -15,6 +16,7 @@ public class ImgPicker {
         imagePicker = ImagePicker.create((Activity) view.getContext());
 
         return imagePicker.limit(10) // max images can be selected (99 by default)
+                .theme(R.style.ef_CustomToolbarTheme)
                 .toolbarFolderTitle("사진첩")
                 .toolbarDoneButtonText("Confirm")
                 .showCamera(false) // show camera or not (true by default)

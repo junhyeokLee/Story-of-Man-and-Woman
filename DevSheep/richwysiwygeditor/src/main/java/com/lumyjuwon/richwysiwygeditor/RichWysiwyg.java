@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.lumyjuwon.richwysiwygeditor.RichEditor.RichEditor;
 import com.lumyjuwon.richwysiwygeditor.WysiwygUtils.ImgPicker;
@@ -36,6 +37,7 @@ public class RichWysiwyg extends LinearLayout {
     private Button cancelButton;
     private Button confirmButton;
     private ImageButton insertImageButton;
+    private WriteCustomButton textSizeButton;
     private WriteCustomButton textColorButton;
     private WriteCustomButton textBgColorButton;
     private WriteCustomButton textBoldButton;
@@ -43,6 +45,9 @@ public class RichWysiwyg extends LinearLayout {
     private WriteCustomButton textUnderlineButton;
     private WriteCustomButton textStrikeButton;
     private WriteCustomButton textAlignButton;
+    private WriteCustomButton textNumberButton;
+    private WriteCustomButton textBulletButton;
+    private WriteCustomButton textBlockquoteButton;
     private ArrayList<WriteCustomButton> popupButtons;
     private ArrayList<WriteCustomButton> Buttons;
     private LayoutInflater layoutInflater;
@@ -77,12 +82,13 @@ public class RichWysiwyg extends LinearLayout {
                     content.clearFocusEditor();
                     if(button.getId() == R.id.write_textColor)
                         showColorPopupWindow(view);
-                    else if(button.getId() == R.id.write_textSize)
-                        showTextPopupWindow(view);
                     else if(button.getId() == R.id.write_textBgColor)
                         showBgColorPopupWindow(view);
                     else if(button.getId() == R.id.write_textAlign)
                         showAlignPopupWindow(view);
+                    else if(button.getId() == R.id.write_textSize)
+                        showSizePopupWindow(view);
+
 
                     clearPopupButton();
                     button.switchCheckedState();
@@ -108,8 +114,17 @@ public class RichWysiwyg extends LinearLayout {
                     content.setUnderline();
                 else if(button.getId() == R.id.write_textStrike)
                     content.setStrikeThrough();
+                else if(button.getId() == R.id.write_text_numbers)
+                    content.setNumbers();
+                else if(button.getId() == R.id.write_text_bullet)
+                    content.setBullets();
+                else if(button.getId() == R.id.write_blockquote)
+                    content.setBlockquote();
+
+
+
                 if(button.getCheckedState()) {
-                    button.setColorFilter(ContextCompat.getColor(getContext().getApplicationContext(), R.color.dark_gray));
+                    button.setColorFilter(ContextCompat.getColor(getContext().getApplicationContext(), R.color.sub_Accent));
                     button.switchCheckedState();
                 }
                 else {
@@ -174,12 +189,13 @@ public class RichWysiwyg extends LinearLayout {
                                     textStrikeButton.switchCheckedState();
                                 Buttons.remove(textStrikeButton);
                                 break;
+
                             default:
                         }
                     }
                 }
                 for(WriteCustomButton button : Buttons){
-                    button.setColorFilter(ContextCompat.getColor(getContext().getApplicationContext(), R.color.dark_gray));
+                    button.setColorFilter(ContextCompat.getColor(getContext().getApplicationContext(), R.color.sub_Accent));
                     button.setCheckedState(false);
                 }
             }
@@ -205,17 +221,20 @@ public class RichWysiwyg extends LinearLayout {
         });
 
         // Text Size 버튼
-        ImageButton textSizeButton = findViewById(R.id.write_textSize);
-        textSizeButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view){
-                closePopupWindow();
-            }
-        });
+//        ImageButton textSizeButton = findViewById(R.id.write_textSize);
+//        textSizeButton.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View view){
+//                closePopupWindow();
+//            }
+//        });
 
         PopupButtonListener popupButtonListener = new PopupButtonListener();
         DecorationButtonListener decorationButtonListener = new DecorationButtonListener();
 
+        // Text Size 버튼
+        textSizeButton = findViewById(R.id.write_textSize);
+        textSizeButton.setOnClickListener(popupButtonListener);
         // Text Color 버튼
         textColorButton = findViewById(R.id.write_textColor);
         textColorButton.setOnClickListener(popupButtonListener);
@@ -235,6 +254,18 @@ public class RichWysiwyg extends LinearLayout {
         // Italic 버튼
         textItalicButton = findViewById(R.id.write_textItalic);
         textItalicButton.setOnClickListener(decorationButtonListener);
+
+        // Text Number 버튼
+        textNumberButton = findViewById(R.id.write_text_numbers);
+        textNumberButton.setOnClickListener(decorationButtonListener);
+
+        // Text Bullet 버튼
+        textBulletButton = findViewById(R.id.write_text_bullet);
+        textBulletButton.setOnClickListener(decorationButtonListener);
+
+        // Text Blockquote 버튼
+        textBlockquoteButton = findViewById(R.id.write_blockquote);
+        textBlockquoteButton.setOnClickListener(decorationButtonListener);
 
         // Underline 버튼
         textUnderlineButton = findViewById(R.id.write_textUnderLine);
@@ -283,30 +314,59 @@ public class RichWysiwyg extends LinearLayout {
         mPopupWindow.setAnimationStyle(1); // 생성 애니메이션 -1, 생성 애니메이션 사용 안 함 0
         mPopupWindow.showAsDropDown(view, 0, -230);
 
-        ImageButton textAlignLeftButton = popupView.findViewById(R.id.text_alignLeft);
-        textAlignLeftButton.setOnClickListener(new OnClickListener(){
+        TextView textSize1 = popupView.findViewById(R.id.text_size1);
+        textSize1.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View view){
                 closePopupWindow();
-                content.setAlignLeft();
+                content.setHeading(5);
+//                textAlignButton.switchCheckedState();
+                Keyboard.showKeyboard(view);
+                content.focusEditor();
             }
         });
-
-        ImageButton textAlignCenterButton = popupView.findViewById(R.id.text_alignCenter);
-        textAlignCenterButton.setOnClickListener(new OnClickListener(){
+        TextView textSize2 = popupView.findViewById(R.id.text_size2);
+        textSize2.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View view){
                 closePopupWindow();
-                content.setAlignCenter();
+                content.setHeading(4);
+//                textAlignButton.switchCheckedState();
+                Keyboard.showKeyboard(view);
+                content.focusEditor();
             }
         });
-
-        ImageButton textAlignRightButton = popupView.findViewById(R.id.text_alignRight);
-        textAlignRightButton.setOnClickListener(new OnClickListener(){
+        TextView textSize3 = popupView.findViewById(R.id.text_size3);
+        textSize3.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View view){
                 closePopupWindow();
-                content.setAlignRight();
+                content.setHeading(3);
+//                textAlignButton.switchCheckedState();
+                Keyboard.showKeyboard(view);
+                content.focusEditor();
+            }
+        });
+        TextView textSize4 = popupView.findViewById(R.id.text_size4);
+        textSize4.setOnClickListener(new OnClickListener(){
+            @Override
+            public void onClick(View view){
+                closePopupWindow();
+                content.setHeading(2);
+//                textAlignButton.switchCheckedState();
+                Keyboard.showKeyboard(view);
+                content.focusEditor();
+            }
+        });
+        TextView textSize5 = popupView.findViewById(R.id.text_size5);
+        textSize5.setOnClickListener(new OnClickListener(){
+            @Override
+            public void onClick(View view){
+                closePopupWindow();
+                content.setHeading(1);
+//                textAlignButton.switchCheckedState();
+                Keyboard.showKeyboard(view);
+                content.focusEditor();
             }
         });
     }
@@ -330,34 +390,7 @@ public class RichWysiwyg extends LinearLayout {
                     if(value != R.color.white)
                         textColorButton.setColorFilter(ContextCompat.getColor(getContext().getApplicationContext(), value));
                     else
-                        textColorButton.setColorFilter(ContextCompat.getColor(getContext().getApplicationContext(), R.color.dark_gray));
-                    textColorButton.switchCheckedState();
-                    Keyboard.showKeyboard(view);
-                }
-            });
-        }
-    }
-
-    // 글 사이즈 설정 Window
-    private void showTextPopupWindow(View view) {
-        layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        popupView = layoutInflater.inflate(R.layout.popup_text_color, null);
-        mPopupWindow = new PopupWindow(popupView, RelativeLayout.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
-        mPopupWindow.setAnimationStyle(-1); // 생성 애니메이션 -1, 생성 애니메이션 사용 안 함 0
-        mPopupWindow.showAsDropDown(view, 0, -230);
-
-        for (Integer key : TextColor.colorMap.keySet()){
-            final int value = TextColor.colorMap.get(key);
-            Button popupButton = popupView.findViewById(key);
-            popupButton.setOnClickListener(new OnClickListener(){
-                @Override
-                public void onClick(View view){
-                    closePopupWindow();
-                    content.setTextColor(ContextCompat.getColor(getContext().getApplicationContext(), value));
-                    if(value != R.color.white)
-                        textColorButton.setColorFilter(ContextCompat.getColor(getContext().getApplicationContext(), value));
-                    else
-                        textColorButton.setColorFilter(ContextCompat.getColor(getContext().getApplicationContext(), R.color.dark_gray));
+                        textColorButton.setColorFilter(ContextCompat.getColor(getContext().getApplicationContext(), R.color.sub_Accent));
                     textColorButton.switchCheckedState();
                     Keyboard.showKeyboard(view);
                 }
@@ -384,7 +417,7 @@ public class RichWysiwyg extends LinearLayout {
                     if(value != R.color.white)
                         textBgColorButton.setColorFilter(ContextCompat.getColor(getContext().getApplicationContext(), value));
                     else
-                        textBgColorButton.setColorFilter(ContextCompat.getColor(getContext().getApplicationContext(), R.color.dark_gray));
+                        textBgColorButton.setColorFilter(ContextCompat.getColor(getContext().getApplicationContext(), R.color.sub_Accent));
                     textBgColorButton.switchCheckedState();
                     Keyboard.showKeyboard(view);
                 }
