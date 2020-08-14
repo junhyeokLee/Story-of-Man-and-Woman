@@ -19,6 +19,7 @@ class HomeRankFragment(position: Int) : Fragment() {
         val view = inflater.inflate(R.layout.fragment_rank,null)
         val tv:TextView = view.findViewById(R.id.tv_number)
         val rank_img: ImageView = view.findViewById(R.id.iv_rank_img)
+        val rank_tag_img: ImageView = view.findViewById(R.id.iv_rank_tag_img)
 
         // 오늘의 사연, 이달의 사연, 많이 본 사연 , 많은 응원중.., 공지사항
 
@@ -29,21 +30,30 @@ class HomeRankFragment(position: Int) : Fragment() {
         }
         if(position == 1){
             tv.setText("오늘의 사연")
-            rank_img.setBackgroundResource(R.drawable.chef_cat)
+            rank_tag_img.setBackgroundResource(0)
+//            rank_tag_img.setBackgroundResource(R.drawable.ic_thumbs_up)
+            rank_img.setBackgroundResource(R.drawable.ic_first)
         }else if(position == 2){
             tv.setText("이달의 사연")
-            rank_img.setBackgroundResource(R.drawable.chef_cat)
+            rank_tag_img.setBackgroundResource(0)
+//            rank_tag_img.setBackgroundResource(R.drawable.ic_first)
+            rank_img.setBackgroundResource(R.drawable.image)
         }
         else if(position == 3){
             tv.setText("화제의 사연")
-            rank_img.setBackgroundResource(R.drawable.image)
+            rank_tag_img.setBackgroundResource(0)
+//            rank_tag_img.setBackgroundResource(R.drawable.ic_offer)
+            rank_img.setBackgroundResource(R.drawable.ic_first)
         }
         else if(position == 4){
             tv.setText("동이들의 선택")
-            rank_img.setBackgroundResource(R.drawable.chef_cat)
+            rank_tag_img.setBackgroundResource(0)
+//            rank_tag_img.setBackgroundResource(R.drawable.ic_crown)
+            rank_img.setBackgroundResource(R.drawable.ic_thumbs_up)
         }
         else if(position == 5){
             tv.setText("공지사항")
+            rank_tag_img.setBackgroundResource(0)
             rank_img.setBackgroundResource(R.drawable.image)
         }
 

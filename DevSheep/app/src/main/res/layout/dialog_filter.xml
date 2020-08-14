@@ -14,11 +14,11 @@
         android:layout_gravity="center"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="12dp"
-        android:background="@color/main_Accent" />
+        android:background="@color/red_deep" />
 
     <LinearLayout
         android:id="@+id/yes_or_no_layout"
-        android:layout_width="340dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:clickable="true"
         android:orientation="vertical"
@@ -29,7 +29,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.1"
+            android:layout_weight="1"
             android:layout_marginTop="12dp"
             android:gravity="center"
             app:fontFamily="@font/circularstd_book"
@@ -47,6 +47,7 @@
                 android:text="10대"
                 android:textColor="@color/black"
                 android:textSize="14sp"
+                android:fontFamily="@font/roundwindregular"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -64,6 +65,7 @@
                 android:text="20대"
                 android:textColor="@color/black"
                 android:textSize="14sp"
+                android:fontFamily="@font/roundwindregular"
                 android:gravity="center"
                 android:orientation="vertical" />
 
@@ -75,6 +77,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/background_age_category"
                 android:button="@null"
+                android:fontFamily="@font/roundwindregular"
                 android:text="30대"
                 android:textColor="@color/black"
                 android:textSize="14sp"
@@ -91,6 +94,7 @@
                 android:button="@null"
                 android:text="40대"
                 android:textColor="@color/black"
+                android:fontFamily="@font/roundwindregular"
                 android:textSize="14sp"
                 android:gravity="center"
                 android:orientation="vertical" />
@@ -104,6 +108,7 @@
                 android:background="@drawable/background_age_category"
                 android:button="@null"
                 android:text="50대"
+                android:fontFamily="@font/roundwindregular"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 android:gravity="center"
@@ -116,7 +121,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:layout_weight="0.1"
+            android:layout_weight="1"
             >
 
             <CheckBox
@@ -127,6 +132,7 @@
                 android:background="@drawable/background_age_category"
                 android:button="@null"
                 android:text="남/여"
+                android:fontFamily="@font/roundwindregular"
                 android:layout_margin="4dp"
                 android:textColor="@color/black"
                 android:textSize="14sp"
@@ -143,6 +149,7 @@
                 android:button="@null"
                 android:text="남"
                 android:textColor="@color/black"
+                android:fontFamily="@font/roundwindregular"
                 android:textSize="14sp"
                 android:gravity="center"
                 android:layout_margin="4dp"
@@ -160,6 +167,7 @@
                 android:background="@drawable/background_age_category"
                 android:button="@null"
                 android:text="여"
+                android:fontFamily="@font/roundwindregular"
                 android:layout_margin="4dp"
                 android:textColor="@color/black"
                 android:textSize="14sp"
@@ -184,7 +192,8 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/white"
-                android:backgroundTint="@color/main_Accent"
+                android:fontFamily="@font/roundwindregular"
+                android:backgroundTint="@color/gray"
                 android:layout_gravity="bottom"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="12dp"

@@ -20,7 +20,7 @@
             android:layout_width="32dp"
             android:layout_height="2dp"
             android:layout_marginBottom="8dp"
-            android:background="@color/colorAccent" />
+            android:background="@color/main_Accent" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -41,8 +41,8 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_write"
-                    android:tint="@color/white" />
+                    android:src="@drawable/ic_write_empty"
+                    android:tint="@color/gray" />
             </LinearLayout>
 
             <LinearLayout
@@ -56,9 +56,10 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
                     android:text=" 나의 이야기 "
-                    android:textColor="@color/white"
+                    android:textColor="@color/main_Accent"
                     android:textSize="14sp"
-                    app:fontFamily="@font/circularstd_book" />
+                    android:fontFamily="@font/roundwindregular"
+                     />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -66,10 +67,81 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginBottom="16dp"
-                    android:text="- 자유롭게 이야기 하고싶을때 "
-                    android:textColor="@color/white"
+                    android:text="- 전체공개"
+                    android:textColor="@color/black"
                     android:textSize="12sp"
-                    app:fontFamily="@font/circularstd_book" />
+                    app:fontFamily="@font/ridi_batang" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/my_follow_story_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/write2_background"
+        android:clickable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <View
+            android:layout_width="32dp"
+            android:layout_height="2dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/main_Accent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:fontFamily="@font/circularstd_book">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="12dp"
+                android:layout_weight="6">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_heart_empty"
+                    android:tint="@color/gray" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:text="구독하는 사람들에게"
+                    android:textColor="@color/main_Accent"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/roundwindregular"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="- 구독자 공개 "
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    app:fontFamily="@font/ridi_batang" />
             </LinearLayout>
 
         </LinearLayout>
@@ -90,7 +162,7 @@
             android:layout_width="32dp"
             android:layout_height="2dp"
             android:layout_marginBottom="8dp"
-            android:background="@color/design_default_color_primary" />
+            android:background="@color/main_Accent" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -112,7 +184,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_lock_empty"
-                    android:tint="@color/white"
+                    android:tint="@color/gray"
                     />
             </LinearLayout>
 
@@ -127,9 +199,10 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
                     android:text="비밀 이야기"
-                    android:textColor="@color/white"
+                    android:textColor="@color/main_Accent"
                     android:textSize="14sp"
-                    app:fontFamily="@font/circularstd_book" />
+                    android:fontFamily="@font/roundwindregular"
+                    />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -138,10 +211,10 @@
                     android:layout_marginRight="16dp"
                     android:layout_marginBottom="16dp"
                     android:lineSpacingExtra="4dp"
-                    android:text="- 나를 좋아하는 사람들에게만"
-                    android:textColor="@color/white"
+                    android:text="- 비공개"
+                    android:textColor="@color/black"
                     android:textSize="12sp"
-                    app:fontFamily="@font/circularstd_book" />
+                    app:fontFamily="@font/ridi_batang" />
             </LinearLayout>
 
         </LinearLayout>

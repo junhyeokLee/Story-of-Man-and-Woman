@@ -30,6 +30,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:text="ImageUrl"
+            android:fontFamily="@font/roundwindregular"
             android:textColor="@color/white"
             android:textSize="16sp" />
 

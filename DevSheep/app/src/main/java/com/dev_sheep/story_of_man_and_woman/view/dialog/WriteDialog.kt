@@ -5,8 +5,8 @@ import android.content.Intent
 import android.view.View
 import android.widget.LinearLayout
 import com.dev_sheep.story_of_man_and_woman.R
-import com.dev_sheep.story_of_man_and_woman.view.MySytotyActivity
-import com.dev_sheep.story_of_man_and_woman.view.SecretStoryActivity
+import com.dev_sheep.story_of_man_and_woman.view.activity.MystoryActivity
+import com.dev_sheep.story_of_man_and_woman.view.activity.SecretStoryActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class WriteDialog : BottomSheetDialogFragment() {
@@ -18,7 +18,7 @@ class WriteDialog : BottomSheetDialogFragment() {
         val yesOrNo: LinearLayout = contentView.findViewById(R.id.yes_or_no_layout)
 
         myStory.setOnClickListener {
-            val lintent = Intent(context, MySytotyActivity::class.java)
+            val lintent = Intent(context, MystoryActivity::class.java)
             startActivity(lintent)
             dismiss()
         }

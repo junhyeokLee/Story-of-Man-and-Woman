@@ -1,0 +1,57 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+            android:key="@string/pref_show_values"
+            android:title="@string/show_values_title"
+            android:icon="@drawable/ic_show_values"
+            android:summary="@string/show_values_desc"/>
+    <PreferenceScreen
+            android:title="@string/open_repo_title"
+            android:icon="@drawable/ic_repo"
+            android:summary="@string/open_repo_desc">
+        <intent android:action="android.intent.action.VIEW"
+                android:data="@string/repo_url"/>
+    </PreferenceScreen>
+    <PreferenceCategory android:title="Booleans">
+        <SwitchPreference
+                android:key="@string/pref_boolean1"
+                android:defaultValue="@bool/pref_boolean1_default"
+                android:title="@string/boolean1_title"
+                android:icon="@drawable/ic_one"
+                android:summary="@string/boolean1_desc"/>
+        <SwitchPreference
+                android:key="@string/pref_boolean2"
+                android:defaultValue="@bool/pref_boolean2_default"
+                android:title="@string/boolean2_title"
+                android:icon="@drawable/ic_two"
+                android:dependency="@string/pref_boolean1"
+                android:summary="@string/boolean2_desc"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Strings">
+        <EditTextPreference
+                android:key="@string/pref_string1"
+                android:defaultValue="@string/pref_string1_default"
+                android:title="@string/string1_title"
+                android:icon="@drawable/ic_one"
+                android:summary="@string/string1_desc"/>
+        <EditTextPreference
+                android:key="@string/pref_string2"
+                android:defaultValue="@string/pref_string2_default"
+                android:title="@string/string2_title"
+                android:icon="@drawable/ic_two"
+                android:summary="@string/string2_desc"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Integers">
+        <SeekBarPreference
+                android:key="@string/pref_int1"
+                android:defaultValue="@integer/pref_int1_default"
+                android:title="@string/int1_title"
+                android:icon="@drawable/ic_one"
+                android:summary="@string/int1_desc"/>
+        <SeekBarPreference
+                android:key="@string/pref_int2"
+                android:defaultValue="@integer/pref_int2_default"
+                android:title="@string/int2_title"
+                android:icon="@drawable/ic_two"
+                android:summary="@string/int2_desc"/>
+    </PreferenceCategory>
+</PreferenceScreen>
