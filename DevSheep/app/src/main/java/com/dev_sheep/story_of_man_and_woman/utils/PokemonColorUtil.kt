@@ -9,16 +9,16 @@ import com.dev_sheep.story_of_man_and_woman.R
 class PokemonColorUtil(var context: Context) {
 
     @ColorInt
-    fun getPokemonColor(typeOfPokemon: List<String>?): Int {
-        val type = typeOfPokemon?.getOrNull(0)
-        val color = when (type?.toLowerCase()) {
-            "grass", "bug" -> R.color.lightTeal
-            "fire" -> R.color.lightRed
-            "water", "fighting", "normal" -> R.color.lightBlue
-            "electric", "psychic" -> R.color.lightYellow
-            "poison", "ghost" -> R.color.lightPurple
-            "ground", "rock" -> R.color.lightBrown
-            "dark" -> R.color.black
+    fun getPokemonColor(typeOfPokemon: String?): Int {
+
+        val color = when (typeOfPokemon) {
+            "남" -> R.color.blue
+            "여" -> R.color.hot_pink
+            "10대" -> R.color.lightBlue
+            "20대" -> R.color.lightYellow
+            "30대" -> R.color.lightPurple
+            "40대" -> R.color.lightBrown
+            "50대" -> R.color.black
             else -> R.color.lightBlue
         }
         return convertColor(color)

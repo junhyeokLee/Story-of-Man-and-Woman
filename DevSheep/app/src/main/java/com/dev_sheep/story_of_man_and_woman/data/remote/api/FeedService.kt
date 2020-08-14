@@ -1,18 +1,16 @@
 package com.dev_sheep.story_of_man_and_woman.data.remote.api
 
-import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
-import com.dev_sheep.story_of_man_and_woman.data.database.entity.Tag
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
 import io.reactivex.Single
-import okhttp3.MultipartBody
+import org.w3c.dom.Text
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.POST
+import java.sql.Date
 
-
-interface TestService {
-    @GET("pokemon.json")
-    fun get(): Call<List<Test>>
-
+interface FeedService {
 
     @FormUrlEncoded
     @POST("add_feed.php")
@@ -22,25 +20,13 @@ interface TestService {
         @Field("tag_seq") tag_seq: Int,
         @Field("creater") creater: String,
         @Field("type") type: String
-    ): Single<Void>
+    ): Call<Void>
 
 
-    @GET("get_feed.php")
-    fun getList(): Single<List<Feed>>
+//    @FormUrlEncoded
+//    @GET("get_feed.php")
+//    fun getStart(): Call<List<Feed>>
 
-
-    @GET("get_tag.php")
-    fun getTagList(): Single<List<Tag>>
-
-    @FormUrlEncoded
-    @POST("get_feed_item.php")
-    fun getFeed(@Field("feed_seq") feed_seq: Int): Single<Feed>
-
-
-    //사용자가 프로필 이미지를 변경했을때 해당 이미지를 서버로 전송하는 통신
-    @Multipart
-    @POST("upload_content.php")
-    fun uploadImage(@Part File: MultipartBody.Part?): Call<Feed>
 
 //    @FormUrlEncoded
 //    @POST("update_feed.php")

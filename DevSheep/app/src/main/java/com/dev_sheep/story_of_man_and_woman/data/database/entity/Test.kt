@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.dev_sheep.story_of_man_and_woman.utils.ListStringConverter
 
-@Entity
+@Entity(tableName = "Test")
 @TypeConverters(ListStringConverter::class)
 data class Test( @PrimaryKey
                  @NonNull

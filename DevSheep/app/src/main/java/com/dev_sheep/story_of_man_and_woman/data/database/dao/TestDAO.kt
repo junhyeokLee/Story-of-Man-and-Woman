@@ -6,6 +6,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
 
 @Dao
@@ -17,7 +18,7 @@ interface TestDAO {
     @Query("SELECT * FROM Test WHERE id IN(:evolutionIds)")
     fun getEvolutionsByIds(evolutionIds: List<String>): LiveData<List<Test>>
 
-    @Query("SELECT * FROM Test ORDER BY id LIMIT 20" )
+    @Query("SELECT * FROM Test" )
     fun all(): LiveData<List<Test>>
 
     @Query("SELECT * FROM Test ORDER BY id DESC LIMIT :limit OFFSET :offset")
@@ -31,4 +32,12 @@ interface TestDAO {
 
     @Delete
     fun delete(model: Test)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun addAllList(feed: List<Feed>)
+
+    @Query("SELECT * FROM Feed" )
+    fun getallList(): LiveData<List<Feed>>
+
+
 }
