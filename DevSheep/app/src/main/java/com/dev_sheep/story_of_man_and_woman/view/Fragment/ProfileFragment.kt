@@ -24,10 +24,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.dev_sheep.story_of_man_and_woman.R
+import com.dev_sheep.story_of_man_and_woman.view.activity.MessageActivity
+import com.dev_sheep.story_of_man_and_woman.view.activity.MyMessageActivity
 import com.dev_sheep.story_of_man_and_woman.view.adapter.ProfileViewpagerAdapter
 import com.dev_sheep.story_of_man_and_woman.view.dialog.ImageDialog
 import com.dev_sheep.story_of_man_and_woman.viewmodel.TestViewModel
@@ -47,8 +50,11 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     private val testViewModel: TestViewModel by viewModel()
     private val MY_PERMISSION_CAMERA = 1111
     private val REQUEST_TAKE_PHOTO = 2222
+    private val REQUEST_TAKE_PHOTO_BACKGROUND = 6666
     private val REQUEST_TAKE_ALBUM = 3333
-    private val REQUEST_IMAGE_CROP = 4444
+    private val REQUEST_TAKE_ALBUM_BACKGROUND = 4444
+    private val REQUEST_IMAGE_CROP = 5555
+    private val REQUEST_IMAGE_CROP_BACKGROUND = 7777
     var mCurrentPhotoPath: String? = null
     var imageURI: Uri? = null
     var photoURI: Uri? = null
@@ -67,7 +73,8 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     var backgroundAdd: ImageView? = null
     var viewpager : ViewPager? = null
     var tablayout: TabLayout? = null
-
+    lateinit var preferecnes_img : ImageView
+    lateinit var preferecnes_message : ImageView
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -86,14 +93,36 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         backgroundAdd = view.findViewById<ImageView>(R.id.id_ProfileBackgorund_add)
         viewpager = view.findViewById(R.id.viewPager) as ViewPager
         tablayout = view.findViewById(R.id.tabLayout) as TabLayout
+        preferecnes_img = view.findViewById(R.id.preferecnes_img) as ImageView
+        preferecnes_message = view.findViewById(R.id.preferecnes_message) as ImageView
         recyclerView?.layoutManager = layoutManager
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
         setHasOptionsMenu(true)
+
+//        send 쪽지 db-
+//                Id 고유번호
+//                Recv_seq 받는이 seq
+//        Send_seq 보내는이 seq
+//        Title 제목
+//                Content 내용 type = text로
+//        Recv_chk 쪽지를 읽었는지 안읽었는지 확인 타입 varchar
+//        File 쪽지파일 이름 타입은 varchar
+//        Send_date 타입은 date
+//
+//        Receive 쪽지 db -
+//                Id 고유번호
+//                Recv_seq 받는이 seq
+//        Send_seq 보내는이 seq
+//        Title 제목
+//                Content 내용 type = text로
+//        File 쪽지파일 이름 타입은 varchar
+//        Send_date 타입은 date
 
         collapsingToolbarInit()
 
         tablayout?.apply {
             addTab(this.newTab().setIcon(R.drawable.ic_write))
+            addTab(this.newTab().setIcon(R.drawable.ic_heart_empty))
             addTab(this.newTab().setIcon(R.drawable.ic_lock_empty))
             addTab(this.newTab().setIcon(R.drawable.ic_bookmark_hollow))
         }
@@ -113,16 +142,25 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             {
                 if(tab!!.position == 0){
                     tablayout?.getTabAt(0)?.setIcon(R.drawable.ic_write)
-                    tablayout?.getTabAt(1)?.setIcon(R.drawable.ic_lock_empty)
-                    tablayout?.getTabAt(2)?.setIcon(R.drawable.ic_bookmark_hollow)
+                    tablayout?.getTabAt(1)?.setIcon(R.drawable.ic_heart_empty)
+                    tablayout?.getTabAt(2)?.setIcon(R.drawable.ic_lock_empty)
+                    tablayout?.getTabAt(3)?.setIcon(R.drawable.ic_bookmark_hollow)
                 }else if(tab!!.position == 1){
                     tablayout?.getTabAt(0)?.setIcon(R.drawable.ic_write_empty)
-                    tablayout?.getTabAt(1)?.setIcon(R.drawable.ic_lock)
-                    tablayout?.getTabAt(2)?.setIcon(R.drawable.ic_bookmark_hollow)
+                    tablayout?.getTabAt(1)?.setIcon(R.drawable.ic_heart)
+                    tablayout?.getTabAt(2)?.setIcon(R.drawable.ic_lock_empty)
+                    tablayout?.getTabAt(3)?.setIcon(R.drawable.ic_bookmark_hollow)
                 }else if(tab!!.position == 2){
                     tablayout?.getTabAt(0)?.setIcon(R.drawable.ic_write_empty)
-                    tablayout?.getTabAt(1)?.setIcon(R.drawable.ic_lock_empty)
-                    tablayout?.getTabAt(2)?.setIcon(R.drawable.ic_bookmark_filled)
+                    tablayout?.getTabAt(1)?.setIcon(R.drawable.ic_heart_empty)
+                    tablayout?.getTabAt(2)?.setIcon(R.drawable.ic_lock)
+                    tablayout?.getTabAt(3)?.setIcon(R.drawable.ic_bookmark_hollow)
+                }else if(tab!!.position == 3){
+                    tablayout?.getTabAt(0)?.setIcon(R.drawable.ic_write_empty)
+                    tablayout?.getTabAt(1)?.setIcon(R.drawable.ic_heart_empty)
+                    tablayout?.getTabAt(2)?.setIcon(R.drawable.ic_lock_empty)
+                    tablayout?.getTabAt(3)?.setIcon(R.drawable.ic_bookmark_filled)
+
                 }
                 viewpager?.setCurrentItem(tab!!.position)
             }
@@ -131,6 +169,9 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         profileImage?.setImageResource(R.mipmap.user)
         profileImage?.setOnClickListener(this)
         profileAdd?.setOnClickListener(this)
+        backgroundAdd?.setOnClickListener(this)
+        preferecnes_img?.setOnClickListener(this)
+        preferecnes_message?.setOnClickListener(this)
 //        val manager: FragmentManager? = activity?.supportFragmentManager
 
 
@@ -243,11 +284,27 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             REQUEST_TAKE_PHOTO ->{
                 if(requestCode == Activity.RESULT_OK) {
                     try {
-                        Log.i("REQUEST_TAKE_PHOTO", "OK!!!!!!")
-                        galleryAddPic()
-                        id_Profile_Image.setImageURI(imageURI)
+                        Log.e("REQUEST_TAKE_PHOTO", "OK!!!!!!")
+//                        galleryAddPic()
+//                        id_Profile_Image.setImageURI(imageURI)
                     } catch (e: Exception) {
                         Log.e("REQUEST_TAKE_PHOTO", e.toString())
+                    }
+                }else{
+                    Toast.makeText(this.context, "저장공간에 접근할 수 없는 기기 입니다.", Toast.LENGTH_SHORT)
+                        .show()
+
+                }
+            }
+
+            REQUEST_TAKE_PHOTO_BACKGROUND ->{
+                if(requestCode == Activity.RESULT_OK) {
+                    try {
+                        Log.e("REQUEST_TAKE_PHOTO BACKGROUND", "OK!!!!!!")
+//                        galleryAddPic()
+//                        id_ProfileBackground_Image.setImageURI(imageURI)
+                    } catch (e: Exception) {
+                        Log.e("REQUEST_TAKE_PHOTO BACKGROUND", e.toString())
                     }
                 }else{
                     Toast.makeText(this.context, "저장공간에 접근할 수 없는 기기 입니다.", Toast.LENGTH_SHORT)
@@ -264,7 +321,23 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                             albumFile = createImageFile()
                             photoURI = data!!.data
                             albumURI = Uri.fromFile(albumFile)
-                            cropImage()
+                            cropImage(REQUEST_IMAGE_CROP)
+                        } catch (e: IOException) {
+                            Log.e("TAKE_ALBUM_SINLE_ERROR", e.toString())
+                        }
+                    }
+                }
+            }
+
+            REQUEST_TAKE_ALBUM_BACKGROUND ->{
+                if (resultCode == Activity.RESULT_OK) {
+                    if (data!!.data != null) {
+                        try {
+                            var albumFile: File? = null
+                            albumFile = createImageFile()
+                            photoURI = data!!.data
+                            albumURI = Uri.fromFile(albumFile)
+                            cropImage(REQUEST_IMAGE_CROP_BACKGROUND)
                         } catch (e: IOException) {
                             Log.e("TAKE_ALBUM_SINLE_ERROR", e.toString())
                         }
@@ -274,9 +347,19 @@ class ProfileFragment: Fragment(),View.OnClickListener {
 
             REQUEST_IMAGE_CROP -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    galleryAddPic()
+//                    galleryAddPic()
                     //사진 변환 error
+                    Log.e("IMAGE_href = ",""+albumURI)
                     id_Profile_Image.setImageURI(albumURI)
+                }
+            }
+
+            REQUEST_IMAGE_CROP_BACKGROUND ->{
+                if (resultCode == Activity.RESULT_OK) {
+//                    galleryAddPic()
+                    //사진 변환 error
+                    Log.e("IMAGEBACKGORUND_href = ",""+albumURI)
+                    id_ProfileBackground_Image.setImageURI(albumURI)
                 }
             }
         }
@@ -303,6 +386,12 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         intent.type = "image/*"
         intent.type = MediaStore.Images.Media.CONTENT_TYPE
         startActivityForResult(intent, REQUEST_TAKE_ALBUM)
+    }
+    private fun getBackGroundAlbum() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        intent.type = MediaStore.Images.Media.CONTENT_TYPE
+        startActivityForResult(intent, REQUEST_TAKE_ALBUM_BACKGROUND)
     }
 
     private fun captureCamera() {
@@ -352,7 +441,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     }
 
     //사진 crop할 수 있도록 하는 함수
-    fun cropImage() {
+    fun cropImage(type:Int) {
         val cropIntent = Intent("com.android.camera.action.CROP")
         cropIntent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
         cropIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -361,7 +450,12 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         cropIntent.putExtra("aspectY", 1)
         cropIntent.putExtra("scale", true)
         cropIntent.putExtra("output", albumURI)
-        startActivityForResult(cropIntent, REQUEST_IMAGE_CROP)
+
+        if(type == REQUEST_IMAGE_CROP) {
+            startActivityForResult(cropIntent, REQUEST_IMAGE_CROP)
+        }else{
+            startActivityForResult(cropIntent, REQUEST_IMAGE_CROP_BACKGROUND)
+        }
     }
 
     // 갤러리에 사진 추가 함수
@@ -379,10 +473,24 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             R.id.id_Profile_add -> {
                 getAlbum()
             }
+            R.id.id_ProfileBackgorund_add ->{
+                getBackGroundAlbum()
+            }
             R.id.id_Profile_Image -> {
-                Log.e("dwqdwq","dwqdwq");
                 ImageDialog(context!!,R.mipmap.user).start("dqwq")
-
+            }
+            R.id.preferecnes_img ->{
+                val preference = PrefsFragment()//The fragment that u want to open for example
+                var PrefsFragmnet = (context as AppCompatActivity).supportFragmentManager
+                var fragmentTransaction: FragmentTransaction = PrefsFragmnet.beginTransaction()
+                fragmentTransaction.setReorderingAllowed(true)
+                fragmentTransaction.setCustomAnimations(R.anim.fragment_fade_in,R.anim.fragment_fade_out)
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.replace(R.id.frameLayout, preference);
+                fragmentTransaction.commit()
+            }
+            R.id.preferecnes_message ->{
+                startActivity( Intent(context, MyMessageActivity::class.java))
             }
         }
 //            val dialog = CameraDialog()

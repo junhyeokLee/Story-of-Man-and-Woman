@@ -9,6 +9,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import com.dev_sheep.story_of_man_and_woman.R
 import com.mikhaellopez.circularimageview.CircularImageView
+import java.nio.file.Path
 
 class ImageDialog(context: Context, imagePath: Int) : View.OnClickListener {
 
@@ -23,6 +24,9 @@ class ImageDialog(context: Context, imagePath: Int) : View.OnClickListener {
 //        dlg.setCancelable(false)    //다이얼로그의 바깥 화면을 눌렀을 때 다이얼로그가 닫히지 않도록 함
         dlg.window.getAttributes().windowAnimations = R.style.DialogAnimation;
         dlg.window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+        dlg.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        dlg.window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
 
         img_back = dlg.findViewById(R.id.im_back)
         img_url = dlg.findViewById(R.id.id_Profile_Image)

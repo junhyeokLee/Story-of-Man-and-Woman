@@ -1,4 +1,4 @@
-package com.dev_sheep.story_of_man_and_woman.view;
+package com.dev_sheep.story_of_man_and_woman.view.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
