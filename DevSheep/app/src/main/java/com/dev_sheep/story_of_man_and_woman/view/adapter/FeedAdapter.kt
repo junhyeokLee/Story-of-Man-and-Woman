@@ -1,36 +1,48 @@
 package com.dev_sheep.story_of_man_and_woman.view.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.text.Html
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
+import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
 import com.dev_sheep.story_of_man_and_woman.utils.PokemonColorUtil
+import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileUsersFragment
+import com.dev_sheep.story_of_man_and_woman.view.activity.FeedActivity
+import com.dev_sheep.story_of_man_and_woman.view.activity.MessageActivity
+import com.dev_sheep.story_of_man_and_woman.view.activity.SecretStoryActivity
 import com.victor.loading.rotate.RotateLoading
+import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.adapter_feed.view.*
-import kotlinx.android.synthetic.main.progress_loading.view.*
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.safety.Whitelist
+import java.text.SimpleDateFormat
 import java.util.*
 
 class FeedAdapter(
-    private val list: List<Test>,
-    private val context: Context,
+    private val list: List<Feed>,
+    private var context: Context,
     private var fragmentManager: FragmentManager
 
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -38,6 +50,9 @@ class FeedAdapter(
     var mViewPagerState = HashMap<Int, Int>()
     private val VIEW_TYPE_ITEM = 0
     private val VIEW_TYPE_LOADING = 1
+
+
+//    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
 
 
@@ -121,51 +136,115 @@ class FeedAdapter(
 
 
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
-
     }
 
 
     internal class FeedHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
+        private val feed_layout: RelativeLayout = itemView.findViewById(R.id.feed_layout)
         private val favoriteButton: ImageView = itemView.findViewById(R.id.favorite_btn)
-        private val name : TextView = itemView.findViewById(R.id.textViewName)
-        private val id : TextView = itemView.findViewById(R.id.textViewID)
-        private val body: TextView = itemView.findViewById(R.id.tv_body)
         private val favoriteValue: TextView = itemView.findViewById(R.id.like_count)
+        private val img_profile : CircleImageView = itemView.findViewById(R.id.img_profile)
+        private val m_nick : TextView = itemView.findViewById(R.id.tv_m_nick)
+        private val content : TextView = itemView.findViewById(R.id.tv_content)
+        private val content_img : ImageView = itemView.findViewById(R.id.content_img)
+        private var sdf : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
-        fun bindView(item: Test) {
-            itemView.textViewName.text = item.name
-            itemView.textViewName.text = item.name
-            itemView.textViewID.text = item.id
+        fun bindView(item: Feed) {
+            itemView.tv_m_nick.text = item.creater
+            itemView.tv_title.text = item.title
+//            content.text = br2nl(item.content)
+            content.text = Jsoup.parse(item.content).text()
+            itemView.tv_age.text = item.creater_age + " 대"
+            itemView.tag_id.text = "# "+item.tag_name
+            itemView.tv_feed_date.text = calculateTime(sdf.parse(item.feed_date))
+            itemView.view_count.text = item.view_no.toString()
+            itemView.comment_count.text = item.comment_seq.toString()
+            itemView.like_count.text = item.like_no.toString()
+            itemView.tv_gender.text = item.creater_gender
+//            Log.e("qdqwd",content.text.toString());
+            Log.e("html : ",item.content);
+            Log.e("html jsoup : ",br2nl(item.content));
 //            itemView.tv_body.text = "아오이게 뭐람 아오이게 뭐람 아오이게 뭐람 아오이게 뭐람 아오이게 뭐람 아오이게 ㅁ으아어어어어어바어으어  ㅁ으아어어어어어바어으어  ㅁ으아어어어어어바어으어  ㅁ으아어어어어어바어으어  ㅁ으아어어어어어바어으어 뭐람 아오이게 뭐람 아오이게 뭐람 아오이게 뭐람"
-            var tv_body_string : String = itemView.tv_body.text.toString()
-            setReadMore(itemView.tv_body,tv_body_string,2)
+//            var tv_body_string : String = stripHtml(content.html.toString())
+            setReadMore(itemView.tv_content,content.text.toString(),3)
 
-            val color = PokemonColorUtil(itemView.context).getPokemonColor(item.typeofpokemon)
-            itemView.textViewType3.background.colorFilter =
+            val color = PokemonColorUtil(itemView.context).getPokemonColor(item.creater_gender)
+            itemView.tv_gender.background.colorFilter =
                 PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP)
 
-            item.typeofpokemon?.getOrNull(0).let { firstType ->
-                itemView.textViewType3.text = firstType
-                itemView.textViewType3.isVisible = firstType != null
-            }
+
+
+
 
 
 //            val radius = itemView.resources.getDimensionPixelSize(R.dimen.corner_radius)
             Glide.with(itemView.context)
-                .load(item.imageurl)
+                .load(item.creater_image_url)
                 .apply(RequestOptions().circleCrop())
                 .placeholder(android.R.color.transparent)
-                .into(itemView.imageView)
+                .into(itemView.img_profile)
 
-            itemView.favorite_btn.setOnClickListener{
-                val favorited = !item.favorited
-                setFavoriteDrawable(favorited,item)
+//            Glide.with(itemView.context)
+//                .load(item.creater_image_url)
+//                .placeholder(android.R.color.transparent)
+//                .into(itemView.content_img)
+
+            with(m_nick){
+                setOnClickListener {
+                    val dialog = ProfileUsersFragment()//The fragment that u want to open for example
+                    var userFragmnet = (context as AppCompatActivity).supportFragmentManager
+                    var fragmentTransaction: FragmentTransaction = userFragmnet.beginTransaction()
+                    fragmentTransaction.setReorderingAllowed(true)
+                    fragmentTransaction.setCustomAnimations(R.anim.fragment_fade_in,R.anim.fragment_fade_out)
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.replace(R.id.frameLayout, dialog);
+                    fragmentTransaction.commit()
+                }
             }
+            with(img_profile){
+                setOnClickListener {
+                    val dialog = ProfileUsersFragment()//The fragment that u want to open for example
+                    var userFragmnet = (context as AppCompatActivity).supportFragmentManager
+                    var fragmentTransaction: FragmentTransaction = userFragmnet.beginTransaction()
+                    fragmentTransaction.setReorderingAllowed(true)
+                    fragmentTransaction.setCustomAnimations(R.anim.fragment_fade_in,R.anim.fragment_fade_out)
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.replace(R.id.frameLayout, dialog);
+                    fragmentTransaction.commit()
+                }
+            }
+
+            with(favoriteButton){
+                setOnClickListener {
+                    val favorited = !item.favorited
+                    setFavoriteDrawable(favorited,item)
+                }
+            }
+
+            with(content){
+                setOnClickListener {
+                    val lintent = Intent(itemView.context, FeedActivity::class.java)
+                    lintent.putExtra("feed_seq",item.feed_seq)
+                    itemView.context.startActivity(lintent)
+
+                    Toast.makeText(context, ""+item.feed_seq+" 피드 클릭", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            with(itemView.tv_title){
+                setOnClickListener {
+                    val lintent = Intent(itemView.context, FeedActivity::class.java)
+                    lintent.putExtra("feed_seq",item.feed_seq)
+                    itemView.context.startActivity(lintent)
+
+                    Toast.makeText(context, ""+item.feed_seq+" 피드 클릭", Toast.LENGTH_SHORT).show();
+                }
+            }
+
         }
 
 
-        private fun setFavoriteDrawable(favorited: Boolean,test: Test) {
+        private fun setFavoriteDrawable(favorited: Boolean,feed: Feed) {
             val context = itemView.context
             var favCount : String
             val drawable = if (favorited) {
@@ -174,16 +253,17 @@ class FeedAdapter(
                 context.getDrawable(R.drawable.ic_favorite_hollow)
             }
             if(favorited){
-                test.favorited = favorited
+                feed.favorited = favorited
                 favCount = "1"
             }else{
-                test.favorited = favorited
+                feed.favorited = favorited
                 favCount = "0"
             }
 
             favoriteButton.setImageDrawable(drawable)
             favoriteValue.setText(favCount)
         }
+
 
 
         private fun setReadMore(view: TextView, text: String, maxLine: Int) {
@@ -243,6 +323,24 @@ class FeedAdapter(
                 }
             }
         }
+
+
+        // html 태그 제거
+        fun stripHtml(html:String) : String{
+            return Html.fromHtml(html).toString()
+        }
+
+        // html br 포
+        fun br2nl(html: String?): String? {
+            if (html == null) return html
+            val document: Document = Jsoup.parse(html)
+            document.outputSettings(Document.OutputSettings().prettyPrint(false)) //makes html() preserve linebreaks and spacing
+            document.select("br").append("\n")
+//            document.select("p").prepend("\n\n")
+            val s: String = document.html().replace("\\\n", "\n")
+            return Jsoup.clean(s, "", Whitelist.none(), Document.OutputSettings().prettyPrint(false))
+        }
+
     }
 
     internal class LoadingViewHolder(itemView:View):RecyclerView.ViewHolder(itemView){
@@ -263,5 +361,45 @@ class FeedAdapter(
         notifyItemRangeChanged(size, sizeNew)
     }
 
+
+
+
+}
+
+/** 몇분전, 방금 전,  */
+
+private object TIME_MAXIMUM {
+    const val SEC = 60
+    const val MIN = 60
+    const val HOUR = 24
+    const val DAY = 30
+    const val MONTH = 12
+}
+
+fun calculateTime(date: Date): String? {
+    val curTime = System.currentTimeMillis()
+    val regTime = date.time
+    var diffTime = (curTime - regTime) / 1000
+    var msg: String? = null
+    if (diffTime < TIME_MAXIMUM.SEC) {
+        // sec
+        msg = diffTime.toString() + " 초전"
+    } else if (TIME_MAXIMUM.SEC.let { diffTime /= it; diffTime } < TIME_MAXIMUM.MIN) {
+        // min
+        println(diffTime)
+        msg = diffTime.toString() + " 분전"
+    } else if (TIME_MAXIMUM.MIN.let { diffTime /= it; diffTime } < TIME_MAXIMUM.HOUR) {
+        // hour
+        msg = diffTime.toString() + " 시간전"
+    } else if (TIME_MAXIMUM.HOUR.let { diffTime /= it; diffTime } < TIME_MAXIMUM.DAY) {
+        // day
+        msg = diffTime.toString() + " 일전"
+    } else if (TIME_MAXIMUM.DAY.let { diffTime /= it; diffTime } < TIME_MAXIMUM.MONTH) {
+        // day
+        msg = diffTime.toString() + " 달전"
+    } else {
+        msg = diffTime.toString() + " 년전"
+    }
+    return msg
 }
 

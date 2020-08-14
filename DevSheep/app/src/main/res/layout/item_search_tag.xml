@@ -11,16 +11,16 @@
 
 
     <TextView
-        android:id="@+id/text_tag"
+        android:id="@+id/tag_name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
         android:singleLine="true"
         android:text="#사연/이별"
         android:textColor="@color/black"
-        android:textSize="12sp"
-        app:fontFamily="@font/sf_bold"
-        android:textStyle="italic"
+        android:textSize="14sp"
+        android:fontFamily="@font/ridi_batang"
+        android:textStyle="bold"
         tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

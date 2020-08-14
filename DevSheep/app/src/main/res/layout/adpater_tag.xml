@@ -3,20 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="34dp"
-    android:layout_marginRight="4dp"
-    android:layout_marginLeft="4dp">
+    android:layout_height="match_parent"
+    android:layout_marginRight="8dp"
+    android:layout_marginLeft="8dp">
+<!--    android:background="@drawable/background_main_tag_span"-->
 
     <TextView
-        android:id="@+id/text_tag"
+        android:id="@+id/tag_name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:singleLine="true"
         android:text="#사연/이별"
-        android:textColor="@color/main_lightGray"
+        android:textColor="@color/white"
         android:textSize="14sp"
-        app:fontFamily="@font/roboto_bold"
+        app:fontFamily="@font/ridi_batang"
         tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

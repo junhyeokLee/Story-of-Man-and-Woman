@@ -1,64 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar_write"
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="2dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
-        <LinearLayout
+        android:layout_height="wrap_content"
+        app:elevation="0dp"
+        android:elevation="0dp"
+       >
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/app_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white"
-            android:orientation="horizontal"
-            >
-            <EditText
+            android:layout_height="?attr/actionBarSize"
+            app:title="Search"
+            app:elevation="0dp"
+            android:elevation="0dp"
+            app:titleTextColor="@color/black"
+            app:layout_scrollFlags="scroll|enterAlways"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        >
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/background_search_bar"
+            android:theme="?attr/actionBarTheme"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            app:layout_collapseMode="pin">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:fontFamily="@font/roboto_bold"
-                android:layout_weight="1"
-                android:hint="검색 (제목,내용)"
-                android:layout_gravity="center"
-                android:id="@+id/toolbar_title"
-                android:background="@null"
-                android:textSize="18sp"
-                android:drawablePadding="6dp"
-                android:drawableLeft="@drawable/ic_hash"
-                android:drawableTint="@color/gray"
-                />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_search"
-                android:layout_marginRight="32dp"
-                android:tint="@color/gray">
-            </ImageView>
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/ridi_batang"
+                    android:layout_weight="1"
+                    android:hint="Search"
+                    android:layout_gravity="center"
+                    android:id="@+id/toolbar_title"
+                    android:background="@null"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/gray"
+                    android:textCursorDrawable="@drawable/buttonstyle"
+                    android:drawablePadding="12dp"
+                    android:layout_marginLeft="12dp"
+                    android:drawableLeft="@drawable/ic_hash"
+                    android:drawableTint="@color/gray"
+                    />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_search"
+                    android:padding="10dp"
+                    android:tint="@color/gray">
+                </ImageView>
+
+            </LinearLayout>
 
 
+        </androidx.appcompat.widget.Toolbar>
 
-        </LinearLayout>
-    </androidx.appcompat.widget.Toolbar>
+        <View
+            android:layout_width="match_parent"
+            android:layout_marginTop="4dp"
+            android:layout_height="1dp"
+            android:background="@color/lighterGrey"
+            ></View>
 
     <ProgressBar
         android:layout_gravity="center"
         android:id="@+id/progressBar_tag"
         style="?android:attr/progressBarStyleLarge"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-
-
     <!-- 스크롤뷰 , 리싸이클러뷰 이중스크롤 방 -->
-    <androidx.core.widget.NestedScrollView
+
+
+        <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        >
 
         <LinearLayout
             android:descendantFocusability="blocksDescendants"
@@ -66,26 +111,16 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <RelativeLayout
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginBottom="8dp"
-                >
+                android:layout_height="match_parent"
+                android:textSize="24sp"
+                android:text="# Tag"
+                android:textColor="@color/black"
+                android:fontFamily="@font/roundwindregular"
+                android:layout_margin="12dp"
 
-                <TextView
-                    android:id="@+id/tv_category"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/typer_roboto_bold_italic"
-                    android:text="# 태그"
-                    android:textColor="@color/black"
-                    android:textSize="26sp">
-
-                </TextView>
-            </RelativeLayout>
+                ></TextView>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView_tag"
@@ -94,11 +129,13 @@
                 android:layout_margin="6dp"
                 android:background="@color/white"
                 app:layoutManager="GridLayoutManager"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 tools:itemCount="10"
                 tools:listitem="@layout/adpater_tag"
                 tools:spanCount="3"></androidx.recyclerview.widget.RecyclerView>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
+    </LinearLayout>
 
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

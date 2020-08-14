@@ -15,52 +15,65 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:layout_gravity="center"
+        android:orientation="vertical"
         >
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView_tag"
+
+
+        <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_margin="6dp"
-            android:background="#4d000000"
-            android:scrollbars="vertical"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            app:layoutManager="GridLayoutManager"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            tools:itemCount="7"
-            tools:listitem="@layout/adpater_tag"
-            tools:spanCount="4"></androidx.recyclerview.widget.RecyclerView>
-        />
+            android:layout_height="38dp"
+            android:layout_gravity="bottom|end"
+            app:contentInsetStart="0dp"
+            app:layout_collapseMode="pin"
+            >
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_tag"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/buttonstyle"
+                android:scrollbars="vertical"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                app:layoutManager="GridLayoutManager"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                tools:itemCount="7"
+                tools:listitem="@layout/adpater_tag"
+                tools:spanCount="4"></androidx.recyclerview.widget.RecyclerView>
+
+        </androidx.appcompat.widget.Toolbar>
+
+
 
     </LinearLayout>
 
-    <!--    <ImageView-->
-    <!--        android:layout_width="200dp"-->
-    <!--        android:layout_height="200dp"-->
-    <!--        android:layout_alignParentTop="true"-->
-    <!--        android:layout_alignParentEnd="true"-->
-    <!--        android:layout_gravity="end"-->
-    <!--        android:layout_marginTop="-44dp"-->
-    <!--        android:layout_marginEnd="-38dp"-->
-    <!--        android:adjustViewBounds="true"-->
-    <!--        android:alpha="0.1"-->
-    <!--        android:background="@drawable/ic_gender" />-->
+<!--    <ImageView-->
+<!--        android:layout_width="200dp"-->
+<!--        android:layout_height="200dp"-->
+<!--        android:layout_alignParentTop="true"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:layout_gravity="end"-->
+<!--        android:layout_marginTop="-44dp"-->
+<!--        android:layout_marginEnd="-38dp"-->
+<!--        android:adjustViewBounds="true"-->
+<!--        android:alpha="0.1"-->
+<!--        android:background="@drawable/ic_gender" />-->
 
-    <!--    <TextView-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="260dp"-->
-    <!--        android:layout_alignParentTop="true"-->
-    <!--        android:layout_alignParentEnd="true"-->
-    <!--        android:layout_marginTop="-48dp"-->
-    <!--        android:layout_marginRight="8dp"-->
-    <!--        android:alpha="0.25"-->
-    <!--        android:layout_gravity="end"-->
-    <!--        android:adjustViewBounds="true"-->
-    <!--        android:gravity="center|right"-->
-    <!--        app:fontFamily="@font/circularstd_bold"-->
-    <!--        android:text="사연남녀"-->
-    <!--        android:textSize="26sp" />-->
+<!--    <TextView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="260dp"-->
+<!--        android:layout_alignParentTop="true"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:layout_marginTop="-48dp"-->
+<!--        android:layout_marginRight="8dp"-->
+<!--        android:alpha="0.25"-->
+<!--        android:layout_gravity="end"-->
+<!--        android:adjustViewBounds="true"-->
+<!--        android:gravity="center|right"-->
+<!--        app:fontFamily="@font/circularstd_bold"-->
+<!--        android:text="사연남녀"-->
+<!--        android:textSize="26sp" />-->
 
     <!-- 상단바 -->
     <com.google.android.material.appbar.AppBarLayout
@@ -79,7 +92,6 @@
             app:expandedTitleTextAppearance="@style/AppTheme.Title.Expanded"
             app:layout_scrollFlags="scroll|enterAlways|exitUntilCollapsed">
 
-
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
@@ -89,42 +101,50 @@
                 android:theme="?attr/actionBarTheme"
                 app:layout_collapseMode="pin">
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center|left"
-                    android:text="# "
-                    android:textColor="@color/color_primary_text"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:text="사연남녀"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/ridi_batang"
+                    />
+            </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="right"
+                    android:paddingRight="4dp"
+                    android:orientation="horizontal">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:gravity="center|left"
-                    android:text="@string/total_feed"
-                    android:textColor="@color/color_primary_text"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:gravity="center|right"
+                    android:fontFamily="@font/roboto_regular"
+                    android:paddingRight="12dp"
+                    android:text="남/여"
+                    android:textSize="11sp" />
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center|right"
                     android:fontFamily="@font/roboto_regular"
                     android:paddingRight="4dp"
-                    android:text="남/최신순"
+                    android:text="20대 / 30대"
                     android:textSize="11sp" />
+                </LinearLayout>
 
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ProgressBar
-        android:layout_gravity="center"
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+
 
 
 
@@ -145,15 +165,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="6dp"
-                    android:background="@color/main_lightGray"
-                    />
-
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="160dp"
+                    android:layout_height="187dp"
                     android:background="@android:color/transparent"
                     >
 
@@ -179,19 +193,32 @@
 
                 </FrameLayout>
 
+        <eu.micer.circlesloadingindicator.CirclesLoadingIndicator
+            android:id="@+id/progressBar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:circlesColor="@color/main_Accent"
+            app:circlesCount="8"
+            app:circlesRadius="4dp"
+            app:rotationDuration="3000"
+            app:showLeadingLine="false" />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:background="@color/main_lightGray"
-                    android:overScrollMode="never"
-                    android:nestedScrollingEnabled="false"
                     app:layoutManager="GridLayoutManager"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"
                     tools:itemCount="20"
                     tools:listitem="@layout/adapter_feed"
+                    android:overScrollMode="never"
+                    android:nestedScrollingEnabled="false"
                     tools:spanCount="1" />
+
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </LinearLayout>

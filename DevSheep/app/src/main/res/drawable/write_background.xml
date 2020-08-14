@@ -1,15 +1,15 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true" android:color="@color/black">
-    <shape>
-        <solid android:color="@color/color_primary_text" />
-        <corners
-            android:topLeftRadius="12dp"
-            android:topRightRadius="12dp" />
-    </shape>
-        </item>
+    <item android:state_pressed="true" android:color="@color/gray">
+        <shape>
+            <solid android:color="@color/gray" />
+            <corners
+                android:topLeftRadius="12dp"
+                android:topRightRadius="12dp" />
+        </shape>
+    </item>
     <item>
         <shape>
-            <solid android:color="@color/grey" />
+            <solid android:color="@color/white" />
             <corners
                 android:topLeftRadius="12dp"
                 android:topRightRadius="12dp" />

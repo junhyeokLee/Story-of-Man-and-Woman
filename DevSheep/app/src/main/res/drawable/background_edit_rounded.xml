@@ -5,8 +5,8 @@
             <solid
                 android:color="@color/white" />
             <stroke
-                android:color="@color/gray"
-                android:width="0.7dp"
+                android:color="@color/sub_Accent"
+                android:width="1dp"
                 />
             <corners android:radius="120dp" />
         </shape>

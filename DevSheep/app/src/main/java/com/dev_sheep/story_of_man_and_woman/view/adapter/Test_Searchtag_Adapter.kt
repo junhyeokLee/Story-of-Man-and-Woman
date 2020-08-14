@@ -7,11 +7,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dev_sheep.story_of_man_and_woman.R
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Tag
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
 import kotlinx.android.synthetic.main.adpater_tag.view.*
 
 class Test_Searchtag_Adapter(
-    private val list: List<Test>,
+    private val list: List<Tag>,
     private val context: Context
 ) : RecyclerView.Adapter<Test_Searchtag_Adapter.ViewHolder>() {
 
@@ -19,9 +20,9 @@ class Test_Searchtag_Adapter(
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bindView(item: Test) {
+        fun bindView(item: Tag) {
 
-            itemView.text_tag.text = "  # "+item.name+"   "
+            itemView.tag_name.text = "  # "+item.tag_name+"   "
 
 //1 . # 모든사연
 //2 . # 잡담
