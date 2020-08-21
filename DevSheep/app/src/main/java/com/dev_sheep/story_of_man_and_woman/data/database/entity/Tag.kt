@@ -8,6 +8,5 @@ import androidx.room.PrimaryKey
 data class Tag( @PrimaryKey
                 @NonNull
                 var tag_seq: Int,
-                var tag_name: String? = null,
-                var isChecked: Boolean = false
+                var tag_name: String? = null
 )

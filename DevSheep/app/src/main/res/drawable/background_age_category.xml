@@ -5,10 +5,10 @@
         <shape android:shape="rectangle" >
             <stroke
                 android:width="1dp"
-                android:color="@color/gray" />
+                android:color="@color/sub_Accent" />
             <corners android:radius="4dp" />
 
-            <solid android:color="@color/gray" />
+            <solid android:color="@color/sub_Accent" />
         </shape>
     </item>
 
@@ -16,7 +16,7 @@
         <shape android:shape="rectangle" >
             <stroke
                 android:width="1dp"
-                android:color="@color/gray" />
+                android:color="@color/sub_Accent" />
             <corners android:radius="4dp" />
             <solid android:color="@color/white" />
         </shape>

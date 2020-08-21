@@ -208,8 +208,6 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
                     followChecked.setTextColor(resources.getColor(R.color.black))
                     followChecked.text = "구독하기"
                     followerCount.setText("0")
-
-
                 }
 
 
