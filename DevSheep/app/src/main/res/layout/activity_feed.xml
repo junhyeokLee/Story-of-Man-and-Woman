@@ -131,10 +131,10 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentStart="true"
-                                android:gravity="center|left"
                                 android:layout_marginLeft="8dp"
+                                android:gravity="center|left"
                                 android:maxLines="1"
-                                android:text="닉네임닉네임닉네임닉네임닉네임닉네임"
+                                android:text="nick_name"
                                 android:textColor="@color/black"
                                 android:textSize="12sp"
                                 app:fontFamily="@font/poppins" />
@@ -199,113 +199,77 @@
 
 
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="16dp"
+                    android:orientation="vertical"
+                    android:layout_alignParentStart="true"
+                    >
+
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="16dp"
-                        android:layout_gravity="center|bottom"
-                        android:orientation="vertical"
-                        android:layout_alignParentStart="true"
-                        android:gravity="center"
-                        >
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
-                        <LinearLayout
+
+                        <View
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            <View
-                                android:layout_width="match_parent"
-                                android:layout_height="0.5dp"
-                                android:layout_weight="1"
-                                android:layout_marginLeft="12dp"
-                                android:layout_marginRight="12dp"
-                                android:layout_gravity="center"
-                                android:background="@color/sub_Accent">
-                            </View>
+                            android:layout_height="0.5dp"
+                            android:layout_marginLeft="12dp"
+                            android:layout_marginRight="12dp"
+                            android:layout_weight="1"
+                            android:layout_gravity="center"
+                            android:background="@color/sub_Accent">
+                        </View>
 
-
-
-                            <View
-                                android:layout_width="match_parent"
-                                android:layout_height="0.5dp"
-                                android:layout_marginLeft="12dp"
-                                android:layout_marginRight="12dp"
-                                android:layout_weight="1"
-                                android:layout_gravity="center"
-                                android:background="@color/sub_Accent">
-                            </View>
-
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            >
-
-                            <TextView
-                                android:id="@+id/tv_m_nick"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentStart="true"
-                                android:gravity="center"
-                                android:layout_marginTop="4dp"
-
-                                android:maxLines="1"
-                                android:text="test"
-                                android:textColor="@color/black"
-                                android:textSize="13sp"
-                                app:fontFamily="@font/ridi_batang" />
-
-
-
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="16dp"
-                            android:orientation="vertical">
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:fontFamily="@font/poppins"
-                                    android:text="댓글"
-                                    android:textColor="@color/gray2"
-                                    android:textSize="12sp"></TextView>
-
-                                <TextView
-                                    android:id="@+id/tv_comment_count"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginLeft="6dp"
-                                    android:fontFamily="@font/poppins"
-                                    android:text="1개"
-                                    android:textColor="@color/gray2"
-                                    android:textSize="12sp"></TextView>
-
-                            </LinearLayout>
-
-                            <androidx.recyclerview.widget.RecyclerView
-                                android:id="@+id/recyclerview_comments"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="6dp"
-                                >
-
-                            </androidx.recyclerview.widget.RecyclerView>
-
-                        </LinearLayout>
 
                     </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins"
+                                android:text="댓글"
+                                android:textColor="@color/gray2"
+                                android:textSize="12sp"></TextView>
+
+                            <TextView
+                                android:id="@+id/tv_comment_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="6dp"
+                                android:fontFamily="@font/poppins"
+                                android:text="1개"
+                                android:textColor="@color/gray2"
+                                android:textSize="12sp"></TextView>
+
+                        </LinearLayout>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerview_comments"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            >
+
+                        </androidx.recyclerview.widget.RecyclerView>
+
+                    </LinearLayout>
+
+                </LinearLayout>
 
 
             </LinearLayout>
@@ -317,7 +281,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/write_bottom_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="46dp"
+        android:layout_height="?attr/actionBarSize"
         android:background="@drawable/top_border_white"
         android:minHeight="?attr/actionBarSize"
         android:gravity="bottom"
@@ -341,8 +305,8 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:layout_gravity="center"
                     android:background="@android:color/transparent"
                     android:src="@drawable/ic_eye"
@@ -374,8 +338,8 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:layout_gravity="center"
                     android:background="@android:color/transparent"
                     android:src="@drawable/ic_chat"
@@ -408,8 +372,8 @@
 
                 <ImageView
                     android:id="@+id/favorite_btn"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:layout_gravity="center"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     app:layout_constraintStart_toEndOf="@+id/chefActionMessage"
@@ -439,8 +403,8 @@
 
                 <ImageView
                     android:id="@+id/bookmark"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:layout_gravity="center"
                     android:background="@android:color/transparent"
                     android:src="@drawable/ic_bookmark_hollow"

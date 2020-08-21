@@ -9,7 +9,8 @@
     <color name="main_Accent_translate">#99FA6555</color>
     <color name="main_Primary">#0aaab4</color>
     <color name="main_lightGray">#f8fbff</color>
-
+    <color name="textInputLayout">#96ffffff</color>
+    <color name="whitegray">#9affffff</color>
 
 
     <color name="facebook_color">#4267B2</color>

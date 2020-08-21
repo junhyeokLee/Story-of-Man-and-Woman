@@ -86,8 +86,10 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
         collapsingToolbarInit()
 
         tablayout?.apply {
-            addTab(this.newTab().setIcon(R.drawable.ic_write))
-            addTab(this.newTab().setIcon(R.drawable.ic_heart_empty))
+            addTab(this.newTab().setIcon(R.drawable.ic_write).setText("나 이야기"))
+            addTab(this.newTab().setIcon(R.drawable.ic_heart_empty).setText("구독자 에게"))
+
+
         }
 
         viewPagerAdapter = ProfileViewpagerAdapter(childFragmentManager,tablayout!!.tabCount)

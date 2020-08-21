@@ -13,8 +13,21 @@
         <item name="android:textViewStyle" >@style/RobotoTextViewStyle </item>
     </style>
 
+    <style name="SplashTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">@drawable/main_background1</item>
+    </style>
+    <style name="EditScreenTextInputLayoutStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorControlNormal">@color/textInputLayout</item>
+        <item name="colorControlActivated">@color/textInputLayout</item>
+        <item name="colorControlHighlight">@color/textInputLayout</item>
+        <item name="colorAccent">@color/textInputLayout</item>
+        <item name="android:textColorHint">@color/textInputLayout</item>
+    </style>
 
-
+    <style name="tab_text" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">12sp</item>
+        <item name="fontFamily">@font/ridi_batang</item>
+    </style>
 
     <!-- Base application theme. -->
     <style name="WriteTheme" parent="Theme.AppCompat.Light.NoActionBar">

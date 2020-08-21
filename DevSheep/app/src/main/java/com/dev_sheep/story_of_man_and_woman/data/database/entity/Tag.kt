@@ -6,6 +6,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "Tag")
 data class Tag( @PrimaryKey
-                 @NonNull
-                 var tag_seq: Int,
-                 var tag_name: String? = null)
+                @NonNull
+                var tag_seq: Int,
+                var tag_name: String? = null,
+                var isChecked: Boolean = false
+)

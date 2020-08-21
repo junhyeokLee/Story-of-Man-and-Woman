@@ -17,13 +17,14 @@
             android:layout_height="wrap_content"
             android:background="@drawable/bottom_border_white"
             android:hint="@string/headline"
-            android:fontFamily="@font/roundwindextra_bold"
+            android:fontFamily="@font/ridi_batang"
+            android:textColor="@color/black"
             android:textColorHint="@color/blue_gray_light"
             android:paddingStart="12dp"
             android:paddingTop="8dp"
             android:paddingEnd="0dp"
             android:paddingBottom="8dp"
-            android:textSize="18sp" />
+            android:textSize="24sp" />
 
         <HorizontalScrollView
             android:id="@+id/write_center_toolbar"
@@ -54,6 +55,24 @@
             android:textCursorDrawable="@drawable/edit_cursor" >
 
         </com.lumyjuwon.richwysiwygeditor.RichEditor.RichEditor>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            >
+            <TextView
+                android:id="@+id/tv_tag_name"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="12dp"
+                android:text="# 태그"
+                android:textColor="@color/sub_Accent"
+                android:textSize="16sp"
+                android:fontFamily="@font/ridi_batang">
+            </TextView>
+
+        </LinearLayout>
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/write_bottom_toolbar"

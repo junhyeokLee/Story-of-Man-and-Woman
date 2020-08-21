@@ -22,7 +22,10 @@ import com.dev_sheep.story_of_man_and_woman.view.dialog.ImageDialog
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_feed.*
+import kotlinx.android.synthetic.main.activity_feed.img_profile
+import kotlinx.android.synthetic.main.activity_feed.tv_feed_date
 import kotlinx.android.synthetic.main.activity_feed_write.*
+import kotlinx.android.synthetic.main.adapter_feed.*
 import kotlinx.android.synthetic.main.adapter_feed.view.*
 import kotlinx.android.synthetic.main.adapter_feed.view.img_profile
 
@@ -61,7 +64,6 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                     Log.e("feed_creater",""+it.creater)
                      tv_creater.text = it.creater
                      tv_tag_name.text = "# "+it.tag_name
-                     tv_m_nick.text = it.creater
                      write_headline.text = it.title
                      write_content.html = it.content
                      tv_feed_date.text = it.feed_date!!.substring(0, 10);

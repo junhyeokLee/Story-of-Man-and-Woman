@@ -1,11 +1,13 @@
 package com.dev_sheep.story_of_man_and_woman.di
 
+import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
 import com.dev_sheep.story_of_man_and_woman.data.remote.api.TestService
 import com.google.gson.GsonBuilder
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.create
 
 
@@ -32,7 +34,8 @@ val networkModule = module {
     // single = 앱이 살아있는 동안 전역적으로 사용가능한 객체를 생성
     single<Retrofit> {
         Retrofit.Builder()
-            .baseUrl("http://storymaw.dothome.co.kr/")
+            .baseUrl("http://www.storymaw.com/")
+            .addConverterFactory(ScalarsConverterFactory.create()) //important
             .addConverterFactory(GsonConverterFactory.create(gson))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()

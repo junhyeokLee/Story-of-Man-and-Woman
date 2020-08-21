@@ -59,7 +59,7 @@
                     android:textColor="@color/main_Accent"
                     android:textSize="14sp"
                     android:fontFamily="@font/roundwindregular"
-                     />
+                    />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -149,7 +149,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/yes_or_no_layout"
+        android:id="@+id/private_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/write2_background"

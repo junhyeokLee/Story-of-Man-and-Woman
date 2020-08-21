@@ -121,10 +121,10 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         collapsingToolbarInit()
 
         tablayout?.apply {
-            addTab(this.newTab().setIcon(R.drawable.ic_write))
-            addTab(this.newTab().setIcon(R.drawable.ic_heart_empty))
-            addTab(this.newTab().setIcon(R.drawable.ic_lock_empty))
-            addTab(this.newTab().setIcon(R.drawable.ic_bookmark_hollow))
+            addTab(this.newTab().setIcon(R.drawable.ic_write).setText("나의 이야기"))
+            addTab(this.newTab().setIcon(R.drawable.ic_heart_empty).setText("구독자 에게"))
+            addTab(this.newTab().setIcon(R.drawable.ic_lock_empty).setText("비밀 이야기"))
+            addTab(this.newTab().setIcon(R.drawable.ic_bookmark_hollow).setText("북마크"))
         }
 
         viewPagerAdapter = ProfileViewpagerAdapter(childFragmentManager,tablayout!!.tabCount)
@@ -166,7 +166,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             }
         })
 
-        profileImage?.setImageResource(R.mipmap.user)
+        profileImage?.setImageResource(R.drawable.ic_user)
         profileImage?.setOnClickListener(this)
         profileAdd?.setOnClickListener(this)
         backgroundAdd?.setOnClickListener(this)
@@ -477,7 +477,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                 getBackGroundAlbum()
             }
             R.id.id_Profile_Image -> {
-                ImageDialog(context!!,R.mipmap.user).start("dqwq")
+                ImageDialog(context!!,R.drawable.ic_user).start("dqwq")
             }
             R.id.preferecnes_img ->{
                 val preference = PrefsFragment()//The fragment that u want to open for example

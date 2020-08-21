@@ -29,6 +29,7 @@ class MystoryActivity : AppCompatActivity() {
 
     private val testViewModel: TestViewModel by viewModel()
     private val REQ_CODE_SELECT_IMAGE = 1001
+    private val TYPE_PUBLIC : String = "public"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,7 +105,7 @@ class MystoryActivity : AppCompatActivity() {
                     Log.e("filename",file.name)
 
                     stringBuffer.append(file.name).append("\n")
-                    richwysiwygeditor.getContent().insertImage("http://storymaw.dothome.co.kr/data/feed/" + file.name, "alt")
+                    richwysiwygeditor.getContent().insertImage("http://www.storymaw.com/data/feed/" + file.name, "alt")
                 }
                 override fun onFailure(
                     call: Call<Feed?>,
@@ -132,17 +133,30 @@ class MystoryActivity : AppCompatActivity() {
             }
             R.id.next -> {
                 Toast.makeText(applicationContext, "완료.", Toast.LENGTH_SHORT).show()
+                // 저장된 m_seq 가져오기
+                val getM_seq = getSharedPreferences("m_seq", AppCompatActivity.MODE_PRIVATE)
+                var m_seq = getM_seq.getString("inputMseq", null)
 
-
+                if(richwysiwygeditor.getHeadlineEditText().getText().toString() == ""){
+                    Toast.makeText(applicationContext, "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                    return false
+                }
+                if(richwysiwygeditor.getContent().getHtml().toString() == ""){
+                    Toast.makeText(applicationContext, "내용을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                    return false
+                }
 
                 testViewModel.insertFeed(
                     richwysiwygeditor.getHeadlineEditText().getText().toString(),
                     richwysiwygeditor.getContent().getHtml().plus("<br>"),
                     2,
-                    "M20073108200004",
-                    "public"
+                    m_seq,
+                    TYPE_PUBLIC
                 )
                 finish()
+
+
+
                 Log.i(
                     "Rich Wysiwyg Headline",
                     richwysiwygeditor.getHeadlineEditText().getText().toString()
@@ -152,6 +166,8 @@ class MystoryActivity : AppCompatActivity() {
                     richwysiwygeditor.getContent().getHtml()
                 )
                 true
+
+
             }
             else -> super.onOptionsItemSelected(item)
         }

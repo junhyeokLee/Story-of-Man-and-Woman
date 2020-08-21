@@ -154,7 +154,7 @@ class FeedAdapter(
             itemView.tv_title.text = item.title
 //            content.text = br2nl(item.content)
             content.text = Jsoup.parse(item.content).text()
-            itemView.tv_age.text = item.creater_age + " 대"
+            itemView.tv_age.text = item.creater_age
             itemView.tag_id.text = "# "+item.tag_name
             itemView.tv_feed_date.text = calculateTime(sdf.parse(item.feed_date))
             itemView.view_count.text = item.view_no.toString()

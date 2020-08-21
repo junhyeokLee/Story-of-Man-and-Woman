@@ -114,12 +114,11 @@ class HomeFragment : Fragment() {
                 }
                 if (it.isNotEmpty()) {
                     progressBar?.visibility = View.GONE
-
                 }else {
                     progressBar?.visibility = View.VISIBLE
                 }
             },{
-
+                Log.e("feed 보기 실패함",""+it.message)
             })
 
         val single_tag = testService.getTagList()
@@ -158,7 +157,7 @@ class HomeFragment : Fragment() {
                 }
             }
                 ,{
-
+                    Log.e("feed 보기2 실패함",""+it.message)
                 })
 
 //        val call = testService.getList()

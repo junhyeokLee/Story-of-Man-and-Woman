@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         app:elevation="0dp"
         android:elevation="0dp"
-       >
+        >
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/app_toolbar"
@@ -89,52 +89,52 @@
             android:background="@color/lighterGrey"
             ></View>
 
-    <ProgressBar
-        android:layout_gravity="center"
-        android:id="@+id/progressBar_tag"
-        style="?android:attr/progressBarStyleLarge"
-        android:visibility="gone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <!-- 스크롤뷰 , 리싸이클러뷰 이중스크롤 방 -->
+        <ProgressBar
+            android:layout_gravity="center"
+            android:id="@+id/progressBar_tag"
+            style="?android:attr/progressBarStyleLarge"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <!-- 스크롤뷰 , 리싸이클러뷰 이중스크롤 방 -->
 
 
         <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        >
-
-        <LinearLayout
-            android:descendantFocusability="blocksDescendants"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            >
 
-            <TextView
+            <LinearLayout
+                android:descendantFocusability="blocksDescendants"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textSize="24sp"
-                android:text="# Tag"
-                android:textColor="@color/black"
-                android:fontFamily="@font/roundwindregular"
-                android:layout_margin="12dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
 
-                ></TextView>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="24sp"
+                    android:text="# Tag"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/roundwindregular"
+                    android:layout_margin="12dp"
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView_tag"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="6dp"
-                android:background="@color/white"
-                app:layoutManager="GridLayoutManager"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                tools:itemCount="10"
-                tools:listitem="@layout/adpater_tag"
-                tools:spanCount="3"></androidx.recyclerview.widget.RecyclerView>
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+                    ></TextView>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView_tag"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="6dp"
+                    android:background="@color/white"
+                    app:layoutManager="GridLayoutManager"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    tools:itemCount="10"
+                    tools:listitem="@layout/adpater_tag"
+                    tools:spanCount="3"></androidx.recyclerview.widget.RecyclerView>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
 
     </LinearLayout>
 

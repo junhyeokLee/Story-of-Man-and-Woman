@@ -226,12 +226,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
+            app:tabTextAppearance="@style/tab_text"
             app:tabGravity="fill"
             app:tabMode="fixed"
             app:tabIndicatorColor="@color/main_Accent"
             app:tabTextColor="@color/sub_Accent"
             app:tabIconTint="@color/sub_Accent"
-            app:tabSelectedTextColor="@color/main_Accent"
+            app:tabSelectedTextColor="@color/sub_Accent"
             >
 
         </com.google.android.material.tabs.TabLayout>

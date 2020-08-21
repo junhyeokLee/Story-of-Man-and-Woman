@@ -7,24 +7,32 @@ import android.widget.LinearLayout
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.view.activity.MystoryActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.SecretStoryActivity
+import com.dev_sheep.story_of_man_and_woman.view.activity.SelectTagActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class WriteDialog : BottomSheetDialogFragment() {
+
+    private val TYPE_PUBLIC = "public"
+    private val TYPE_SUBSCRIBER = "subscriber"
+    private val TYPE_PRIVATE = "private"
+
 
     override fun setupDialog(dialog: Dialog, style: Int) {
         val contentView = View.inflate(context, R.layout.dialog_write, null)
 
         val myStory: LinearLayout = contentView.findViewById(R.id.my_story_layout)
-        val yesOrNo: LinearLayout = contentView.findViewById(R.id.yes_or_no_layout)
+        val scretStory: LinearLayout = contentView.findViewById(R.id.private_layout)
 
         myStory.setOnClickListener {
-            val lintent = Intent(context, MystoryActivity::class.java)
+            val lintent = Intent(context, SelectTagActivity::class.java)
+            lintent.putExtra("type",TYPE_PUBLIC)
             startActivity(lintent)
             dismiss()
         }
 
-        yesOrNo.setOnClickListener {
-            val lintent = Intent(context, SecretStoryActivity::class.java)
+        scretStory.setOnClickListener {
+            val lintent = Intent(context, SelectTagActivity::class.java)
+            lintent.putExtra("type",TYPE_PRIVATE)
             startActivity(lintent)
             dismiss()
         }

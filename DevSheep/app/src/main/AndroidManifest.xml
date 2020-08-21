@@ -21,13 +21,18 @@
         android:theme="@style/AppTheme">
         <!-- retorufit 사용시 url이 http일 경우 사용 usesCleartextTraffic="true" -->
 
-        <activity android:name=".view.activity.MainActivity">
+        <activity
+            android:name=".view.activity.SplashActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/SplashTheme"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <activity android:name=".view.activity.MainActivity" />
 
         <activity android:name=".view.activity.MystoryActivity"
             android:theme="@style/WriteTheme">
@@ -35,10 +40,13 @@
         <activity android:name=".view.activity.SecretStoryActivity"
             android:theme="@style/WriteTheme">
         </activity>
+        <activity android:name=".view.activity.LoginActivity"></activity>
+        <activity android:name=".view.activity.SignUpActivity"></activity>
         <activity android:name=".view.activity.MyMessageActivity"></activity>
         <activity android:name=".view.activity.MessageActivity"></activity>
         <activity android:name=".view.activity.FeedActivity"></activity>
-
+        <activity android:name=".view.activity.SelectTagActivity"
+            android:theme="@style/WriteTheme"></activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"
