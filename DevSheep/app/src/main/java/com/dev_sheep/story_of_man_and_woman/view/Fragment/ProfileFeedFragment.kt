@@ -14,11 +14,11 @@ import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
 import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedAdapter
 import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedRankAdapter
 import com.dev_sheep.story_of_man_and_woman.view.adapter.Test_tag_Adapter
-import com.dev_sheep.story_of_man_and_woman.viewmodel.TestViewModel
+import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ProfileFeedFragment: Fragment() {
-    private val testViewModel: TestViewModel by viewModel()
+    private val feedViewModel: FeedViewModel by viewModel()
     private var recyclerViewTag : RecyclerView? = null
     lateinit var mTagAdapter: Test_tag_Adapter
     private var limit: Int = 10
@@ -38,12 +38,12 @@ class ProfileFeedFragment: Fragment() {
     private fun initData(){
 
         // 전체보기
-//        testViewModel.getListPokemon().observe(this, Observer { test ->
+//        feedViewModel.getListPokemon().observe(this, Observer { test ->
 //            setAdapter(test)
 //        })
 
         // 페이징 처리
-//        testViewModel.getListFirst(limit,offset).observe(this, Observer { test ->
+//        feedViewModel.getListFirst(limit,offset).observe(this, Observer { test ->
 //            setAdapter(test)
 //        })
 

@@ -20,6 +20,8 @@ data class Feed( @PrimaryKey
                  var content: String? = null,
                  @SerializedName("tag_name")
                  var tag_name: String? = null,
+                 @SerializedName("tag_seq")
+                 var tag_seq: String? = null,
                  @SerializedName("creater")
                  var creater: String? = null,
                  @SerializedName("creater_image_url")

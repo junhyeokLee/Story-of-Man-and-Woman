@@ -28,7 +28,7 @@ import androidx.viewpager.widget.ViewPager
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.view.adapter.ProfileViewpagerAdapter
 import com.dev_sheep.story_of_man_and_woman.view.dialog.ImageDialog
-import com.dev_sheep.story_of_man_and_woman.viewmodel.TestViewModel
+import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.tabs.TabLayout
@@ -42,7 +42,7 @@ import java.util.*
 class ProfileUsersFragment: Fragment(),View.OnClickListener {
 
     private var menu : Menu? = null
-    private val testViewModel: TestViewModel by viewModel()
+    private val feedViewModel: FeedViewModel by viewModel()
 
     var collapsingToolbar : CollapsingToolbarLayout? = null
     var appBarLayout : AppBarLayout? = null

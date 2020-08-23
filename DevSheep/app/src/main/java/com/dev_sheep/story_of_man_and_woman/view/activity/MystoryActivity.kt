@@ -9,8 +9,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
-import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.testService
-import com.dev_sheep.story_of_man_and_woman.viewmodel.TestViewModel
+import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
+import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.model.Image
 import kotlinx.android.synthetic.main.activity_feed_write.*
@@ -27,9 +27,11 @@ import java.io.File
 class MystoryActivity : AppCompatActivity() {
 
 
-    private val testViewModel: TestViewModel by viewModel()
+    private val feedViewModel: FeedViewModel by viewModel()
     private val REQ_CODE_SELECT_IMAGE = 1001
-    private val TYPE_PUBLIC : String = "public"
+    lateinit var TYPE_VALUE : String
+    lateinit var TAG_SEQ : String
+    lateinit var TAG_NAME : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +39,25 @@ class MystoryActivity : AppCompatActivity() {
         toolbar_write.setTitle("")
         setSupportActionBar(toolbar_write)
 
+        if (intent.hasExtra("type")) {
+            TYPE_VALUE = intent.getStringExtra("type")
+        } else {
+            Toast.makeText(this, "전달된 이름이 없습니다", Toast.LENGTH_SHORT).show()
+        }
+
+        if(intent.hasExtra("tag_seq")){
+            TAG_SEQ = intent.getStringExtra("tag_seq")
+        }else{
+            Toast.makeText(this, "전달된 이름이 없습니다", Toast.LENGTH_SHORT).show()
+
+        }
+        if(intent.hasExtra("tag_name")){
+            TAG_NAME = intent.getStringExtra("tag_name")
+            richwysiwygeditor.tagName.text = "# "+TAG_NAME
+        }else{
+            Toast.makeText(this, "전달된 이름이 없습니다", Toast.LENGTH_SHORT).show()
+
+        }
 
         //추가된 소스코드, Toolbar의 왼쪽에 버튼을 추가하고 버튼의 아이콘을 바꾼다.
 
@@ -95,7 +116,7 @@ class MystoryActivity : AppCompatActivity() {
                 RequestBody.create(MediaType.parse("multipart/form-data"), file)
             val body =
                 MultipartBody.Part.createFormData("uploaded_file", file.name, requestFile)
-            val resultCall: Call<Feed> = testService.uploadImage(body)
+            val resultCall: Call<Feed> = FEED_SERVICE.uploadImage(body)
             resultCall.enqueue(object : Callback<Feed?> {
                 override fun onResponse(
                     call: Call<Feed?>,
@@ -132,10 +153,12 @@ class MystoryActivity : AppCompatActivity() {
                 true
             }
             R.id.next -> {
-                Toast.makeText(applicationContext, "완료.", Toast.LENGTH_SHORT).show()
+
                 // 저장된 m_seq 가져오기
                 val getM_seq = getSharedPreferences("m_seq", AppCompatActivity.MODE_PRIVATE)
-                var m_seq = getM_seq.getString("inputMseq", null)
+                val M_SEQ = getM_seq.getString("inputMseq", null)
+
+                Toast.makeText(applicationContext, "완료.", Toast.LENGTH_SHORT).show()
 
                 if(richwysiwygeditor.getHeadlineEditText().getText().toString() == ""){
                     Toast.makeText(applicationContext, "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
@@ -146,16 +169,14 @@ class MystoryActivity : AppCompatActivity() {
                     return false
                 }
 
-                testViewModel.insertFeed(
+                feedViewModel.insertFeed(
                     richwysiwygeditor.getHeadlineEditText().getText().toString(),
                     richwysiwygeditor.getContent().getHtml().plus("<br>"),
-                    2,
-                    m_seq,
-                    TYPE_PUBLIC
+                    Integer.parseInt(TAG_SEQ),
+                    M_SEQ,
+                    TYPE_VALUE
                 )
                 finish()
-
-
 
                 Log.i(
                     "Rich Wysiwyg Headline",

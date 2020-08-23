@@ -1,33 +1,19 @@
 package com.dev_sheep.story_of_man_and_woman.view.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
-import android.widget.CheckBox
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.marginLeft
-import androidx.fragment.app.FragmentTransaction
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
-import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
-import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.testService
-import com.dev_sheep.story_of_man_and_woman.view.Fragment.PrefsFragment
-import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedAdapter
-import com.dev_sheep.story_of_man_and_woman.view.dialog.ImageDialog
+import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_feed.*
 import kotlinx.android.synthetic.main.activity_feed.img_profile
 import kotlinx.android.synthetic.main.activity_feed.tv_feed_date
-import kotlinx.android.synthetic.main.activity_feed_write.*
-import kotlinx.android.synthetic.main.adapter_feed.*
-import kotlinx.android.synthetic.main.adapter_feed.view.*
-import kotlinx.android.synthetic.main.adapter_feed.view.img_profile
 
 class FeedActivity : AppCompatActivity() ,View.OnClickListener{
 
@@ -57,7 +43,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
 
          if(intent.hasExtra("feed_seq")){
 
-             val single = testService.getFeed(intent.getIntExtra("feed_seq",0))
+             val single = FEED_SERVICE.getFeed(intent.getIntExtra("feed_seq",0))
              single.subscribeOn(Schedulers.io())
                  .observeOn(AndroidSchedulers.mainThread())
                  .subscribe({

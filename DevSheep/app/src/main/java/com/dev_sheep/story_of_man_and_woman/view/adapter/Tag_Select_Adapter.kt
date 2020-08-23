@@ -12,11 +12,11 @@ import kotlinx.android.synthetic.main.adapter_tag_select.view.*
 
 class Tag_Select_Adapter(
     private val list: List<Tag>,
-    private val context: Context
+    private val context: Context,
+    private val onTagCheckedSeq : OnTagCheckedSeq
 ) : RecyclerView.Adapter<Tag_Select_Adapter.ViewHolder>() {
 
     private var lastCheckedPosition = -1
-
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 
@@ -48,7 +48,7 @@ class Tag_Select_Adapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = list[position]
         val tag_seq = list[position].tag_seq
-
+        val tag_name = list[position].tag_name
         if(tag_seq == lastCheckedPosition){
             holder.itemView.select_tag_name.isChecked = true
             holder.itemView.select_tag_name.setTextColor(context.resources.getColor(R.color.white))
@@ -61,6 +61,8 @@ class Tag_Select_Adapter(
         holder.itemView.select_tag_name.setOnClickListener {
             lastCheckedPosition = list[position].tag_seq
             Log.e("Tag Name",""+holder.itemView.select_tag_name.text.toString())
+            // activity에 선택된 Tag 넘겨주기
+            onTagCheckedSeq.getTagCheckedSeq(tag_seq.toString(),tag_name.toString())
             notifyDataSetChanged()
         }
 
@@ -71,13 +73,9 @@ class Tag_Select_Adapter(
         return list.size   // 7개 까지만
     }
 
-}
+    // activity에 선택된 Tag 넘겨주기
+    interface OnTagCheckedSeq {
+        fun getTagCheckedSeq(tag_seq : String,tag_name: String)
+    }
 
-interface OnMyItemCheckedChanged {
-    fun onItemCheckedChanged(item: String, isChecked: Boolean)
-}
-
-private val mOnMyItemCheckedChanged: OnMyItemCheckedChanged? = null
-
-fun setOnMyItemCheckedChanged(onMyItemCheckedChanged: OnMyItemCheckedChanged?) {
 }

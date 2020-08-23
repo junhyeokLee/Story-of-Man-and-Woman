@@ -221,13 +221,19 @@ class FeedAdapter(
                 }
             }
 
-            with(content){
+//            with(content){
+//                setOnClickListener {
+//                    val lintent = Intent(itemView.context, FeedActivity::class.java)
+//                    lintent.putExtra("feed_seq",item.feed_seq)
+//                    itemView.context.startActivity(lintent)
+//                }
+//            }
+
+            with(feed_layout){
                 setOnClickListener {
                     val lintent = Intent(itemView.context, FeedActivity::class.java)
                     lintent.putExtra("feed_seq",item.feed_seq)
                     itemView.context.startActivity(lintent)
-
-                    Toast.makeText(context, ""+item.feed_seq+" 피드 클릭", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -236,8 +242,6 @@ class FeedAdapter(
                     val lintent = Intent(itemView.context, FeedActivity::class.java)
                     lintent.putExtra("feed_seq",item.feed_seq)
                     itemView.context.startActivity(lintent)
-
-                    Toast.makeText(context, ""+item.feed_seq+" 피드 클릭", Toast.LENGTH_SHORT).show();
                 }
             }
 

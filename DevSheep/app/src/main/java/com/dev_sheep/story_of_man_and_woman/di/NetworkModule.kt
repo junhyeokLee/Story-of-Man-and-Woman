@@ -1,7 +1,7 @@
 package com.dev_sheep.story_of_man_and_woman.di
 
-import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
-import com.dev_sheep.story_of_man_and_woman.data.remote.api.TestService
+import com.dev_sheep.story_of_man_and_woman.data.remote.api.FeedService
+import com.dev_sheep.story_of_man_and_woman.data.remote.api.MemberService
 import com.google.gson.GsonBuilder
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -42,6 +42,9 @@ val networkModule = module {
     }
 
     single {
-        get<Retrofit>().create<TestService>()
+        get<Retrofit>().create<FeedService>()
+    }
+    single {
+        get<Retrofit>().create<MemberService>()
     }
 }

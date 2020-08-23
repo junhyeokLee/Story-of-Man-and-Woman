@@ -1,53 +1,36 @@
 package com.dev_sheep.story_of_man_and_woman.view.Fragment
 
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
-import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.dev_sheep.story_of_man_and_woman.R
-import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Tag
-import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
-import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.testService
+import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
 import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedAdapter
 import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedRankAdapter
 import com.dev_sheep.story_of_man_and_woman.view.adapter.Test_tag_Adapter
 import com.dev_sheep.story_of_man_and_woman.view.dialog.FilterDialog
-import com.dev_sheep.story_of_man_and_woman.viewmodel.TestViewModel
-import com.facebook.drawee.gestures.GestureDetector.newInstance
-import com.victor.loading.book.BookLoading
-import com.victor.loading.newton.NewtonCradleLoading
-import com.victor.loading.rotate.RotateLoading
+import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import eu.micer.circlesloadingindicator.CirclesLoadingIndicator
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_main.*
 import me.relex.circleindicator.CircleIndicator
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.lang.reflect.Array.newInstance
-import kotlin.concurrent.thread
 
 
 class HomeFragment : Fragment() {
 
 
-    private val testViewModel: TestViewModel by viewModel()
+    private val feedViewModel: FeedViewModel by viewModel()
 
 
     private var recyclerView : RecyclerView? = null
@@ -102,7 +85,7 @@ class HomeFragment : Fragment() {
         setViewPager()
 //        setTagAdapter()
         // 전체보기
-        val single = testService.getList()
+        val single = FEED_SERVICE.getList()
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -121,7 +104,7 @@ class HomeFragment : Fragment() {
                 Log.e("feed 보기 실패함",""+it.message)
             })
 
-        val single_tag = testService.getTagList()
+        val single_tag = FEED_SERVICE.getTagList()
         single_tag.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -193,12 +176,12 @@ class HomeFragment : Fragment() {
 //
 //        })
 
-//        testViewModel.getListFeed().observe(this, Observer {
+//        feedViewModel.getListFeed().observe(this, Observer {
 //            setAdapter(it)
 //        })
 
         // 페이징 처리
-//        testViewModel.getListFirst(limit,offset).observe(this, Observer { test ->
+//        feedViewModel.getListFirst(limit,offset).observe(this, Observer { test ->
 //            setAdapter(test)
 //        })
 
@@ -334,7 +317,7 @@ class HomeFragment : Fragment() {
 
             R.id.filter -> {
 
-//                testViewModel.getFeed()
+//                feedViewModel.getFeed()
                 val dialog = FilterDialog()
                 dialog.show(childFragmentManager, dialog.tag)
 

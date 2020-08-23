@@ -1,6 +1,5 @@
 package com.dev_sheep.story_of_man_and_woman.viewmodel
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
@@ -9,13 +8,14 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
-import com.dev_sheep.story_of_man_and_woman.data.remote.api.TestService
+import com.dev_sheep.story_of_man_and_woman.data.remote.api.FeedService
+import com.dev_sheep.story_of_man_and_woman.data.remote.api.MemberService
 import com.dev_sheep.story_of_man_and_woman.view.activity.MainActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 
-class MemberViewModel(private val testService: TestService) :  ViewModel(){
+class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
 
     fun insertMember(
         email: String,
@@ -25,7 +25,7 @@ class MemberViewModel(private val testService: TestService) :  ViewModel(){
         age: String,
         context: Context
     ){
-        val single = testService.insertMember(email, password, nick_name, gender, age)
+        val single = memberService.insertMember(email, password, nick_name, gender, age)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -60,7 +60,7 @@ class MemberViewModel(private val testService: TestService) :  ViewModel(){
 
     fun getMemberSeq(email: String,password: String,context: Context){
 
-        val single = testService.getMemberSeq(email,password)
+        val single = memberService.getMemberSeq(email,password)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({

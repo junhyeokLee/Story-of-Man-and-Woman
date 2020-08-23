@@ -31,6 +31,7 @@ import java.util.List;
 public class RichWysiwyg extends LinearLayout {
 
     private EditText headline;
+    private TextView tagName;
     private RichEditor content;
     private View popupView;
     private PopupWindow mPopupWindow;
@@ -142,6 +143,7 @@ public class RichWysiwyg extends LinearLayout {
 
         // Html WebView
         headline = findViewById(R.id.write_headline);
+        tagName = findViewById(R.id.tv_wysiwyg_tag_name);
         content = findViewById(R.id.write_content);
         content.setLayerType(View.LAYER_TYPE_HARDWARE, null); // sdk 19 이상은 ChromeWebView를 사용해서 ChromeWebView로 설정
 
@@ -496,6 +498,8 @@ public class RichWysiwyg extends LinearLayout {
     public EditText getHeadlineEditText(){
         return headline;
     }
+
+    public TextView getTagName(){return tagName; }
 
     public ImageButton getInsertImageButton() {
         return insertImageButton;

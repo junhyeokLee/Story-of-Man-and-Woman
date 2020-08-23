@@ -6,22 +6,17 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.GridLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
 import com.dev_sheep.story_of_man_and_woman.view.adapter.Tag_Select_Adapter
-import com.dev_sheep.story_of_man_and_woman.view.adapter.Test_Searchtag_Adapter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_feed_write.*
-import kotlinx.android.synthetic.main.activity_tag_select.*
 import kotlinx.android.synthetic.main.activity_tag_select.progressBar_tag
 import kotlinx.android.synthetic.main.activity_tag_select.recyclerView_tag
 import kotlinx.android.synthetic.main.activity_tag_select.toolbar_write
-import kotlinx.android.synthetic.main.fragment_search.*
 
 class SelectTagActivity : AppCompatActivity(){
 
@@ -30,6 +25,8 @@ class SelectTagActivity : AppCompatActivity(){
     val TYPE_PUBLIC = "public"
     val TYPE_SUBSCRIBER = "subscriber"
     val TYPE_PRIVATE = "private"
+    var CHECKED_TAG_SEQ = ""
+    var CHECKED_TAG_NAME = ""
 
     lateinit var mAdapter : Tag_Select_Adapter
 
@@ -46,14 +43,20 @@ class SelectTagActivity : AppCompatActivity(){
         val layoutManager_Tag = GridLayoutManager(this,3)
         recyclerView_tag.layoutManager = layoutManager_Tag
 
-        val single_tag = APIService.testService.getTagList()
+        val single_tag = APIService.FEED_SERVICE.getTagList()
         single_tag.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
 
                 if (it.isNotEmpty()) {
                     recyclerView_tag.layoutManager = layoutManager_Tag
-                    recyclerView_tag.adapter = Tag_Select_Adapter(it,this)
+                    recyclerView_tag.adapter = Tag_Select_Adapter(it,this,object : Tag_Select_Adapter.OnTagCheckedSeq{
+                        override fun getTagCheckedSeq(tag_seq: String,tag_name:String) {
+                            CHECKED_TAG_SEQ = tag_seq
+                            CHECKED_TAG_NAME = tag_name
+                        }
+
+                    })
                 }else {
                     progressBar_tag.visibility = View.VISIBLE
                 }
@@ -90,19 +93,28 @@ class SelectTagActivity : AppCompatActivity(){
             }
 
             R.id.next_activity ->{
+
+                Log.e("TAG 이름 전송",""+CHECKED_TAG_SEQ)
+
                 if(TYPE_VALUE == TYPE_PUBLIC) {
                     val intent = Intent(this, MystoryActivity::class.java)
                     intent.putExtra("type",TYPE_PUBLIC)
+                    intent.putExtra("tag_seq",CHECKED_TAG_SEQ)
+                    intent.putExtra("tag_name",CHECKED_TAG_NAME)
                     startActivity(intent)
                     finish()
                 }else if(TYPE_VALUE == TYPE_SUBSCRIBER){
                     val intent = Intent(this, MystoryActivity::class.java)
                     intent.putExtra("type",TYPE_SUBSCRIBER)
+                    intent.putExtra("tag_seq",CHECKED_TAG_SEQ)
+                    intent.putExtra("tag_name",CHECKED_TAG_NAME)
                     startActivity(intent)
                     finish()
                 }else if(TYPE_VALUE == TYPE_PRIVATE){
                     val intent = Intent(this, SecretStoryActivity::class.java)
                     intent.putExtra("type",TYPE_PRIVATE)
+                    intent.putExtra("tag_seq",CHECKED_TAG_SEQ)
+                    intent.putExtra("tag_name",CHECKED_TAG_NAME)
                     startActivity(intent)
                     finish()
                 }

@@ -1,24 +1,16 @@
 package com.dev_sheep.story_of_man_and_woman.view.Fragment
 
 import android.os.Bundle
-import android.util.DisplayMetrics
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.dev_sheep.story_of_man_and_woman.R
-import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
-import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedAdapter
 import com.dev_sheep.story_of_man_and_woman.view.adapter.Test_Searchtag_Adapter
-import com.dev_sheep.story_of_man_and_woman.view.adapter.Test_tag_Adapter
-import com.dev_sheep.story_of_man_and_woman.viewmodel.TestViewModel
+import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -27,7 +19,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class SearchFragment: Fragment() {
 
     private var recyclerViewTag : RecyclerView? = null
-    private val testViewModel: TestViewModel by viewModel()
+    private val feedViewModel: FeedViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,7 +48,7 @@ class SearchFragment: Fragment() {
 //        })
 
 
-        val single_tag = APIService.testService.getTagList()
+        val single_tag = APIService.FEED_SERVICE.getTagList()
         single_tag.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({

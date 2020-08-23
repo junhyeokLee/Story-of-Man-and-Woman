@@ -17,7 +17,6 @@ import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileFragment
 import com.dev_sheep.story_of_man_and_woman.view.Fragment.SearchFragment
 import com.dev_sheep.story_of_man_and_woman.view.dialog.WriteDialog
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
-import com.dev_sheep.story_of_man_and_woman.viewmodel.TestViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_feed_write.*
 import kotlinx.android.synthetic.main.activity_main.*
