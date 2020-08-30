@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.preference.PreferenceManager
 import android.text.Html
 import android.text.SpannableString
 import android.text.Spanned
@@ -17,7 +18,6 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.RecyclerView
@@ -29,8 +29,6 @@ import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
 import com.dev_sheep.story_of_man_and_woman.utils.PokemonColorUtil
 import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileUsersFragment
 import com.dev_sheep.story_of_man_and_woman.view.activity.FeedActivity
-import com.dev_sheep.story_of_man_and_woman.view.activity.MessageActivity
-import com.dev_sheep.story_of_man_and_woman.view.activity.SecretStoryActivity
 import com.victor.loading.rotate.RotateLoading
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.adapter_feed.view.*
@@ -43,14 +41,14 @@ import java.util.*
 class FeedAdapter(
     private val list: List<Feed>,
     private var context: Context,
-    private var fragmentManager: FragmentManager
-
+    private var fragmentManager: FragmentManager,
+    private val onClickViewListener: OnClickViewListener,
+    private val onClickLikeListener: OnClickLikeListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     lateinit var mcontext: Context
     var mViewPagerState = HashMap<Int, Int>()
     private val VIEW_TYPE_ITEM = 0
     private val VIEW_TYPE_LOADING = 1
-
 
 //    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
@@ -70,11 +68,19 @@ class FeedAdapter(
 
         return when (viewType) {
             VIEW_TYPE_ITEM -> {
-                view = LayoutInflater.from(parent.context).inflate(R.layout.adapter_feed, parent, false)
-                FeedHolder(view)
+                view = LayoutInflater.from(parent.context).inflate(
+                    R.layout.adapter_feed,
+                    parent,
+                    false
+                )
+                FeedHolder(view, onClickViewListener, onClickLikeListener)
             }
             VIEW_TYPE_LOADING -> {
-                view = LayoutInflater.from(parent.context).inflate(R.layout.progress_loading, parent, false)
+                view = LayoutInflater.from(parent.context).inflate(
+                    R.layout.progress_loading,
+                    parent,
+                    false
+                )
                 LoadingViewHolder(view)
             }
             else -> throw RuntimeException("알 수 없는 뷰 타입 에러")
@@ -92,8 +98,11 @@ class FeedAdapter(
 //            return LoadingViewHolder(view)
 //        }
 
-
+        fun notification(){
+            this.notifyDataSetChanged()
+        }
     }
+
 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -101,13 +110,14 @@ class FeedAdapter(
 
         when(holder.itemViewType){
             VIEW_TYPE_ITEM -> {
-                val viewHolder : FeedHolder = holder as FeedHolder
+                val viewHolder: FeedHolder = holder as FeedHolder
                 val feed = list[position]
-                viewHolder.bindView(feed)
+                viewHolder.bindView(feed, position)
+
             }
 
             VIEW_TYPE_LOADING -> {
-                val viewHolder : LoadingViewHolder = holder as LoadingViewHolder
+                val viewHolder: LoadingViewHolder = holder as LoadingViewHolder
                 viewHolder.bindView()
             }
 
@@ -139,17 +149,24 @@ class FeedAdapter(
     }
 
 
-    internal class FeedHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    internal class FeedHolder(
+        itemView: View,
+        onClickViewListener: OnClickViewListener,
+        onClickLikeListener: OnClickLikeListener
+    ) :  RecyclerView.ViewHolder(itemView) {
+
         private val feed_layout: RelativeLayout = itemView.findViewById(R.id.feed_layout)
-        private val favoriteButton: ImageView = itemView.findViewById(R.id.favorite_btn)
+        private var favoriteButton: CheckBox = itemView.findViewById(R.id.favorite_btn)
         private val favoriteValue: TextView = itemView.findViewById(R.id.like_count)
         private val img_profile : CircleImageView = itemView.findViewById(R.id.img_profile)
         private val m_nick : TextView = itemView.findViewById(R.id.tv_m_nick)
         private val content : TextView = itemView.findViewById(R.id.tv_content)
         private val content_img : ImageView = itemView.findViewById(R.id.content_img)
         private var sdf : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        private val onClickFeedView = onClickViewListener
+        private val onClickFeedLike = onClickLikeListener
 
-        fun bindView(item: Feed) {
+        fun bindView(item: Feed, position: Int) {
             itemView.tv_m_nick.text = item.creater
             itemView.tv_title.text = item.title
 //            content.text = br2nl(item.content)
@@ -162,20 +179,15 @@ class FeedAdapter(
             itemView.like_count.text = item.like_no.toString()
             itemView.tv_gender.text = item.creater_gender
 //            Log.e("qdqwd",content.text.toString());
-            Log.e("html : ",item.content);
-            Log.e("html jsoup : ",br2nl(item.content));
+            Log.e("html : ", item.content);
+            Log.e("html jsoup : ", br2nl(item.content));
 //            itemView.tv_body.text = "아오이게 뭐람 아오이게 뭐람 아오이게 뭐람 아오이게 뭐람 아오이게 뭐람 아오이게 ㅁ으아어어어어어바어으어  ㅁ으아어어어어어바어으어  ㅁ으아어어어어어바어으어  ㅁ으아어어어어어바어으어  ㅁ으아어어어어어바어으어 뭐람 아오이게 뭐람 아오이게 뭐람 아오이게 뭐람"
 //            var tv_body_string : String = stripHtml(content.html.toString())
-            setReadMore(itemView.tv_content,content.text.toString(),3)
+            setReadMore(itemView.tv_content, content.text.toString(), 3)
 
             val color = PokemonColorUtil(itemView.context).getPokemonColor(item.creater_gender)
             itemView.tv_gender.background.colorFilter =
                 PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP)
-
-
-
-
-
 
 //            val radius = itemView.resources.getDimensionPixelSize(R.dimen.corner_radius)
             Glide.with(itemView.context)
@@ -189,13 +201,17 @@ class FeedAdapter(
 //                .placeholder(android.R.color.transparent)
 //                .into(itemView.content_img)
 
+
             with(m_nick){
                 setOnClickListener {
                     val dialog = ProfileUsersFragment()//The fragment that u want to open for example
                     var userFragmnet = (context as AppCompatActivity).supportFragmentManager
                     var fragmentTransaction: FragmentTransaction = userFragmnet.beginTransaction()
                     fragmentTransaction.setReorderingAllowed(true)
-                    fragmentTransaction.setCustomAnimations(R.anim.fragment_fade_in,R.anim.fragment_fade_out)
+                    fragmentTransaction.setCustomAnimations(
+                        R.anim.fragment_fade_in,
+                        R.anim.fragment_fade_out
+                    )
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.replace(R.id.frameLayout, dialog);
                     fragmentTransaction.commit()
@@ -207,40 +223,64 @@ class FeedAdapter(
                     var userFragmnet = (context as AppCompatActivity).supportFragmentManager
                     var fragmentTransaction: FragmentTransaction = userFragmnet.beginTransaction()
                     fragmentTransaction.setReorderingAllowed(true)
-                    fragmentTransaction.setCustomAnimations(R.anim.fragment_fade_in,R.anim.fragment_fade_out)
+                    fragmentTransaction.setCustomAnimations(
+                        R.anim.fragment_fade_in,
+                        R.anim.fragment_fade_out
+                    )
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.replace(R.id.frameLayout, dialog);
                     fragmentTransaction.commit()
                 }
             }
 
+
+
             with(favoriteButton){
-                setOnClickListener {
-                    val favorited = !item.favorited
-                    setFavoriteDrawable(favorited,item)
+            val feed = item
+            var favCount : String
+            val preferences = PreferenceManager.getDefaultSharedPreferences(itemView.context)
+            val editor = preferences.edit()
+
+
+            if (preferences.contains("checked"+position) && preferences.getBoolean("checked"+position, false) == true)
+            {
+                this.isChecked = true
+            } else {
+                this.isChecked = false
+            }
+                setOnCheckedChangeListener { compoundButton, b ->
+                    if(this.isChecked){
+                        onClickFeedLike.OnClickFeed(feed.feed_seq, "true")
+                        favCount = feed.like_no?.plus(1).toString()
+                        editor.putBoolean("checked"+position, true)
+                        editor.apply()
+                    }else{
+                        onClickFeedLike.OnClickFeed(feed.feed_seq, "false")
+                        favCount = feed.like_no.toString()
+                        editor.putBoolean("checked"+position, false)
+                        editor.apply()
+                    }
+
+                    favoriteValue.setText(favCount)
                 }
             }
 
-//            with(content){
-//                setOnClickListener {
-//                    val lintent = Intent(itemView.context, FeedActivity::class.java)
-//                    lintent.putExtra("feed_seq",item.feed_seq)
-//                    itemView.context.startActivity(lintent)
-//                }
-//            }
-
             with(feed_layout){
                 setOnClickListener {
+                    onClickFeedView.OnClickFeed(item.feed_seq)
                     val lintent = Intent(itemView.context, FeedActivity::class.java)
-                    lintent.putExtra("feed_seq",item.feed_seq)
+                    lintent.putExtra("feed_seq", item.feed_seq)
+                    lintent.putExtra("position",position)
+                    lintent.putExtra("checked"+position,favoriteButton.isChecked)
                     itemView.context.startActivity(lintent)
+
                 }
             }
 
             with(itemView.tv_title){
                 setOnClickListener {
                     val lintent = Intent(itemView.context, FeedActivity::class.java)
-                    lintent.putExtra("feed_seq",item.feed_seq)
+                    lintent.putExtra("feed_seq", item.feed_seq)
                     itemView.context.startActivity(lintent)
                 }
             }
@@ -248,26 +288,23 @@ class FeedAdapter(
         }
 
 
-        private fun setFavoriteDrawable(favorited: Boolean,feed: Feed) {
-            val context = itemView.context
-            var favCount : String
-            val drawable = if (favorited) {
-                context.getDrawable(R.drawable.ic_favorite_filled)
-            } else {
-                context.getDrawable(R.drawable.ic_favorite_hollow)
-            }
-            if(favorited){
-                feed.favorited = favorited
-                favCount = "1"
-            }else{
-                feed.favorited = favorited
-                favCount = "0"
-            }
-
-            favoriteButton.setImageDrawable(drawable)
-            favoriteValue.setText(favCount)
-        }
-
+//        private fun setFavoriteDrawable(favorited: Boolean, feed: Feed) {
+//            val context = itemView.context
+//            var favCount : String
+//
+//            if(favorited){
+//                feed.favorited = favorited
+//                onClickFeedLike.OnClickFeed(feed.feed_seq, "true")
+//                favCount = feed.like_no?.plus(1).toString()
+//
+//            }else{
+//                feed.favorited = favorited
+//                onClickFeedLike.OnClickFeed(feed.feed_seq, "false")
+//                favCount = feed.like_no.toString()
+//            }
+//            favoriteValue.setText(favCount)
+//
+//        }
 
 
         private fun setReadMore(view: TextView, text: String, maxLine: Int) {
@@ -330,7 +367,7 @@ class FeedAdapter(
 
 
         // html 태그 제거
-        fun stripHtml(html:String) : String{
+        fun stripHtml(html: String) : String{
             return Html.fromHtml(html).toString()
         }
 
@@ -342,12 +379,19 @@ class FeedAdapter(
             document.select("br").append("\n")
 //            document.select("p").prepend("\n\n")
             val s: String = document.html().replace("\\\n", "\n")
-            return Jsoup.clean(s, "", Whitelist.none(), Document.OutputSettings().prettyPrint(false))
+            return Jsoup.clean(
+                s,
+                "",
+                Whitelist.none(),
+                Document.OutputSettings().prettyPrint(false)
+            )
         }
+
+
 
     }
 
-    internal class LoadingViewHolder(itemView:View):RecyclerView.ViewHolder(itemView){
+    internal class LoadingViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         private val progressBar : RotateLoading = itemView.findViewById(R.id.rotateloading)
 
         fun bindView() {
@@ -357,7 +401,7 @@ class FeedAdapter(
     }
 
 
-    fun addData(item:ArrayList<Test>) {
+    fun addData(item: ArrayList<Test>) {
 
         var size = item.size
         item.addAll(item)
@@ -366,7 +410,14 @@ class FeedAdapter(
     }
 
 
-
+    // omeFragment에서 클릭시 뷰모델 사용하여 조회수 올리기위함
+    interface OnClickViewListener {
+        fun OnClickFeed(feed_seq: Int)
+    }
+    // omeFragment에서 클릭시 뷰모델 사용하여 좋아 올리기위함
+    interface OnClickLikeListener {
+        fun OnClickFeed(feed_seq: Int, boolean_value: String)
+    }
 
 }
 
@@ -406,4 +457,6 @@ fun calculateTime(date: Date): String? {
     }
     return msg
 }
+
+
 

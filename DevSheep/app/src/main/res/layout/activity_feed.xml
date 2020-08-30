@@ -370,15 +370,18 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <ImageView
+
+                <CheckBox
                     android:id="@+id/favorite_btn"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_gravity="center"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:button="@null"
+                    android:checked="false"
+                    android:background="@drawable/background_like_count"
                     app:layout_constraintStart_toEndOf="@+id/chefActionMessage"
-                    app:layout_constraintTop_toBottomOf="@+id/chefDivider"
-                    app:srcCompat="@drawable/ic_favorite_hollow" />
+                    app:layout_constraintTop_toBottomOf="@+id/chefDivider" />
+
 
                 <TextView
                     android:id="@+id/like_count"

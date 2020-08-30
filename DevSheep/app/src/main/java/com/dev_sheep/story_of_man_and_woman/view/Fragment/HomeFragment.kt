@@ -1,6 +1,7 @@
 package com.dev_sheep.story_of_man_and_woman.view.Fragment
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
@@ -11,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewpager.widget.ViewPager
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Tag
@@ -27,7 +29,7 @@ import me.relex.circleindicator.CircleIndicator
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
 
     private val feedViewModel: FeedViewModel by viewModel()
@@ -41,6 +43,7 @@ class HomeFragment : Fragment() {
     private var progressBar : CirclesLoadingIndicator? = null
     lateinit var contexts : Context
     lateinit var mFeedAdapter: FeedAdapter
+    lateinit var mSwipeRefreshLayout: SwipeRefreshLayout
     lateinit var mTagAdapter: Test_tag_Adapter
     lateinit var mRankAdapter: FeedRankAdapter
     private var limit: Int = 10
@@ -58,9 +61,11 @@ class HomeFragment : Fragment() {
     var scrollCount: Int = 0
     private lateinit var layoutManagers: LinearLayoutManager // 태그 자동스크롤 위한 초기화 제한
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_home,null)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_home, null)
         contexts = view.context
 
         setHasOptionsMenu(true);
@@ -69,14 +74,19 @@ class HomeFragment : Fragment() {
         tollbar = view.findViewById<View>(R.id.toolbar) as androidx.appcompat.widget.Toolbar?
         progressBar = view.findViewById<View>(R.id.progressBar) as CirclesLoadingIndicator?
         recyclerViewTag = view.findViewById<View>(R.id.recyclerView_tag) as RecyclerView?
+        mSwipeRefreshLayout = view.findViewById<View>(R.id.sr_refresh) as SwipeRefreshLayout
         viewpager = view.findViewById<View>(R.id.vp) as ViewPager?
         indicators = view.findViewById<CircleIndicator>(R.id.indicator)
         // 프래그먼트에 toolbar 세팅
         (activity as AppCompatActivity).setSupportActionBar(tollbar)
 
-
-
         initData()
+
+        mSwipeRefreshLayout.setOnRefreshListener(this)
+        mSwipeRefreshLayout.setColorSchemeResources(
+            R.color.main_Accent
+        );
+
 
         return view
     }
@@ -89,7 +99,16 @@ class HomeFragment : Fragment() {
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                mFeedAdapter = FeedAdapter(it, contexts,childFragmentManager)
+                mFeedAdapter = FeedAdapter(it, contexts, childFragmentManager,object : FeedAdapter.OnClickViewListener{
+                    override fun OnClickFeed(feed_seq: Int) {
+                  feedViewModel.increaseViewCount(feed_seq)
+                    }
+                },object : FeedAdapter.OnClickLikeListener{
+                    override fun OnClickFeed(feed_seq: Int, boolean_value: String) {
+                        feedViewModel.increaseLikeCount(feed_seq,boolean_value)
+                    }
+
+                })
                 recyclerView?.apply {
                     var linearLayoutMnager = LinearLayoutManager(this.context)
                     this.layoutManager = linearLayoutMnager
@@ -97,11 +116,12 @@ class HomeFragment : Fragment() {
                 }
                 if (it.isNotEmpty()) {
                     progressBar?.visibility = View.GONE
-                }else {
+                } else {
                     progressBar?.visibility = View.VISIBLE
                 }
-            },{
-                Log.e("feed 보기 실패함",""+it.message)
+
+            }, {
+                Log.e("feed 보기 실패함", "" + it.message)
             })
 
         val single_tag = FEED_SERVICE.getTagList()
@@ -111,7 +131,11 @@ class HomeFragment : Fragment() {
                 recyclerViewTag?.apply {
                     var recycler_this = this
                     layoutManagers = object : LinearLayoutManager(context) {
-                        override fun smoothScrollToPosition(recyclerView: RecyclerView, state: RecyclerView.State?, position: Int) {
+                        override fun smoothScrollToPosition(
+                            recyclerView: RecyclerView,
+                            state: RecyclerView.State?,
+                            position: Int
+                        ) {
                             val smoothScroller = object : LinearSmoothScroller(context) {
                                 override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics?): Float {
                                     return 10.0f;
@@ -121,7 +145,7 @@ class HomeFragment : Fragment() {
                             startSmoothScroll(smoothScroller)
                         }
                     }
-                    mTagAdapter = object : Test_tag_Adapter(it,contexts) {
+                    mTagAdapter = object : Test_tag_Adapter(it, contexts) {
                         override fun load() {
                             if (layoutManagers.findFirstVisibleItemPosition() > 1) {
                                 mTagAdapter?.notifyItemMoved(0, it.size - 1)
@@ -138,10 +162,9 @@ class HomeFragment : Fragment() {
                     autoScroll(it, mTagAdapter)
 
                 }
-            }
-                ,{
-                    Log.e("feed 보기2 실패함",""+it.message)
-                })
+            }, {
+                Log.e("feed 보기2 실패함", "" + it.message)
+            })
 
 //        val call = testService.getList()
 //        call.enqueue(object : Callback<List<Feed>?>{
@@ -188,19 +211,21 @@ class HomeFragment : Fragment() {
     }
 
     private fun setViewPager(){
-        mRankAdapter = FeedRankAdapter(contexts,childFragmentManager)
+        mRankAdapter = FeedRankAdapter(contexts, childFragmentManager)
         viewpager?.apply {
             adapter = mRankAdapter
 
-            this.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
+            this.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
                 override fun onPageScrollStateChanged(state: Int) {
                 }
+
                 override fun onPageScrolled(
                     position: Int,
                     positionOffset: Float,
                     positionOffsetPixels: Int
                 ) {
                 }
+
                 override fun onPageSelected(position: Int) {
                     page = position
                 }
@@ -261,7 +286,7 @@ class HomeFragment : Fragment() {
 //
 //    }
 
-//    private fun setAdapter(feed:List<Feed>) {
+    //    private fun setAdapter(feed:List<Feed>) {
 //
 //
 //
@@ -308,7 +333,7 @@ class HomeFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.menu_search,menu)
+        inflater.inflate(R.menu.menu_search, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -328,7 +353,9 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        handler.postDelayed(runnable,delay)
+        initData()
+        handler.postDelayed(runnable, delay)
+
     }
 
     override fun onPause() {
@@ -337,7 +364,7 @@ class HomeFragment : Fragment() {
     }
 
     // 태그 자동스크
-    private fun autoScroll(tag : List<Tag>,adapter: Test_tag_Adapter) {
+    private fun autoScroll(tag: List<Tag>, adapter: Test_tag_Adapter) {
         scrollCount = 0;
         var speedScroll: Long = 1200;
         val runnable = object : Runnable {
@@ -365,5 +392,10 @@ class HomeFragment : Fragment() {
             viewpager!!.setCurrentItem(page, true)
             handler.postDelayed(this, delay.toLong())
         }
+    }
+
+    override fun onRefresh() {
+        initData()
+        mSwipeRefreshLayout.setRefreshing(false)
     }
 }

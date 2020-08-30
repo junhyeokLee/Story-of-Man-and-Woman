@@ -111,7 +111,7 @@ class SelectTagActivity : AppCompatActivity(){
                     startActivity(intent)
                     finish()
                 }else if(TYPE_VALUE == TYPE_PRIVATE){
-                    val intent = Intent(this, SecretStoryActivity::class.java)
+                    val intent = Intent(this, MystoryActivity::class.java)
                     intent.putExtra("type",TYPE_PRIVATE)
                     intent.putExtra("tag_seq",CHECKED_TAG_SEQ)
                     intent.putExtra("tag_name",CHECKED_TAG_NAME)

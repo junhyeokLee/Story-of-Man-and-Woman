@@ -1,6 +1,7 @@
 package com.dev_sheep.story_of_man_and_woman.data.remote
 
 import com.dev_sheep.story_of_man_and_woman.data.remote.api.FeedService
+import com.dev_sheep.story_of_man_and_woman.data.remote.api.MemberService
 import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -22,4 +23,5 @@ object APIService {
         .build()
 
     val FEED_SERVICE: FeedService = retrofit.create()
+    val MEMBER_SERVICE: MemberService = retrofit.create()
 }

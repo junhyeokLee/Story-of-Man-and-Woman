@@ -1,5 +1,6 @@
 package com.dev_sheep.story_of_man_and_woman.view.activity
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.media.MediaBrowserServiceCompat.RESULT_OK
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
@@ -126,7 +128,7 @@ class MystoryActivity : AppCompatActivity() {
                     Log.e("filename",file.name)
 
                     stringBuffer.append(file.name).append("\n")
-                    richwysiwygeditor.getContent().insertImage("http://www.storymaw.com/data/feed/" + file.name, "alt")
+                    richwysiwygeditor.getContent().insertImage("http://www.storymaw.com/data/feed/"+TAG_SEQ+"/"+ file.name, "alt")
                 }
                 override fun onFailure(
                     call: Call<Feed?>,

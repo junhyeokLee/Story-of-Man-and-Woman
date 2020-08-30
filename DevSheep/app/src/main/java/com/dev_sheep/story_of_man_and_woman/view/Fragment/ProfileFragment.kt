@@ -3,7 +3,9 @@ package com.dev_sheep.story_of_man_and_woman.view.Fragment
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
@@ -11,6 +13,7 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.preference.PreferenceManager
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
@@ -28,15 +31,23 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
+import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.MEMBER_SERVICE
+import com.dev_sheep.story_of_man_and_woman.data.remote.api.MemberService
 import com.dev_sheep.story_of_man_and_woman.view.activity.MessageActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.MyMessageActivity
 import com.dev_sheep.story_of_man_and_woman.view.adapter.ProfileViewpagerAdapter
 import com.dev_sheep.story_of_man_and_woman.view.dialog.ImageDialog
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
+import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.tabs.TabLayout
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_feed.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -46,8 +57,9 @@ import java.util.*
 
 class ProfileFragment: Fragment(),View.OnClickListener {
 
+
     private var menu : Menu? = null
-    private val feedViewModel: FeedViewModel by viewModel()
+    private val memberViewModel: MemberViewModel by viewModel()
     private val MY_PERMISSION_CAMERA = 1111
     private val REQUEST_TAKE_PHOTO = 2222
     private val REQUEST_TAKE_PHOTO_BACKGROUND = 6666
@@ -68,7 +80,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     var recyclerView : RecyclerView? = null
     var progressBar : ProgressBar? = null
     var layoutManager: GridLayoutManager? = null
-    var profileImage: com.mikhaellopez.circularimageview.CircularImageView? = null
+    var profileImage: ImageView? = null
     var profileAdd : ImageView? = null
     var backgroundAdd: ImageView? = null
     var viewpager : ViewPager? = null
@@ -80,6 +92,11 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        // m_seq 가져오기
+         val preferences: SharedPreferences = context!!.getSharedPreferences("m_seq", Context.MODE_PRIVATE)
+         val m_seq = preferences.getString("inputMseq","")
+
         val view = inflater.inflate(R.layout.fragment_profile,null)
         toolbar = view.findViewById(R.id.toolbar) as Toolbar
         appBarLayout = view.findViewById<AppBarLayout>(R.id.app_bar)
@@ -88,7 +105,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
         progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         layoutManager = GridLayoutManager(view.context, 1)
-        profileImage = view.findViewById<com.mikhaellopez.circularimageview.CircularImageView>(R.id.id_Profile_Image)
+        profileImage = view.findViewById<ImageView>(R.id.id_Profile_Image)
         profileAdd = view.findViewById<ImageView>(R.id.id_Profile_add)
         backgroundAdd = view.findViewById<ImageView>(R.id.id_ProfileBackgorund_add)
         viewpager = view.findViewById(R.id.viewPager) as ViewPager
@@ -98,6 +115,30 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         recyclerView?.layoutManager = layoutManager
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
         setHasOptionsMenu(true)
+
+
+        val single = MEMBER_SERVICE.getMember(m_seq)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+
+                tv_profile_nick.text = it.nick_name
+//                id_Profile_Image.http://storymaw.com/data/feed/20200814_113842.jpg
+            if(it.profile_img == null) {
+                id_Profile_Image.background = resources.getDrawable(R.drawable.ic_user)
+            }else{
+                Glide.with(this)
+                    .load(it.profile_img)
+                    .apply(RequestOptions().circleCrop())
+                    .placeholder(android.R.color.transparent)
+                    .into(id_Profile_Image)
+            }
+
+
+            },{
+                Log.e("실패 Get Member", "" + it.message)
+            })
+
 
 //        send 쪽지 db-
 //                Id 고유번호
@@ -141,6 +182,10 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             override fun onTabSelected(tab: TabLayout.Tab?)
             {
                 if(tab!!.position == 0){
+                    Log.e("탭선택","선택")
+                    Log.e("m_seq",m_seq)
+
+
                     tablayout?.getTabAt(0)?.setIcon(R.drawable.ic_write)
                     tablayout?.getTabAt(1)?.setIcon(R.drawable.ic_heart_empty)
                     tablayout?.getTabAt(2)?.setIcon(R.drawable.ic_lock_empty)
@@ -166,7 +211,6 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             }
         })
 
-        profileImage?.setImageResource(R.drawable.ic_user)
         profileImage?.setOnClickListener(this)
         profileAdd?.setOnClickListener(this)
         backgroundAdd?.setOnClickListener(this)
@@ -191,6 +235,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
 
         return view
     }
+
 
 
     private fun collapsingToolbarInit(){
@@ -347,6 +392,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
 
             REQUEST_IMAGE_CROP -> {
                 if (resultCode == Activity.RESULT_OK) {
+
 //                    galleryAddPic()
                     //사진 변환 error
                     Log.e("IMAGE_href = ",""+albumURI)

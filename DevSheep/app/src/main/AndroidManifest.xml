@@ -37,9 +37,6 @@
         <activity android:name=".view.activity.MystoryActivity"
             android:theme="@style/WriteTheme">
         </activity>
-        <activity android:name=".view.activity.SecretStoryActivity"
-            android:theme="@style/WriteTheme">
-        </activity>
         <activity android:name=".view.activity.LoginActivity"></activity>
         <activity android:name=".view.activity.SignUpActivity"></activity>
         <activity android:name=".view.activity.MyMessageActivity"></activity>

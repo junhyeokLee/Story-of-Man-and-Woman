@@ -1,5 +1,6 @@
 package com.dev_sheep.story_of_man_and_woman.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.dev_sheep.story_of_man_and_woman.data.database.dao.TestDAO
@@ -73,6 +74,27 @@ class FeedViewModel(private val testDAO: TestDAO, private val feedService: FeedS
             .subscribe({
 
             },{
+            })
+    }
+
+    fun increaseViewCount(feed_seq:Int){
+        val single = feedService.edit_feed_view_count(feed_seq)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+
+            },{
+
+            })
+    }
+    fun increaseLikeCount(feed_seq:Int,boolean_value: String){
+        val single = feedService.edit_feed_like_count(feed_seq,boolean_value)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+
+            },{
+
             })
     }
 
