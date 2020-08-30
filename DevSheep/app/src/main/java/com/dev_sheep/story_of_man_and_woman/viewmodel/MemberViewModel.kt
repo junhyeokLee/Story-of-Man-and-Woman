@@ -79,4 +79,42 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
 
     }
 
+
+    fun getMemberCheck(
+        email: String,
+        password: String,
+        context: Context
+    ){
+        val single = memberService.getMemberCheck(email, password)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.e("성공함 Login", "" + it.toString())
+
+                if (it.toString() == "true") { // email 중복되면 false 반환
+
+                    // 회원가입시 자동로그인 하기위해 email,password 저장
+                    val auto = context.getSharedPreferences("autoLogin", AppCompatActivity.MODE_PRIVATE)
+
+                    // auto의 loginEmail , loginPassword에 값을 저장해 줍니다.
+                    val autoLogin : SharedPreferences.Editor = auto.edit()
+                    autoLogin.putString("inputEmail", email);
+                    autoLogin.putString("inputPassword",password);
+                    //꼭 commit()을 해줘야 값이 저장됩니다 ㅎㅎ
+                    autoLogin.commit();
+                    val intent = Intent(context, MainActivity::class.java)
+                    context.applicationContext.startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK))
+                } else {
+                    Toast.makeText(
+                        context.applicationContext,
+                        "email 또는 password를 확인해주세요.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+            }, {
+                Log.e("실패함 Insert Member", "" + it.message)
+            })
+    }
+
 }

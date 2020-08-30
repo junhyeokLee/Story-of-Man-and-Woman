@@ -83,6 +83,7 @@
 
 
         <EditText
+            android:id="@+id/etv_email"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:drawablePadding="16dp"
@@ -99,6 +100,7 @@
 
 
         <EditText
+            android:id="@+id/etv_password"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:drawablePadding="16dp"
@@ -109,7 +111,7 @@
             android:maxLines="1"
             android:backgroundTint="@color/gray"
             android:textColorHint="@color/gray"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="16sp" />
 
         <LinearLayout
@@ -123,6 +125,7 @@
 
 
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_signup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
@@ -137,6 +140,7 @@
 
 
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"

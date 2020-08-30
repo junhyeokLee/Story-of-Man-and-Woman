@@ -186,9 +186,6 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
                     etv_nick_name.text.toString(),
                     selected_Gender, selected_Age
                 )
-
-
-
             }
             R.id.tv_login_activity -> {
                 val intent = Intent(getApplicationContext(), LoginActivity::class.java)

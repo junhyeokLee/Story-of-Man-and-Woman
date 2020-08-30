@@ -62,7 +62,7 @@
                 android:layout_marginBottom="46dp"
                 />
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/id_Profile_Image"
                 android:layout_width="110dp"
                 android:layout_height="110dp"

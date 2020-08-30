@@ -24,6 +24,10 @@ interface MemberService {
     fun getMemberSeq(@Field("email") email: String, @Field("password") password: String): Single<Member>
 
     @FormUrlEncoded
+    @POST("login_check.php")
+    fun getMemberCheck(@Field("email") email: String, @Field("password") password: String): Single<String>
+
+    @FormUrlEncoded
     @POST("member_get.php")
     fun getMember(@Field("m_seq") m_seq: String): Single<Member>
 

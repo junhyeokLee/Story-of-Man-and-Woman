@@ -45,6 +45,7 @@ import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.tabs.TabLayout
+import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_feed.*
@@ -80,11 +81,12 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     var recyclerView : RecyclerView? = null
     var progressBar : ProgressBar? = null
     var layoutManager: GridLayoutManager? = null
-    var profileImage: ImageView? = null
+    var profileImage: CircleImageView? = null
     var profileAdd : ImageView? = null
     var backgroundAdd: ImageView? = null
     var viewpager : ViewPager? = null
     var tablayout: TabLayout? = null
+    lateinit var nickname: String
     lateinit var preferecnes_img : ImageView
     lateinit var preferecnes_message : ImageView
     override fun onCreateView(
@@ -105,7 +107,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
         progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         layoutManager = GridLayoutManager(view.context, 1)
-        profileImage = view.findViewById<ImageView>(R.id.id_Profile_Image)
+        profileImage = view.findViewById<CircleImageView>(R.id.id_Profile_Image)
         profileAdd = view.findViewById<ImageView>(R.id.id_Profile_add)
         backgroundAdd = view.findViewById<ImageView>(R.id.id_ProfileBackgorund_add)
         viewpager = view.findViewById(R.id.viewPager) as ViewPager
@@ -123,6 +125,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             .subscribe({
 
                 tv_profile_nick.text = it.nick_name
+                nickname = it.nick_name.toString()
 //                id_Profile_Image.http://storymaw.com/data/feed/20200814_113842.jpg
             if(it.profile_img == null) {
                 id_Profile_Image.background = resources.getDrawable(R.drawable.ic_user)
@@ -421,7 +424,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             }
         }else if(vertical < 150) {
             if (menu != null) {
-                collapsingToolbar?.title = "junhyeoklee616"
+                collapsingToolbar?.title = nickname
                 val item = menu!!.findItem(id)
                 item.isVisible = true
             }
