@@ -99,9 +99,10 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                mFeedAdapter = FeedAdapter(it, contexts, childFragmentManager,object : FeedAdapter.OnClickViewListener{
+                mFeedAdapter = FeedAdapter(it, contexts,object : FeedAdapter.OnClickViewListener{
                     override fun OnClickFeed(feed_seq: Int) {
-                  feedViewModel.increaseViewCount(feed_seq)
+                        feedViewModel.increaseViewCount(feed_seq)
+
                     }
                 },object : FeedAdapter.OnClickLikeListener{
                     override fun OnClickFeed(feed_seq: Int, boolean_value: String) {

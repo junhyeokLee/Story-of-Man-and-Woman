@@ -34,6 +34,9 @@ import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Member
+import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.MEMBER_SERVICE
 import com.dev_sheep.story_of_man_and_woman.data.remote.api.MemberService
 import com.dev_sheep.story_of_man_and_woman.view.activity.MessageActivity
@@ -49,8 +52,15 @@ import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_feed.*
+import kotlinx.android.synthetic.main.activity_feed_write.*
 import kotlinx.android.synthetic.main.fragment_profile.*
+import okhttp3.Callback
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import retrofit2.Call
+import retrofit2.Response
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -72,7 +82,9 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     var imageURI: Uri? = null
     var photoURI: Uri? = null
     var albumURI: Uri? = null
-
+    var albumFile: File? = null
+    lateinit var m_nick_name : String
+    lateinit var m_seq : String
     var collapsingToolbar : CollapsingToolbarLayout? = null
     var appBarLayout : AppBarLayout? = null
     var toolbar : Toolbar? = null
@@ -94,11 +106,6 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        // m_seq 가져오기
-         val preferences: SharedPreferences = context!!.getSharedPreferences("m_seq", Context.MODE_PRIVATE)
-         val m_seq = preferences.getString("inputMseq","")
-
         val view = inflater.inflate(R.layout.fragment_profile,null)
         toolbar = view.findViewById(R.id.toolbar) as Toolbar
         appBarLayout = view.findViewById<AppBarLayout>(R.id.app_bar)
@@ -118,50 +125,6 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
         setHasOptionsMenu(true)
 
-
-        val single = MEMBER_SERVICE.getMember(m_seq)
-        single.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-
-                tv_profile_nick.text = it.nick_name
-                nickname = it.nick_name.toString()
-//                id_Profile_Image.http://storymaw.com/data/feed/20200814_113842.jpg
-            if(it.profile_img == null) {
-                id_Profile_Image.background = resources.getDrawable(R.drawable.ic_user)
-            }else{
-                Glide.with(this)
-                    .load(it.profile_img)
-                    .apply(RequestOptions().circleCrop())
-                    .placeholder(android.R.color.transparent)
-                    .into(id_Profile_Image)
-            }
-
-
-            },{
-                Log.e("실패 Get Member", "" + it.message)
-            })
-
-
-//        send 쪽지 db-
-//                Id 고유번호
-//                Recv_seq 받는이 seq
-//        Send_seq 보내는이 seq
-//        Title 제목
-//                Content 내용 type = text로
-//        Recv_chk 쪽지를 읽었는지 안읽었는지 확인 타입 varchar
-//        File 쪽지파일 이름 타입은 varchar
-//        Send_date 타입은 date
-//
-//        Receive 쪽지 db -
-//                Id 고유번호
-//                Recv_seq 받는이 seq
-//        Send_seq 보내는이 seq
-//        Title 제목
-//                Content 내용 type = text로
-//        File 쪽지파일 이름 타입은 varchar
-//        Send_date 타입은 date
-
         collapsingToolbarInit()
 
         tablayout?.apply {
@@ -170,6 +133,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             addTab(this.newTab().setIcon(R.drawable.ic_lock_empty).setText("비밀 이야기"))
             addTab(this.newTab().setIcon(R.drawable.ic_bookmark_hollow).setText("북마크"))
         }
+
 
         viewPagerAdapter = ProfileViewpagerAdapter(childFragmentManager,tablayout!!.tabCount)
         viewpager?.adapter = viewPagerAdapter
@@ -185,9 +149,6 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             override fun onTabSelected(tab: TabLayout.Tab?)
             {
                 if(tab!!.position == 0){
-                    Log.e("탭선택","선택")
-                    Log.e("m_seq",m_seq)
-
 
                     tablayout?.getTabAt(0)?.setIcon(R.drawable.ic_write)
                     tablayout?.getTabAt(1)?.setIcon(R.drawable.ic_heart_empty)
@@ -214,31 +175,58 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             }
         })
 
+
+        initData()
+
         profileImage?.setOnClickListener(this)
         profileAdd?.setOnClickListener(this)
         backgroundAdd?.setOnClickListener(this)
         preferecnes_img?.setOnClickListener(this)
         preferecnes_message?.setOnClickListener(this)
-//        val manager: FragmentManager? = activity?.supportFragmentManager
-
-
-//        testViewModel.getListPokemon().observe(this, Observer {
-//            val pokemons: List<Test> = it
-//            recyclerView?.adapter = TestAdapter(pokemons, view.context,childFragmentManager)
-//
-//            if (pokemons.isNotEmpty()) {
-//                progressBar?.visibility = View.GONE
-//            }else {
-//                progressBar?.visibility = View.VISIBLE
-//            }
-//
-//        })
-
-
 
         return view
     }
 
+    private fun initData(){
+        // m_seq 가져오기
+        val preferences: SharedPreferences = context!!.getSharedPreferences("m_seq", Context.MODE_PRIVATE)
+        m_seq = preferences.getString("inputMseq","")
+
+        val single = MEMBER_SERVICE.getMember(m_seq)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+
+                tv_profile_nick.text = it.nick_name
+                nickname = it.nick_name.toString()
+                m_nick_name = it.nick_name.toString()
+//                id_Profile_Image.http://storymaw.com/data/feed/20200814_113842.jpg
+                if(it.profile_img == null) {
+                    id_Profile_Image.background = resources.getDrawable(R.drawable.ic_user)
+                }else{
+                    //"http://www.storymaw.com/data/member/"+nickname+"/"+
+                    Glide.with(this)
+                        .load(it.profile_img)
+                        .apply(RequestOptions().circleCrop())
+                        .placeholder(android.R.color.transparent)
+                        .into(id_Profile_Image)
+                }
+
+
+            },{
+                Log.e("실패 Get Member", "" + it.message)
+            })
+
+
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+
+//        initData()
+
+    }
 
 
     private fun collapsingToolbarInit(){
@@ -365,7 +353,8 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                 if (resultCode == Activity.RESULT_OK) {
                     if (data!!.data != null) {
                         try {
-                            var albumFile: File? = null
+
+
                             albumFile = createImageFile()
                             photoURI = data!!.data
                             albumURI = Uri.fromFile(albumFile)
@@ -381,7 +370,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                 if (resultCode == Activity.RESULT_OK) {
                     if (data!!.data != null) {
                         try {
-                            var albumFile: File? = null
+
                             albumFile = createImageFile()
                             photoURI = data!!.data
                             albumURI = Uri.fromFile(albumFile)
@@ -399,7 +388,30 @@ class ProfileFragment: Fragment(),View.OnClickListener {
 //                    galleryAddPic()
                     //사진 변환 error
                     Log.e("IMAGE_href = ",""+albumURI)
+                    Log.e("IMAGE_FILE_NAME = ",""+albumFile?.name)
+
                     id_Profile_Image.setImageURI(albumURI)
+
+                    val requestFile: RequestBody =
+                        RequestBody.create(MediaType.parse("multipart/form-data"), albumFile)
+                    val profile_img =
+                        MultipartBody.Part.createFormData("uploaded_file", albumFile?.name, requestFile)
+
+                    val resultCall: Call<Member> = MEMBER_SERVICE.uploadProfile(nickname,profile_img)
+
+                    resultCall.enqueue(object : retrofit2.Callback<Member?> {
+                        override fun onResponse(call: Call<Member?>, response: Response<Member?>) {
+                            Log.e("성공함",response.toString())
+                            Log.e("filename",albumFile?.name)
+                            memberViewModel.editProfileImg(m_seq, "http://www.storymaw.com/data/member/"+nickname+"/"+albumFile?.name.toString())
+                        }
+
+                        override fun onFailure(call: Call<Member?>, t: Throwable) {
+                            Log.e("에러",t.message)
+                        }
+
+                    })
+
                 }
             }
 

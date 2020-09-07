@@ -8,6 +8,7 @@ import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
 import com.dev_sheep.story_of_man_and_woman.data.remote.api.FeedService
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 
@@ -39,6 +40,7 @@ class FeedViewModel(private val testDAO: TestDAO, private val feedService: FeedS
 //    }
 
 
+    private val disposable = CompositeDisposable()
 
     fun getListPokemon(): LiveData<List<Test>> {
         return testDAO.all()
@@ -129,4 +131,8 @@ class FeedViewModel(private val testDAO: TestDAO, private val feedService: FeedS
                 })
     }
 
+
+    override fun onCleared() {
+        disposable.clear()
+    }
 }

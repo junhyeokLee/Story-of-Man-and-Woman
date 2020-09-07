@@ -1,7 +1,9 @@
 package com.dev_sheep.story_of_man_and_woman.view.activity
 
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -103,6 +105,11 @@ class MystoryActivity : AppCompatActivity() {
     }
 
     private fun insertImages(images: List<Image>?) {
+
+        // 저장된 m_seq 가져오기
+        val preferences: SharedPreferences = getSharedPreferences("m_seq", Context.MODE_PRIVATE)
+        val m_seq = preferences.getString("inputMseq", "")
+
         if (images == null) return
         val stringBuffer = StringBuilder()
         var i = 0
@@ -128,7 +135,7 @@ class MystoryActivity : AppCompatActivity() {
                     Log.e("filename",file.name)
 
                     stringBuffer.append(file.name).append("\n")
-                    richwysiwygeditor.getContent().insertImage("http://www.storymaw.com/data/feed/"+TAG_SEQ+"/"+ file.name, "alt")
+                    richwysiwygeditor.getContent().insertImage("http://www.storymaw.com/data/feed/"+ file.name, "alt")
                 }
                 override fun onFailure(
                     call: Call<Feed?>,

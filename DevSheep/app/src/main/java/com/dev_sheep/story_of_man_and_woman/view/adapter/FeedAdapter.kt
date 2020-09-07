@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.os.AsyncTask
 import android.preference.PreferenceManager
 import android.text.Html
 import android.text.SpannableString
@@ -31,6 +32,7 @@ import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileUsersFragment
 import com.dev_sheep.story_of_man_and_woman.view.activity.FeedActivity
 import com.victor.loading.rotate.RotateLoading
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.android.synthetic.main.activity_feed.*
 import kotlinx.android.synthetic.main.adapter_feed.view.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -41,7 +43,6 @@ import java.util.*
 class FeedAdapter(
     private val list: List<Feed>,
     private var context: Context,
-    private var fragmentManager: FragmentManager,
     private val onClickViewListener: OnClickViewListener,
     private val onClickLikeListener: OnClickLikeListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -190,6 +191,8 @@ class FeedAdapter(
                 PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP)
 
 //            val radius = itemView.resources.getDimensionPixelSize(R.dimen.corner_radius)
+
+            Log.e("CREATETR ADAPTER URL ",item.creater_image_url)
             Glide.with(itemView.context)
                 .load(item.creater_image_url)
                 .apply(RequestOptions().circleCrop())
@@ -233,36 +236,73 @@ class FeedAdapter(
                 }
             }
 
-
-
             with(favoriteButton){
-            val feed = item
-            var favCount : String
-            val preferences = PreferenceManager.getDefaultSharedPreferences(itemView.context)
-            val editor = preferences.edit()
+                val feed = item
+                var favCount : String
+                val preferences = PreferenceManager.getDefaultSharedPreferences(itemView.context)
+                val editor = preferences.edit()
 
 
-            if (preferences.contains("checked"+position) && preferences.getBoolean("checked"+position, false) == true)
-            {
-                this.isChecked = true
-            } else {
-                this.isChecked = false
-            }
-                setOnCheckedChangeListener { compoundButton, b ->
-                    if(this.isChecked){
-                        onClickFeedLike.OnClickFeed(feed.feed_seq, "true")
-                        favCount = feed.like_no?.plus(1).toString()
-                        editor.putBoolean("checked"+position, true)
-                        editor.apply()
-                    }else{
-                        onClickFeedLike.OnClickFeed(feed.feed_seq, "false")
-                        favCount = feed.like_no.toString()
-                        editor.putBoolean("checked"+position, false)
-                        editor.apply()
-                    }
+                if (preferences.contains("checked"+feed.feed_seq) &&
+                    preferences.getBoolean("checked"+feed.feed_seq, false) == true)
+                {
+                    this.isChecked = true
 
-                    favoriteValue.setText(favCount)
+                } else {
+                    this.isChecked = false
                 }
+
+                if(this.isChecked == true){
+                    setOnCheckedChangeListener { compoundButton, b ->
+                        if(this.isChecked){
+                            onClickFeedLike.OnClickFeed(feed.feed_seq, "true")
+                            favCount = feed.like_no.toString()
+                            editor.putBoolean("checked"+feed.feed_seq, true)
+                            editor.apply()
+                        }else{
+                            onClickFeedLike.OnClickFeed(feed.feed_seq, "false")
+                            favCount = feed.like_no?.minus(1).toString()
+                            editor.putBoolean("checked"+feed.feed_seq, true)
+                            editor.apply()
+                        }
+                        favoriteValue.setText(favCount)
+                    }
+                }else{
+                    setOnCheckedChangeListener { compoundButton, b ->
+                        if(this.isChecked){
+                            onClickFeedLike.OnClickFeed(feed.feed_seq, "true")
+                            favCount = feed.like_no?.plus(1).toString()
+                            editor.putBoolean("checked"+feed.feed_seq, true)
+                            editor.apply()
+                        }else{
+                            onClickFeedLike.OnClickFeed(feed.feed_seq, "false")
+                            favCount = feed.like_no.toString()
+                            editor.putBoolean("checked"+feed.feed_seq, false)
+                            editor.apply()
+                        }
+                        favoriteValue.setText(favCount)
+                    }
+                }
+
+
+//                setOnCheckedChangeListener { compoundButton, b ->
+//                    if(b == true){
+//
+//                        onClickFeedLike.OnClickFeed(feed.feed_seq, "true")
+//                        favCount = feed.like_no?.plus(1).toString()
+//                        editor.putBoolean("checked"+feed.feed_seq, true)
+//                        editor.apply()
+//
+//                    }else{
+//                        onClickFeedLike.OnClickFeed(feed.feed_seq, "false")
+//                        favCount = feed.like_no.toString()
+//                        editor.putBoolean("checked"+feed.feed_seq, false)
+//                        editor.apply()
+//                    }
+//
+//                    favoriteValue.setText(favCount)
+//
+//                }
             }
 
             with(feed_layout){
@@ -270,8 +310,7 @@ class FeedAdapter(
                     onClickFeedView.OnClickFeed(item.feed_seq)
                     val lintent = Intent(itemView.context, FeedActivity::class.java)
                     lintent.putExtra("feed_seq", item.feed_seq)
-                    lintent.putExtra("position",position)
-                    lintent.putExtra("checked"+position,favoriteButton.isChecked)
+                    lintent.putExtra("checked"+item.feed_seq,favoriteButton.isChecked)
                     itemView.context.startActivity(lintent)
 
                 }

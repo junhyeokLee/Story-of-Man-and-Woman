@@ -35,6 +35,15 @@ interface FeedService {
     @GET("feed_get_all.php")
     fun getList(): Single<List<Feed>>
 
+    @GET("feed_get_mystory.php")
+    fun getListMystory(@Query("m_seq") m_seq: String): Single<List<Feed>>
+
+    @GET("feed_get_secret.php")
+    fun getListSecert(@Query("m_seq") m_seq: String): Single<List<Feed>>
+
+    @GET("feed_get_subscribe.php")
+    fun getListSubscribe(@Query("m_seq") m_seq: String): Single<List<Feed>>
+
     @FormUrlEncoded
     @POST("feed_edit_view_count.php")
     fun edit_feed_view_count(@Field("feed_seq") feed_seq: Int): Single<Feed>

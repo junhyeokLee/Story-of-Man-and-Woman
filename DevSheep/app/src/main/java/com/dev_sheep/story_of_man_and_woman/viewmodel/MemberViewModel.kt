@@ -75,7 +75,20 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
 
             },{
                 Log.e("실패 Get Member", "" + it.message)
-    })
+            })
+
+    }
+
+    fun editProfileImg(m_seq: String, profileImg: String){
+        val single = memberService.editMemberProfile(m_seq,profileImg)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.e("성공함 profile edit", "" + it.profile_img)
+
+            },{
+                Log.e("실패 profile edit", "" + it.message)
+            })
 
     }
 

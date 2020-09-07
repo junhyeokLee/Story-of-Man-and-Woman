@@ -48,75 +48,92 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
         getIntentFeed()
     }
 
-     fun getIntentFeed(){
+    fun getIntentFeed(){
 
-         if(intent.hasExtra("feed_seq")){
+        if(intent.hasExtra("feed_seq")){
 
-             val feed_seq = intent.getIntExtra("feed_seq",0)
-             var favCount : String
-             val preferences = PreferenceManager.getDefaultSharedPreferences(this)
-             val editor = preferences.edit()
-             val single = FEED_SERVICE.getFeed(feed_seq)
-             single.subscribeOn(Schedulers.io())
-                 .observeOn(AndroidSchedulers.mainThread())
-                 .subscribe({
+            val feed_seq = intent.getIntExtra("feed_seq",0)
+            var favCount : String
+            val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+            val editor = preferences.edit()
+            val single = FEED_SERVICE.getFeed(feed_seq)
+            single.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
                     Log.e("feed_creater",""+it.creater)
-                     tv_creater.text = it.creater
-                     tv_tag_name.text = "# "+it.tag_name
-                     write_headline.text = it.title
-                     write_content.html = it.content
-                     tv_feed_date.text = it.feed_date!!.substring(0, 10);
-                     view_count.text = it.view_no.toString()
-                     like_count.text = it.like_no.toString()
+                    tv_creater.text = it.creater
+                    tv_tag_name.text = "# "+it.tag_name
+                    write_headline.text = it.title
+                    write_content.html = it.content
+                    tv_feed_date.text = it.feed_date!!.substring(0, 10);
+                    view_count.text = it.view_no.toString()
+                    like_count.text = it.like_no.toString()
 
-                     check_follow.setOnClickListener(this)
-                     img_profile.setOnClickListener(this)
-                     Glide.with(this)
-                         .load(it.creater_image_url)
-                         .apply(RequestOptions().circleCrop())
-                         .placeholder(android.R.color.transparent)
-                         .into(img_profile)
+                    check_follow.setOnClickListener(this)
+                    img_profile.setOnClickListener(this)
+                    Glide.with(this)
+                        .load(it.creater_image_url)
+                        .apply(RequestOptions().circleCrop())
+                        .placeholder(android.R.color.transparent)
+                        .into(img_profile)
 
-                     with(favorite_btn){
+                    with(favorite_btn){
 
-                         if(intent.hasExtra("position")){
-                             val position = intent.getIntExtra("position",0)
+                        if(intent.hasExtra("feed_seq")){
+                            val feed_seq = intent.getIntExtra("feed_seq",0)
 
-                             if(intent.hasExtra("checked"+position)) {
-                                 val checked = intent.getBooleanExtra("checked"+position,false)
-                                 favorite_btn.isChecked = checked
+                            if(intent.hasExtra("checked"+feed_seq)) {
+                                val checked = intent.getBooleanExtra("checked"+feed_seq,false)
+                                this.isChecked = checked
 
-                                 setOnCheckedChangeListener { compoundButton, b ->
-                                     if(this.isChecked){
-                                         feedViewModel.increaseLikeCount(feed_seq,this.isChecked.toString())
-                                         favCount = it.like_no?.plus(1).toString()
-                                         editor.putBoolean("checked"+position, true)
-                                         editor.apply()
-                                     }else{
-                                         feedViewModel.increaseLikeCount(feed_seq,this.isChecked.toString())
-                                         favCount = it.like_no.toString()
-                                         editor.putBoolean("checked"+position, false)
-                                         editor.apply()
-                                     }
-                                     like_count.text = favCount
-                                 }
+                                if(checked == true){
+                                    setOnCheckedChangeListener { compoundButton, b ->
+                                        if(this.isChecked){
+                                            feedViewModel.increaseLikeCount(feed_seq,"true")
+                                            favCount = it.like_no.toString()
+                                            editor.putBoolean("checked"+feed_seq, true)
+                                            editor.apply()
+                                        }else{
+                                            feedViewModel.increaseLikeCount(feed_seq,"false")
+                                            favCount = it.like_no?.minus(1).toString()
+                                            editor.putBoolean("checked"+feed_seq, false)
+                                            editor.apply()
+                                        }
+                                        like_count.text = favCount
+                                    }
+                                }else{
+                                    setOnCheckedChangeListener { compoundButton, b ->
+                                        if(this.isChecked){
+                                            feedViewModel.increaseLikeCount(feed_seq,"true")
+                                            favCount = it.like_no?.plus(1).toString()
+                                            editor.putBoolean("checked"+feed_seq, true)
+                                            editor.apply()
+                                        }else{
+                                            feedViewModel.increaseLikeCount(feed_seq,"false")
+                                            favCount = it.like_no.toString()
+                                            editor.putBoolean("checked"+feed_seq, false)
+                                            editor.apply()
+                                        }
+                                        like_count.text = favCount
+                                    }
+                                }
 
-                             }
-                         }
-                     }
+                            }
+                        }
+                    }
 
 
 
-                 },
-                     {
-                         Log.e("errors",it.message)
-                 })
+                },
+                    {
+                        Log.e("errors",it.message)
+                    })
 
-         } else{
-             Toast.makeText(this, "전달된 이름이 없습니다", Toast.LENGTH_SHORT).show()
-         }
+        } else{
+            Toast.makeText(this, "전달된 이름이 없습니다", Toast.LENGTH_SHORT).show()
+        }
 
-     }
+    }
 
     override fun onClick(v: View?) {
         when(v?.id){
