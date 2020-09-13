@@ -65,7 +65,7 @@ interface FeedService {
 
     @FormUrlEncoded
     @POST("book_mark_get.php")
-    fun getBookMark(@Field("m_seq") m_seq: String): Single<Feed>
+    fun getBookMark(@Field("m_seq") m_seq: String): Single<List<Feed>>
 
 //    @FormUrlEncoded
 //    @POST("update_feed.php")
