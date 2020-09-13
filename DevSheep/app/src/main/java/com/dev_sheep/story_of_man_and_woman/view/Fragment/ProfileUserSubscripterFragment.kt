@@ -26,7 +26,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_profile_feed.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class ProfileFeedFragment: Fragment() {
+class ProfileUserSubscripterFragment(m_seq : String): Fragment() {
     private val feedViewModel: FeedViewModel by viewModel()
     private var recyclerView: RecyclerView? = null
     lateinit var mFeedAdapter: FeedAdapter
@@ -38,7 +38,7 @@ class ProfileFeedFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_profile_feed, container, false)
+        val view = inflater.inflate(R.layout.fragment_profile_subscribe, container, false)
         contexts = view.context
         recyclerView = view.findViewById<View>(R.id.recyclerView) as RecyclerView?
         initData()
@@ -52,7 +52,7 @@ class ProfileFeedFragment: Fragment() {
         val m_seq = preferences.getString("inputMseq", "")
 
         // 전체보기
-        val single = FEED_SERVICE.getListMystory(m_seq)
+        val single = FEED_SERVICE.getListSubscribe(m_seq)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({

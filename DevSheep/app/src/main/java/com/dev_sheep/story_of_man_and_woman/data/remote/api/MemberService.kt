@@ -41,4 +41,20 @@ interface MemberService {
     @FormUrlEncoded
     @POST("member_edit_profile.php")
     fun editMemberProfile(@Field("m_seq") m_seq:String,@Field("profile_img") profile_img:String ): Single<Member>
+
+    @FormUrlEncoded
+    @POST("member_edit_profilebackground.php")
+    fun editMemberProfileBackground(@Field("m_seq") m_seq:String,@Field("background_img") background_img:String ): Single<Member>
+
+    @FormUrlEncoded
+    @POST("follow_member_request.php")
+    fun memberSubscribe(@Field("target_m_seq") target_m_seq:String,@Field("m_seq") m_seq:String,@Field("type") type: String ): Single<String>
+
+    @FormUrlEncoded
+    @POST("follow_member_count.php")
+    fun memberMySubscribeCount(@Field("m_seq") m_seq:String): Single<String>
+
+    @FormUrlEncoded
+    @POST("follow_member_user_count.php")
+    fun memberUserSubscribeCount(@Field("m_seq") m_seq:String): Single<String>
 }

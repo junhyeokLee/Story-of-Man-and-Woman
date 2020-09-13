@@ -69,6 +69,11 @@ class ProfileSubscripterFragment: Fragment() {
                             feedViewModel.increaseLikeCount(feed_seq, boolean_value)
                         }
 
+                    },object : FeedAdapter.OnClickBookMarkListener{
+                        override fun OnClickBookMark(m_seq: String, feed_seq: Int, boolean_value: String) {
+                            feedViewModel.onClickBookMark(m_seq,feed_seq,boolean_value)
+                        }
+
                     })
                 recyclerView?.apply {
                     var linearLayoutMnager = LinearLayoutManager(this.context)

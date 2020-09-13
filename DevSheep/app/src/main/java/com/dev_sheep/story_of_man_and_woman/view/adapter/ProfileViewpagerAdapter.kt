@@ -26,8 +26,9 @@ class ProfileViewpagerAdapter(fm: FragmentManager,pageCount: Int) : FragmentPage
         {
             0 -> ProfileFeedFragment()
             1 -> ProfileSubscripterFragment()
-            2 -> ProfileBookMarkFragment()
-            3 -> ProfileScretFragment()
+            2 -> ProfileScretFragment()
+            3 -> ProfileBookMarkFragment()
+
             else -> null
         }
         return fragment!!

@@ -1,13 +1,17 @@
 package com.dev_sheep.story_of_man_and_woman.viewmodel
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.SharedPreferences
 import android.util.Log
+import android.widget.CheckBox
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
+import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.remote.api.FeedService
 import com.dev_sheep.story_of_man_and_woman.data.remote.api.MemberService
 import com.dev_sheep.story_of_man_and_woman.view.activity.MainActivity
@@ -45,7 +49,7 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
 
                     val intent = Intent(context, MainActivity::class.java)
                     context.applicationContext.startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK))
-                } else {
+                } else if(it.toString() == "false") {
                     Toast.makeText(
                         context.applicationContext,
                         "이미 사용중인 이메일 입니다.",
@@ -91,6 +95,18 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
             })
 
     }
+    fun editProfileBackgroundImg(m_seq: String, profileBackgroundImg: String){
+        val single = memberService.editMemberProfileBackground(m_seq,profileBackgroundImg)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.e("성공함 profile backgorund edit", "" + it.profile_img)
+
+            },{
+                Log.e("실패 profile backgorund edit", "" + it.message)
+            })
+
+    }
 
 
     fun getMemberCheck(
@@ -130,4 +146,66 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
             })
     }
 
+    fun memberSubscribe(target_m_seq:String,m_seq:String,type:String,count: TextView){
+        val single = memberService.memberSubscribe(target_m_seq,m_seq,type)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                if(count.text == "구독하기" || count.text == "구독취소"){
+
+                }else {
+                    Log.e("성공함 구독", "" + it.toString())
+                    if (it.toString() == "true") {
+                        var value = Integer.parseInt(count.text.toString())
+                        var result = value + 1
+                        count.text = result.toString()
+                    } else {
+                        var value = Integer.parseInt(count.text.toString())
+                        var result = value - 1
+                        count.text = result.toString()
+                    }
+                }
+            }, {
+                Log.e("실패함 구독", "" + it.message)
+
+            })
+    }
+    fun memberSubscribeChecked(target_m_seq:String, m_seq:String, type:String, checkBox: CheckBox,context: Context){
+        val single = memberService.memberSubscribe(target_m_seq,m_seq,type)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                if(it.toString() == "true"){
+                    checkBox.isChecked = true
+                    checkBox.text = "구독취소"
+                    checkBox.setTextColor(context.getColor(R.color.white))
+                }else{
+                    checkBox.isChecked = false
+                    checkBox.text = "구독하기"
+                    checkBox.setTextColor(context.getColor(R.color.black))
+
+                }
+
+            }, {
+            })
+    }
+
+    fun memberMySubscribeCount(m_seq: String,count: TextView){
+        val single = memberService.memberMySubscribeCount(m_seq)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                count.text = it
+            }, {
+            })
+    }
+    fun memberUserSubscribeCount(m_seq: String,count: TextView){
+        val single = memberService.memberUserSubscribeCount(m_seq)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                count.text = it
+            }, {
+            })
+    }
 }

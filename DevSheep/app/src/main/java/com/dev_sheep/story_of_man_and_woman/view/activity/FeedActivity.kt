@@ -14,6 +14,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
+import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_feed.*
@@ -24,7 +25,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class FeedActivity : AppCompatActivity() ,View.OnClickListener{
 
     private val feedViewModel: FeedViewModel by viewModel()
-
+    private val memberViewModel: MemberViewModel by viewModel()
+    lateinit var m_seq : String
+    lateinit var my_m_seq: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +52,25 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
     }
 
     fun getIntentFeed(){
+
+        if(intent.hasExtra("creater_seq")){
+
+            m_seq = intent.getStringExtra("creater_seq")
+
+            // 저장된 m_seq 가져오기
+            val getM_seq = getSharedPreferences("m_seq", AppCompatActivity.MODE_PRIVATE)
+            my_m_seq = getM_seq.getString("inputMseq", null)
+
+            check_follow.apply {
+                memberViewModel.memberSubscribeChecked(
+                    m_seq,
+                    my_m_seq,
+                    "checked",
+                    this,
+                    context
+                );
+            }
+        }
 
         if(intent.hasExtra("feed_seq")){
 
@@ -122,7 +144,43 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                         }
                     }
 
+                    with(bookmark){
+                        if(intent.hasExtra("feed_seq")){
+                            val feed_seq = intent.getIntExtra("feed_seq",0)
 
+                            if(intent.hasExtra("bookmark_checked"+feed_seq)) {
+                                val checked = intent.getBooleanExtra("bookmark_checked"+feed_seq,false)
+                                this.isChecked = checked
+
+                                if(checked == true){
+                                    setOnCheckedChangeListener { compoundButton, b ->
+                                        if(this.isChecked){
+                                            feedViewModel.onClickBookMark(my_m_seq,feed_seq,"true")
+                                            editor.putBoolean("bookmark_checked"+feed_seq, true)
+                                            editor.apply()
+                                        }else{
+                                            feedViewModel.onClickBookMark(my_m_seq,feed_seq,"false")
+                                            editor.putBoolean("bookmark_checked"+feed_seq, false)
+                                            editor.apply()
+                                        }
+                                    }
+                                }else{
+                                    setOnCheckedChangeListener { compoundButton, b ->
+                                        if(this.isChecked){
+                                            feedViewModel.onClickBookMark(my_m_seq,feed_seq,"true")
+                                            editor.putBoolean("bookmark_checked"+feed_seq, true)
+                                            editor.apply()
+                                        }else{
+                                            feedViewModel.onClickBookMark(my_m_seq,feed_seq,"false")
+                                            editor.putBoolean("bookmark_checked"+feed_seq, false)
+                                            editor.apply()
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
 
                 },
                     {
@@ -139,11 +197,14 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
         when(v?.id){
             R.id.check_follow -> {
                 if(check_follow.isChecked == true){
+
                     check_follow.setTextColor(resources.getColor(R.color.white))
-                    check_follow.text = "구독중"
+                    check_follow.text = "구독취소"
+                    memberViewModel.memberSubscribe(m_seq,my_m_seq,"true",check_follow)
                 }else{
                     check_follow.setTextColor(resources.getColor(R.color.black))
                     check_follow.text = "구독하기"
+                    memberViewModel.memberSubscribe(m_seq,my_m_seq,"false",check_follow)
                 }
             }
             R.id.img_profile -> {

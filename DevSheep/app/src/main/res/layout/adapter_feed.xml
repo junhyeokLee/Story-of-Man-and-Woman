@@ -357,16 +357,16 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <ImageView
+                <CheckBox
                     android:id="@+id/bookmark"
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:layout_gravity="center"
-                    android:background="@android:color/transparent"
-                    android:tint="@color/sub_Accent"
+                    android:button="@null"
+                    android:background="@drawable/background_bookmark"
                     android:src="@drawable/ic_bookmark_hollow">
 
-                </ImageView>
+                </CheckBox>
 
 
             </LinearLayout>

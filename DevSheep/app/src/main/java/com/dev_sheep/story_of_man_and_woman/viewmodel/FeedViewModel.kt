@@ -100,25 +100,6 @@ class FeedViewModel(private val testDAO: TestDAO, private val feedService: FeedS
             })
     }
 
-//    fun getFeed(){
-//        val call = testService.getList()
-//        call.enqueue(object : Callback<List<Feed>?>{
-//            override fun onFailure(call: Call<List<Feed>?>, t: Throwable) {
-//              Log.e("errors",t.message.toString())
-//            }
-//
-//            override fun onResponse(call: Call<List<Feed>?>, response: Response<List<Feed>?>) {
-//                response?.body()?.let { tests: List<Feed> ->
-//                    thread {
-//                        Log.e("getFeed성공",tests.toString())
-//                        Log.e("feed 0 title value = ",tests.get(0).title)
-//                    }
-//                }
-//            }
-//
-//        })
-//    }
-
     fun getTag(){
         val single = feedService.getList()
         single.subscribeOn(Schedulers.io())
@@ -129,6 +110,28 @@ class FeedViewModel(private val testDAO: TestDAO, private val feedService: FeedS
                 ,{
 
                 })
+    }
+    fun onClickBookMark(m_seq:String,feed_seq: Int,boolean_value: String){
+        val single = feedService.onClickBookMark(m_seq,feed_seq,boolean_value)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.e("BookMark m_seq = ",m_seq)
+
+            },{
+
+            })
+    }
+    fun getBookMark(m_seq:String){
+        val single = feedService.getBookMark(m_seq)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.e("BookMark m_seq = ",m_seq)
+
+            },{
+
+            })
     }
 
 

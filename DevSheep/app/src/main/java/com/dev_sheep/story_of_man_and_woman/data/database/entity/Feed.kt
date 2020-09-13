@@ -24,6 +24,8 @@ data class Feed( @PrimaryKey
                  var tag_seq: String? = null,
                  @SerializedName("creater")
                  var creater: String? = null,
+                 @SerializedName("creater_seq")
+                 var creater_seq: String? = null,
                  @SerializedName("creater_image_url")
                  var creater_image_url: String? = null,
                  @SerializedName("creater_age")
@@ -43,4 +45,7 @@ data class Feed( @PrimaryKey
                  @SerializedName("favorited")
                  var favorited: Boolean = false,
                  @SerializedName("type")
-                 var type: String? = null)
+                 var type: String? = null,
+                 @SerializedName("bookmark_check")
+                 var bookmark_check: String? = null)
+

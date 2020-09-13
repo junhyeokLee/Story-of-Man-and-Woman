@@ -2,9 +2,11 @@ package com.dev_sheep.story_of_man_and_woman.view.adapter
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.AsyncTask
+import android.os.Bundle
 import android.preference.PreferenceManager
 import android.text.Html
 import android.text.SpannableString
@@ -27,9 +29,12 @@ import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
+import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
 import com.dev_sheep.story_of_man_and_woman.utils.PokemonColorUtil
+import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileFragment
 import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileUsersFragment
 import com.dev_sheep.story_of_man_and_woman.view.activity.FeedActivity
+import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import com.victor.loading.rotate.RotateLoading
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_feed.*
@@ -37,6 +42,7 @@ import kotlinx.android.synthetic.main.adapter_feed.view.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.safety.Whitelist
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -44,7 +50,8 @@ class FeedAdapter(
     private val list: List<Feed>,
     private var context: Context,
     private val onClickViewListener: OnClickViewListener,
-    private val onClickLikeListener: OnClickLikeListener
+    private val onClickLikeListener: OnClickLikeListener,
+    private val onClickBookMarkListener: OnClickBookMarkListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     lateinit var mcontext: Context
     var mViewPagerState = HashMap<Int, Int>()
@@ -57,6 +64,7 @@ class FeedAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         mcontext = parent.context
+
         val view: View?
 //        val viewHolder: RecyclerView.ViewHolder
 //        var viewHolder: RecyclerView.ViewHolder? = null
@@ -74,7 +82,7 @@ class FeedAdapter(
                     parent,
                     false
                 )
-                FeedHolder(view, onClickViewListener, onClickLikeListener)
+                FeedHolder(view, onClickViewListener, onClickLikeListener,onClickBookMarkListener)
             }
             VIEW_TYPE_LOADING -> {
                 view = LayoutInflater.from(parent.context).inflate(
@@ -153,12 +161,14 @@ class FeedAdapter(
     internal class FeedHolder(
         itemView: View,
         onClickViewListener: OnClickViewListener,
-        onClickLikeListener: OnClickLikeListener
+        onClickLikeListener: OnClickLikeListener,
+        onClickBookMarkListener: OnClickBookMarkListener
     ) :  RecyclerView.ViewHolder(itemView) {
 
         private val feed_layout: RelativeLayout = itemView.findViewById(R.id.feed_layout)
         private var favoriteButton: CheckBox = itemView.findViewById(R.id.favorite_btn)
         private val favoriteValue: TextView = itemView.findViewById(R.id.like_count)
+        private val bookmarkButton: CheckBox = itemView.findViewById(R.id.bookmark)
         private val img_profile : CircleImageView = itemView.findViewById(R.id.img_profile)
         private val m_nick : TextView = itemView.findViewById(R.id.tv_m_nick)
         private val content : TextView = itemView.findViewById(R.id.tv_content)
@@ -166,8 +176,12 @@ class FeedAdapter(
         private var sdf : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         private val onClickFeedView = onClickViewListener
         private val onClickFeedLike = onClickLikeListener
+        private val onClickBookMark = onClickBookMarkListener
+        lateinit var m_seq : String
+
 
         fun bindView(item: Feed, position: Int) {
+
             itemView.tv_m_nick.text = item.creater
             itemView.tv_title.text = item.title
 //            content.text = br2nl(item.content)
@@ -180,10 +194,6 @@ class FeedAdapter(
             itemView.like_count.text = item.like_no.toString()
             itemView.tv_gender.text = item.creater_gender
 //            Log.e("qdqwd",content.text.toString());
-            Log.e("html : ", item.content);
-            Log.e("html jsoup : ", br2nl(item.content));
-//            itemView.tv_body.text = "아오이게 뭐람 아오이게 뭐람 아오이게 뭐람 아오이게 뭐람 아오이게 뭐람 아오이게 ㅁ으아어어어어어바어으어  ㅁ으아어어어어어바어으어  ㅁ으아어어어어어바어으어  ㅁ으아어어어어어바어으어  ㅁ으아어어어어어바어으어 뭐람 아오이게 뭐람 아오이게 뭐람 아오이게 뭐람"
-//            var tv_body_string : String = stripHtml(content.html.toString())
             setReadMore(itemView.tv_content, content.text.toString(), 3)
 
             val color = PokemonColorUtil(itemView.context).getPokemonColor(item.creater_gender)
@@ -192,7 +202,6 @@ class FeedAdapter(
 
 //            val radius = itemView.resources.getDimensionPixelSize(R.dimen.corner_radius)
 
-            Log.e("CREATETR ADAPTER URL ",item.creater_image_url)
             Glide.with(itemView.context)
                 .load(item.creater_image_url)
                 .apply(RequestOptions().circleCrop())
@@ -204,25 +213,55 @@ class FeedAdapter(
 //                .placeholder(android.R.color.transparent)
 //                .into(itemView.content_img)
 
+            // 자신의 seq 가져오기
+            val preferences: SharedPreferences = itemView.context!!.getSharedPreferences(
+                "m_seq",
+                Context.MODE_PRIVATE
+            )
+            m_seq = preferences.getString("inputMseq", "")
 
             with(m_nick){
                 setOnClickListener {
-                    val dialog = ProfileUsersFragment()//The fragment that u want to open for example
-                    var userFragmnet = (context as AppCompatActivity).supportFragmentManager
-                    var fragmentTransaction: FragmentTransaction = userFragmnet.beginTransaction()
-                    fragmentTransaction.setReorderingAllowed(true)
-                    fragmentTransaction.setCustomAnimations(
-                        R.anim.fragment_fade_in,
-                        R.anim.fragment_fade_out
-                    )
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.replace(R.id.frameLayout, dialog);
-                    fragmentTransaction.commit()
+                    // 나의 seq가 같지 않으면 user프로필
+                    if(m_seq != item.creater_seq) {
+                        val fragment =
+                            ProfileUsersFragment()//The fragment that 로u want to open for example
+                        val arguments = Bundle()
+                        arguments.putString("m_seq", item.creater_seq)
+                        fragment.arguments = arguments
+                        var userFragmnet = (context as AppCompatActivity).supportFragmentManager
+                        var fragmentTransaction: FragmentTransaction = userFragmnet.beginTransaction()
+                        fragmentTransaction.setReorderingAllowed(true)
+                        fragmentTransaction.setCustomAnimations(
+                            R.anim.fragment_fade_in,
+                            R.anim.fragment_fade_out
+                        )
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.replace(R.id.frameLayout, fragment);
+                        fragmentTransaction.commit()
+                    }else if(m_seq == item.creater_seq){
+                        val fragment =
+                            ProfileFragment()//The fragment that u want to open for example
+                        var userFragmnet = (context as AppCompatActivity).supportFragmentManager
+                        var fragmentTransaction: FragmentTransaction = userFragmnet.beginTransaction()
+                        fragmentTransaction.setReorderingAllowed(true)
+                        fragmentTransaction.setCustomAnimations(
+                            R.anim.fragment_fade_in,
+                            R.anim.fragment_fade_out
+                        )
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.replace(R.id.frameLayout, fragment);
+                        fragmentTransaction.commit()
+                    }
+
                 }
             }
             with(img_profile){
                 setOnClickListener {
-                    val dialog = ProfileUsersFragment()//The fragment that u want to open for example
+                    val fragment = ProfileUsersFragment()//The fragment that u want to open for example
+                    val arguments = Bundle()
+                    arguments.putString("m_seq",item.creater_seq)
+                    fragment.arguments = arguments
                     var userFragmnet = (context as AppCompatActivity).supportFragmentManager
                     var fragmentTransaction: FragmentTransaction = userFragmnet.beginTransaction()
                     fragmentTransaction.setReorderingAllowed(true)
@@ -231,7 +270,7 @@ class FeedAdapter(
                         R.anim.fragment_fade_out
                     )
                     fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.replace(R.id.frameLayout, dialog);
+                    fragmentTransaction.replace(R.id.frameLayout, fragment);
                     fragmentTransaction.commit()
                 }
             }
@@ -262,7 +301,7 @@ class FeedAdapter(
                         }else{
                             onClickFeedLike.OnClickFeed(feed.feed_seq, "false")
                             favCount = feed.like_no?.minus(1).toString()
-                            editor.putBoolean("checked"+feed.feed_seq, true)
+                            editor.putBoolean("checked"+feed.feed_seq, false)
                             editor.apply()
                         }
                         favoriteValue.setText(favCount)
@@ -283,26 +322,48 @@ class FeedAdapter(
                         favoriteValue.setText(favCount)
                     }
                 }
+            }
+
+            with(bookmarkButton){
+                val feed = item
+                val preferences = PreferenceManager.getDefaultSharedPreferences(itemView.context)
+                val editor = preferences.edit()
 
 
-//                setOnCheckedChangeListener { compoundButton, b ->
-//                    if(b == true){
-//
-//                        onClickFeedLike.OnClickFeed(feed.feed_seq, "true")
-//                        favCount = feed.like_no?.plus(1).toString()
-//                        editor.putBoolean("checked"+feed.feed_seq, true)
-//                        editor.apply()
-//
-//                    }else{
-//                        onClickFeedLike.OnClickFeed(feed.feed_seq, "false")
-//                        favCount = feed.like_no.toString()
-//                        editor.putBoolean("checked"+feed.feed_seq, false)
-//                        editor.apply()
-//                    }
-//
-//                    favoriteValue.setText(favCount)
-//
-//                }
+                if (preferences.contains("bookmark_checked"+feed.feed_seq) &&
+                    preferences.getBoolean("bookmark_checked"+feed.feed_seq, false) == true)
+                {
+                    this.isChecked = true
+                } else {
+                    this.isChecked = false
+                }
+
+                if(this.isChecked == true){
+                    setOnCheckedChangeListener { compoundButton, b ->
+                        if(this.isChecked){
+                            onClickBookMark.OnClickBookMark(m_seq,feed.feed_seq,"true")
+                            editor.putBoolean("bookmark_checked"+feed.feed_seq, true)
+                            editor.apply()
+//                            FEED_SERVICE.addBookMark(m_seq,item.feed_seq)
+                        }else{
+                            onClickBookMark.OnClickBookMark(m_seq,feed.feed_seq,"false")
+                            editor.putBoolean("bookmark_checked"+feed.feed_seq, false)
+                            editor.apply()
+                        }
+                    }
+                }else{
+                    setOnCheckedChangeListener { compoundButton, b ->
+                        if(this.isChecked){
+                            onClickBookMark.OnClickBookMark(m_seq,feed.feed_seq,"true")
+                            editor.putBoolean("bookmark_checked"+feed.feed_seq, true)
+                            editor.apply()
+                        }else{
+                            onClickBookMark.OnClickBookMark(m_seq,feed.feed_seq,"false")
+                            editor.putBoolean("bookmark_checked"+feed.feed_seq, false)
+                            editor.apply()
+                        }
+                    }
+                }
             }
 
             with(feed_layout){
@@ -311,16 +372,10 @@ class FeedAdapter(
                     val lintent = Intent(itemView.context, FeedActivity::class.java)
                     lintent.putExtra("feed_seq", item.feed_seq)
                     lintent.putExtra("checked"+item.feed_seq,favoriteButton.isChecked)
+                    lintent.putExtra("creater_seq",item.creater_seq)
+                    lintent.putExtra("bookmark_checked"+item.feed_seq,bookmarkButton.isChecked)
                     itemView.context.startActivity(lintent)
 
-                }
-            }
-
-            with(itemView.tv_title){
-                setOnClickListener {
-                    val lintent = Intent(itemView.context, FeedActivity::class.java)
-                    lintent.putExtra("feed_seq", item.feed_seq)
-                    itemView.context.startActivity(lintent)
                 }
             }
 
@@ -456,6 +511,10 @@ class FeedAdapter(
     // omeFragment에서 클릭시 뷰모델 사용하여 좋아 올리기위함
     interface OnClickLikeListener {
         fun OnClickFeed(feed_seq: Int, boolean_value: String)
+    }
+    // omeFragment에서 클릭시 뷰모델 사용하여 저장하기위
+    interface OnClickBookMarkListener {
+        fun OnClickBookMark(m_seq: String,feed_seq: Int, boolean_value: String)
     }
 
 }

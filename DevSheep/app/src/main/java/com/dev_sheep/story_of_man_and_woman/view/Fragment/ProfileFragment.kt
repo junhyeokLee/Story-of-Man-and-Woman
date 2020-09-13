@@ -7,20 +7,15 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.preference.PreferenceManager
+import android.provider.ContactsContract
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
 import android.view.*
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
@@ -34,16 +29,11 @@ import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
-import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Member
-import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.MEMBER_SERVICE
-import com.dev_sheep.story_of_man_and_woman.data.remote.api.MemberService
-import com.dev_sheep.story_of_man_and_woman.view.activity.MessageActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.MyMessageActivity
 import com.dev_sheep.story_of_man_and_woman.view.adapter.ProfileViewpagerAdapter
 import com.dev_sheep.story_of_man_and_woman.view.dialog.ImageDialog
-import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
@@ -51,10 +41,7 @@ import com.google.android.material.tabs.TabLayout
 import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_feed.*
-import kotlinx.android.synthetic.main.activity_feed_write.*
 import kotlinx.android.synthetic.main.fragment_profile.*
-import okhttp3.Callback
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -93,7 +80,9 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     var recyclerView : RecyclerView? = null
     var progressBar : ProgressBar? = null
     var layoutManager: GridLayoutManager? = null
-    var profileImage: CircleImageView? = null
+    lateinit var profileImage: CircleImageView
+    lateinit var profileBackground: ImageView
+    lateinit var profileNickname: TextView
     var profileAdd : ImageView? = null
     var backgroundAdd: ImageView? = null
     var viewpager : ViewPager? = null
@@ -101,12 +90,17 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     lateinit var nickname: String
     lateinit var preferecnes_img : ImageView
     lateinit var preferecnes_message : ImageView
+    lateinit var followChecked : CheckBox
+    lateinit var followerCount : TextView
+    lateinit var followCount : TextView
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_profile,null)
+        setHasOptionsMenu(true)
+        val view = inflater.inflate(R.layout.fragment_profile, null)
         toolbar = view.findViewById(R.id.toolbar) as Toolbar
         appBarLayout = view.findViewById<AppBarLayout>(R.id.app_bar)
         collapsingToolbar = view.findViewById<CollapsingToolbarLayout>(R.id.collapsing_toolbar)
@@ -115,15 +109,19 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         layoutManager = GridLayoutManager(view.context, 1)
         profileImage = view.findViewById<CircleImageView>(R.id.id_Profile_Image)
+        profileBackground = view.findViewById<ImageView>(R.id.id_ProfileBackground_Image)
         profileAdd = view.findViewById<ImageView>(R.id.id_Profile_add)
         backgroundAdd = view.findViewById<ImageView>(R.id.id_ProfileBackgorund_add)
+        profileNickname = view.findViewById<TextView>(R.id.tv_profile_nick)
         viewpager = view.findViewById(R.id.viewPager) as ViewPager
         tablayout = view.findViewById(R.id.tabLayout) as TabLayout
+        followCount = view.findViewById(R.id.count_follow) as TextView
+        followerCount = view.findViewById(R.id.count_follower) as TextView
         preferecnes_img = view.findViewById(R.id.preferecnes_img) as ImageView
         preferecnes_message = view.findViewById(R.id.preferecnes_message) as ImageView
         recyclerView?.layoutManager = layoutManager
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
-        setHasOptionsMenu(true)
+
 
         collapsingToolbarInit()
 
@@ -135,36 +133,36 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         }
 
 
-        viewPagerAdapter = ProfileViewpagerAdapter(childFragmentManager,tablayout!!.tabCount)
+        viewPagerAdapter = ProfileViewpagerAdapter(childFragmentManager, tablayout!!.tabCount)
         viewpager?.adapter = viewPagerAdapter
         viewpager?.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tablayout))
 
-        tablayout?.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
+        tablayout?.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {
                 viewpager?.setCurrentItem(tab!!.position)
             }
+
             override fun onTabUnselected(tab: TabLayout.Tab?) {
 //                viewpager?.setCurrentItem(tab!!.position)
             }
-            override fun onTabSelected(tab: TabLayout.Tab?)
-            {
-                if(tab!!.position == 0){
 
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                if (tab!!.position == 0) {
                     tablayout?.getTabAt(0)?.setIcon(R.drawable.ic_write)
                     tablayout?.getTabAt(1)?.setIcon(R.drawable.ic_heart_empty)
                     tablayout?.getTabAt(2)?.setIcon(R.drawable.ic_lock_empty)
                     tablayout?.getTabAt(3)?.setIcon(R.drawable.ic_bookmark_hollow)
-                }else if(tab!!.position == 1){
+                } else if (tab!!.position == 1) {
                     tablayout?.getTabAt(0)?.setIcon(R.drawable.ic_write_empty)
                     tablayout?.getTabAt(1)?.setIcon(R.drawable.ic_heart)
                     tablayout?.getTabAt(2)?.setIcon(R.drawable.ic_lock_empty)
                     tablayout?.getTabAt(3)?.setIcon(R.drawable.ic_bookmark_hollow)
-                }else if(tab!!.position == 2){
+                } else if (tab!!.position == 2) {
                     tablayout?.getTabAt(0)?.setIcon(R.drawable.ic_write_empty)
                     tablayout?.getTabAt(1)?.setIcon(R.drawable.ic_heart_empty)
                     tablayout?.getTabAt(2)?.setIcon(R.drawable.ic_lock)
                     tablayout?.getTabAt(3)?.setIcon(R.drawable.ic_bookmark_hollow)
-                }else if(tab!!.position == 3){
+                } else if (tab!!.position == 3) {
                     tablayout?.getTabAt(0)?.setIcon(R.drawable.ic_write_empty)
                     tablayout?.getTabAt(1)?.setIcon(R.drawable.ic_heart_empty)
                     tablayout?.getTabAt(2)?.setIcon(R.drawable.ic_lock_empty)
@@ -183,37 +181,45 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         backgroundAdd?.setOnClickListener(this)
         preferecnes_img?.setOnClickListener(this)
         preferecnes_message?.setOnClickListener(this)
-
+        memberViewModel.memberMySubscribeCount(m_seq,followCount)
+        memberViewModel.memberUserSubscribeCount(m_seq,followerCount)
         return view
     }
 
     private fun initData(){
         // m_seq 가져오기
-        val preferences: SharedPreferences = context!!.getSharedPreferences("m_seq", Context.MODE_PRIVATE)
-        m_seq = preferences.getString("inputMseq","")
+        val preferences: SharedPreferences = context!!.getSharedPreferences(
+            "m_seq",
+            Context.MODE_PRIVATE
+        )
+        m_seq = preferences.getString("inputMseq", "")
 
         val single = MEMBER_SERVICE.getMember(m_seq)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-
-                tv_profile_nick.text = it.nick_name
+                profileNickname.text = it.nick_name
                 nickname = it.nick_name.toString()
                 m_nick_name = it.nick_name.toString()
-//                id_Profile_Image.http://storymaw.com/data/feed/20200814_113842.jpg
-                if(it.profile_img == null) {
-                    id_Profile_Image.background = resources.getDrawable(R.drawable.ic_user)
-                }else{
+                if (it.profile_img == null) {
+                    profileImage.background = resources.getDrawable(R.drawable.ic_user)
+                } else {
                     //"http://www.storymaw.com/data/member/"+nickname+"/"+
                     Glide.with(this)
                         .load(it.profile_img)
                         .apply(RequestOptions().circleCrop())
                         .placeholder(android.R.color.transparent)
-                        .into(id_Profile_Image)
+                        .into(profileImage)
+                }
+                if (it.background_img != null) {
+                    Glide.with(this)
+                        .load(it.background_img)
+                        .placeholder(android.R.color.transparent)
+                        .into(profileBackground)
                 }
 
 
-            },{
+            }, {
                 Log.e("실패 Get Member", "" + it.message)
             })
 
@@ -224,7 +230,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     override fun onResume() {
         super.onResume()
 
-//        initData()
+        initData()
 
     }
 
@@ -242,16 +248,19 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             var isShow = true
             var scrollRange = -1
             this?.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { barLayout, verticalOffset ->
-                if (scrollRange == -1){
+                if (scrollRange == -1) {
                     scrollRange = barLayout?.totalScrollRange!!
                 }
-                showAndHideOption(R.id.action_info,scrollRange + verticalOffset)
+                showAndHideOption(R.id.action_info, scrollRange + verticalOffset)
             })
         }
     }
 
     private fun checkPermission(){
-        if(ContextCompat.checkSelfPermission(this.context!!,android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        if(ContextCompat.checkSelfPermission(
+                this.context!!,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED)
         {
             if (ActivityCompat.shouldShowRequestPermissionRationale(
                     this.requireActivity(),
@@ -268,7 +277,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                     ) { dialogInterface, i ->
                         val intent =
                             Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                        intent.data = Uri.parse("package: " + context!!.packageName )
+                        intent.data = Uri.parse("package: " + context!!.packageName)
                         startActivity(intent)
                     }.setCancelable(false).create().show()
             } else {
@@ -288,7 +297,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         this.menu = menu
-        inflater.inflate(R.menu.menu_scrolling,menu)
+        inflater.inflate(R.menu.menu_scrolling, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -317,44 +326,40 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when(requestCode){
-            REQUEST_TAKE_PHOTO ->{
-                if(requestCode == Activity.RESULT_OK) {
+            REQUEST_TAKE_PHOTO -> {
+                if (requestCode == Activity.RESULT_OK) {
                     try {
                         Log.e("REQUEST_TAKE_PHOTO", "OK!!!!!!")
 //                        galleryAddPic()
-//                        id_Profile_Image.setImageURI(imageURI)
                     } catch (e: Exception) {
                         Log.e("REQUEST_TAKE_PHOTO", e.toString())
                     }
-                }else{
+                } else {
                     Toast.makeText(this.context, "저장공간에 접근할 수 없는 기기 입니다.", Toast.LENGTH_SHORT)
                         .show()
 
                 }
             }
 
-            REQUEST_TAKE_PHOTO_BACKGROUND ->{
-                if(requestCode == Activity.RESULT_OK) {
+            REQUEST_TAKE_PHOTO_BACKGROUND -> {
+                if (requestCode == Activity.RESULT_OK) {
                     try {
                         Log.e("REQUEST_TAKE_PHOTO BACKGROUND", "OK!!!!!!")
 //                        galleryAddPic()
-//                        id_ProfileBackground_Image.setImageURI(imageURI)
                     } catch (e: Exception) {
                         Log.e("REQUEST_TAKE_PHOTO BACKGROUND", e.toString())
                     }
-                }else{
+                } else {
                     Toast.makeText(this.context, "저장공간에 접근할 수 없는 기기 입니다.", Toast.LENGTH_SHORT)
                         .show()
 
                 }
             }
 
-            REQUEST_TAKE_ALBUM ->{
+            REQUEST_TAKE_ALBUM -> {
                 if (resultCode == Activity.RESULT_OK) {
                     if (data!!.data != null) {
                         try {
-
-
                             albumFile = createImageFile()
                             photoURI = data!!.data
                             albumURI = Uri.fromFile(albumFile)
@@ -366,7 +371,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                 }
             }
 
-            REQUEST_TAKE_ALBUM_BACKGROUND ->{
+            REQUEST_TAKE_ALBUM_BACKGROUND -> {
                 if (resultCode == Activity.RESULT_OK) {
                     if (data!!.data != null) {
                         try {
@@ -385,49 +390,85 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             REQUEST_IMAGE_CROP -> {
                 if (resultCode == Activity.RESULT_OK) {
 
-//                    galleryAddPic()
-                    //사진 변환 error
-                    Log.e("IMAGE_href = ",""+albumURI)
-                    Log.e("IMAGE_FILE_NAME = ",""+albumFile?.name)
-
-                    id_Profile_Image.setImageURI(albumURI)
-
                     val requestFile: RequestBody =
                         RequestBody.create(MediaType.parse("multipart/form-data"), albumFile)
                     val profile_img =
-                        MultipartBody.Part.createFormData("uploaded_file", albumFile?.name, requestFile)
+                        MultipartBody.Part.createFormData(
+                            "uploaded_file",
+                            albumFile?.name,
+                            requestFile
+                        )
 
-                    val resultCall: Call<Member> = MEMBER_SERVICE.uploadProfile(nickname,profile_img)
+                    val resultCall: Call<Member> = MEMBER_SERVICE.uploadProfile(
+                        nickname,
+                        profile_img
+                    )
 
                     resultCall.enqueue(object : retrofit2.Callback<Member?> {
                         override fun onResponse(call: Call<Member?>, response: Response<Member?>) {
-                            Log.e("성공함",response.toString())
-                            Log.e("filename",albumFile?.name)
-                            memberViewModel.editProfileImg(m_seq, "http://www.storymaw.com/data/member/"+nickname+"/"+albumFile?.name.toString())
+                            Log.e("성공함", response.toString())
+                            Log.e("filename", albumFile?.name)
+                            memberViewModel.editProfileImg(
+                                m_seq,
+                                "http://www.storymaw.com/data/member/" + nickname + "/" + albumFile?.name.toString()
+                            )
+                            profileImage?.setImageURI(albumURI)
                         }
 
                         override fun onFailure(call: Call<Member?>, t: Throwable) {
-                            Log.e("에러",t.message)
+                            Log.e("에러", t.message)
+                        }
+
+                    })
+
+                }
+
+            }
+
+            REQUEST_IMAGE_CROP_BACKGROUND -> {
+                if (resultCode == Activity.RESULT_OK) {
+//                    galleryAddPic()
+                    //사진 변환 error
+
+
+                    val requestFile: RequestBody =
+                        RequestBody.create(MediaType.parse("multipart/form-data"), albumFile)
+                    val background_img =
+                        MultipartBody.Part.createFormData(
+                            "uploaded_file",
+                            albumFile?.name,
+                            requestFile
+                        )
+
+                    val resultCall: Call<Member> = MEMBER_SERVICE.uploadProfile(
+                        nickname,
+                        background_img
+                    )
+
+                    resultCall.enqueue(object : retrofit2.Callback<Member?> {
+                        override fun onResponse(call: Call<Member?>, response: Response<Member?>) {
+                            Log.e("성공함", response.toString())
+                            Log.e("filename", albumFile?.name)
+                            memberViewModel.editProfileBackgroundImg(
+                                m_seq,
+                                "http://www.storymaw.com/data/member/" + nickname + "/" + albumFile?.name.toString()
+                            )
+                            profileBackground.setImageURI(albumURI)
+                        }
+
+                        override fun onFailure(call: Call<Member?>, t: Throwable) {
+                            Log.e("에러", t.message)
                         }
 
                     })
 
                 }
             }
-
-            REQUEST_IMAGE_CROP_BACKGROUND ->{
-                if (resultCode == Activity.RESULT_OK) {
-//                    galleryAddPic()
-                    //사진 변환 error
-                    Log.e("IMAGEBACKGORUND_href = ",""+albumURI)
-                    id_ProfileBackground_Image.setImageURI(albumURI)
-                }
-            }
         }
 
     }
 
-    private fun showAndHideOption(id: Int,vertical: Int) {
+    private fun showAndHideOption(id: Int, vertical: Int) {
         if(vertical > 150){
             if(menu != null) {
                 collapsingToolbar?.title = ""
@@ -502,7 +543,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     }
 
     //사진 crop할 수 있도록 하는 함수
-    fun cropImage(type:Int) {
+    fun cropImage(type: Int) {
         val cropIntent = Intent("com.android.camera.action.CROP")
         cropIntent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
         cropIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -534,24 +575,27 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             R.id.id_Profile_add -> {
                 getAlbum()
             }
-            R.id.id_ProfileBackgorund_add ->{
+            R.id.id_ProfileBackgorund_add -> {
                 getBackGroundAlbum()
             }
             R.id.id_Profile_Image -> {
-                ImageDialog(context!!,R.drawable.ic_user).start("dqwq")
+                ImageDialog(context!!, R.drawable.ic_user).start("dqwq")
             }
-            R.id.preferecnes_img ->{
+            R.id.preferecnes_img -> {
                 val preference = PrefsFragment()//The fragment that u want to open for example
                 var PrefsFragmnet = (context as AppCompatActivity).supportFragmentManager
                 var fragmentTransaction: FragmentTransaction = PrefsFragmnet.beginTransaction()
                 fragmentTransaction.setReorderingAllowed(true)
-                fragmentTransaction.setCustomAnimations(R.anim.fragment_fade_in,R.anim.fragment_fade_out)
+                fragmentTransaction.setCustomAnimations(
+                    R.anim.fragment_fade_in,
+                    R.anim.fragment_fade_out
+                )
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.replace(R.id.frameLayout, preference);
                 fragmentTransaction.commit()
             }
-            R.id.preferecnes_message ->{
-                startActivity( Intent(context, MyMessageActivity::class.java))
+            R.id.preferecnes_message -> {
+                startActivity(Intent(context, MyMessageActivity::class.java))
             }
         }
 //            val dialog = CameraDialog()

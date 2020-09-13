@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:background="@android:color/transparent"
     >
 
@@ -71,7 +72,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:background="@drawable/ic_user"
-                />
+           />
             <LinearLayout
                 android:id="@+id/id_Profile_layout"
                 android:layout_width="50dp"
@@ -111,7 +112,7 @@
 
                 <TextView
                     android:id="@+id/tv_edit"
-                    android:layout_width="220dp"
+                    android:layout_width="160dp"
                     android:layout_height="40dp"
                     android:background="@drawable/background_edit_rounded"
                     android:fontFamily="@font/ridi_batang"
@@ -140,6 +141,7 @@
                             android:text="구독중" />
 
                         <TextView
+                            android:id="@+id/count_follow"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
@@ -168,6 +170,7 @@
                             android:text="구독자" />
 
                         <TextView
+                            android:id="@+id/count_follower"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
