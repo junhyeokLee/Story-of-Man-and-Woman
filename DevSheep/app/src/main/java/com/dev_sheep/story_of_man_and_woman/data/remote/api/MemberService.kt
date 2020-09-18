@@ -19,7 +19,7 @@ interface MemberService {
         @Field("nick_name") nick_name: String,
         @Field("gender") gender: String,
         @Field("age") age: String
-    ): Single<Boolean>
+    ): Single<String>
 
     @FormUrlEncoded
     @POST("member_get_m_seq.php")
@@ -36,7 +36,7 @@ interface MemberService {
     //사용자가 프로필 이미지를 변경했을때 해당 이미지를 서버로 전송하는 통신
     @Multipart
     @POST("member_profile_upload.php")
-    fun uploadProfile(@Part("nick_name") nick_name: String, @Part File: MultipartBody.Part?): Call<Member>
+    fun uploadProfile(@Part("email") nick_name: String, @Part File: MultipartBody.Part?): Call<Member>
 
     @FormUrlEncoded
     @POST("member_edit_profile.php")

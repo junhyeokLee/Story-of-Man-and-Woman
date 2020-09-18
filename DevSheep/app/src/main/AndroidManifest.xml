@@ -32,18 +32,28 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".view.activity.MainActivity" />
+        <activity android:name=".view.activity.MainActivity"
+            android:theme="@style/AppTheme">
+        </activity>
 
         <activity android:name=".view.activity.MystoryActivity"
             android:theme="@style/WriteTheme">
         </activity>
-        <activity android:name=".view.activity.LoginActivity"></activity>
-        <activity android:name=".view.activity.SignUpActivity"></activity>
+        <activity android:name=".view.activity.LoginActivity">
+        </activity>
+        <activity android:name=".view.activity.SignUpActivity"
+            android:noHistory="true">
+        </activity>
         <activity android:name=".view.activity.MyMessageActivity"></activity>
         <activity android:name=".view.activity.MessageActivity"></activity>
-        <activity android:name=".view.activity.FeedActivity"></activity>
+        <activity android:name=".view.activity.FeedActivity">
+        </activity>
+        <activity android:name=".view.activity.FeedEditActivity">
+        </activity>
+
         <activity android:name=".view.activity.SelectTagActivity"
-            android:theme="@style/WriteTheme"></activity>
+            android:theme="@style/WriteTheme"
+            ></activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"

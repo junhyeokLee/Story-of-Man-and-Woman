@@ -7,9 +7,13 @@ import com.dev_sheep.story_of_man_and_woman.data.database.dao.TestDAO
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
 import com.dev_sheep.story_of_man_and_woman.data.remote.api.FeedService
+import com.lumyjuwon.richwysiwygeditor.RichEditor.RichEditor
+import com.lumyjuwon.richwysiwygeditor.RichWysiwyg
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import retrofit2.http.Field
 
 
 class FeedViewModel(private val testDAO: TestDAO, private val feedService: FeedService) :  ViewModel() {
@@ -71,6 +75,15 @@ class FeedViewModel(private val testDAO: TestDAO, private val feedService: FeedS
 //            })
         // use call
         val single = feedService.insertFeed(title,content,tag_seq,creater,type)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+
+            },{
+            })
+    }
+    fun updateFeed(feed_seq: Int,title:String,content:String,type:String){
+        val single = feedService.updateFeed(feed_seq,title,content,type)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({

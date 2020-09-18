@@ -12,6 +12,14 @@
         com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior
     </string>
 
+    <!-- Transition_Names -->
+    <string name="profile_name">ProfileName</string>
+    <string name="profile_img">ProfileImg</string>
+
+    <!-- end Transition_Names -->
+
+
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

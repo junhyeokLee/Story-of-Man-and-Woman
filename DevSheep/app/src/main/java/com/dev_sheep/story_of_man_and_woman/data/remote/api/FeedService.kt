@@ -28,6 +28,15 @@ interface FeedService {
         @Field("type") type: String
     ): Single<Void>
 
+    @FormUrlEncoded
+    @POST("feed_update.php")
+    fun updateFeed(
+        @Field("feed_seq") feed_seq: Int,
+        @Field("title") title: String,
+        @Field("content") content: String,
+        @Field("type") type: String
+    ): Single<Void>
+
 
     @GET("feed_get_all.php")
     fun getList(): Single<List<Feed>>
@@ -56,7 +65,7 @@ interface FeedService {
     //사용자가 프로필 이미지를 변경했을때 해당 이미지를 서버로 전송하는 통신
     @Multipart
     @POST("content_upload.php")
-    fun uploadImage(@Part File: MultipartBody.Part?): Call<Feed>
+    fun uploadImage(@Part("email") email:String,@Part File: MultipartBody.Part?): Call<Feed>
 
     //book_mark 저장하기
     @FormUrlEncoded

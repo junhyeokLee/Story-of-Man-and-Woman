@@ -2,12 +2,17 @@ package com.dev_sheep.story_of_man_and_woman.view.Fragment
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
+import android.widget.CheckBox
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
@@ -15,26 +20,38 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewpager.widget.ViewPager
 import com.dev_sheep.story_of_man_and_woman.R
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Tag
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
+import com.dev_sheep.story_of_man_and_woman.view.activity.FeedActivity
 import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedAdapter
 import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedRankAdapter
 import com.dev_sheep.story_of_man_and_woman.view.adapter.Test_tag_Adapter
 import com.dev_sheep.story_of_man_and_woman.view.dialog.FilterDialog
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
+import de.hdodenhof.circleimageview.CircleImageView
 import eu.micer.circlesloadingindicator.CirclesLoadingIndicator
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_home.*
 import me.relex.circleindicator.CircleIndicator
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
+    companion object {
+        fun newInstance(): HomeFragment {
+            val args = Bundle()
+            val fragment = HomeFragment()
+            fragment.arguments = args
+            return fragment
+        }
+    }
 
     private val feedViewModel: FeedViewModel by viewModel()
 
-
+    private lateinit var m_seq : String
     private var recyclerView : RecyclerView? = null
     private var recyclerViewTag : RecyclerView? = null
     private var viewpager : ViewPager? = null
@@ -80,7 +97,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         // 프래그먼트에 toolbar 세팅
         (activity as AppCompatActivity).setSupportActionBar(tollbar)
 
-        initData()
+
 
         mSwipeRefreshLayout.setOnRefreshListener(this)
         mSwipeRefreshLayout.setColorSchemeResources(
@@ -90,6 +107,20 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
         return view
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // my_m_seq 가져오기
+        val preferences: SharedPreferences = context!!.getSharedPreferences(
+            "m_seq",
+            Context.MODE_PRIVATE
+        )
+        m_seq = preferences.getString("inputMseq", "")
+
+        initData()
+    }
+
     private fun initData(){
 
         setViewPager()
@@ -98,32 +129,72 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         val single = FEED_SERVICE.getList()
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess { progressBar?.visibility = View.GONE }
             .subscribe({
-                mFeedAdapter = FeedAdapter(it, contexts,object : FeedAdapter.OnClickViewListener{
-                    override fun OnClickFeed(feed_seq: Int) {
-                        feedViewModel.increaseViewCount(feed_seq)
+                mFeedAdapter = FeedAdapter(it, contexts, object : FeedAdapter.OnClickViewListener {
+                    override fun OnClickFeed(feed: Feed,tv:TextView,iv: ImageView,ckb:CheckBox,position:Int) {
+                        feedViewModel.increaseViewCount(feed.feed_seq)
+
+                        val lintent = Intent(context, FeedActivity::class.java)
+                        lintent.putExtra("feed_seq", feed.feed_seq)
+                        lintent.putExtra("checked" + feed.feed_seq, ckb.isChecked)
+                        lintent.putExtra("creater_seq", feed.creater_seq)
+                        lintent.putExtra("bookmark_checked" + feed.feed_seq, ckb.isChecked)
+                        lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
+
+//                        context.transitionName = position.toString()
+                        context!!.startActivity(lintent)
 
                     }
-                },object : FeedAdapter.OnClickLikeListener{
+                }, object : FeedAdapter.OnClickLikeListener {
                     override fun OnClickFeed(feed_seq: Int, boolean_value: String) {
-                        feedViewModel.increaseLikeCount(feed_seq,boolean_value)
+                        feedViewModel.increaseLikeCount(feed_seq, boolean_value)
                     }
 
-                },object : FeedAdapter.OnClickBookMarkListener{
-                    override fun OnClickBookMark(m_seq: String, feed_seq: Int, boolean_value: String) {
-                        feedViewModel.onClickBookMark(m_seq,feed_seq,boolean_value)
+                }, object : FeedAdapter.OnClickBookMarkListener {
+                    override fun OnClickBookMark(
+                        m_seq: String,
+                        feed_seq: Int,
+                        boolean_value: String
+                    ) {
+                        feedViewModel.onClickBookMark(m_seq, feed_seq, boolean_value)
                     }
 
+                }, object : FeedAdapter.OnClickProfileListener{
+                    override fun OnClickProfile(feed: Feed, tv: TextView, iv: ImageView) {
+
+                        val trId = ViewCompat.getTransitionName(tv).toString()
+                        val trId1 = ViewCompat.getTransitionName(iv).toString()
+
+                        if (feed.creater_seq == m_seq) {
+                            activity?.supportFragmentManager
+                                ?.beginTransaction()
+                                ?.addSharedElement(tv, trId)
+                                ?.addSharedElement(iv, trId1)
+                                ?.addToBackStack("ProfileImg")
+                                ?.replace(
+                                    R.id.frameLayout,
+                                    ProfileFragment.newInstance(feed, trId, trId1)
+                                )
+                                ?.commit()
+                        } else {
+                            activity?.supportFragmentManager
+                                ?.beginTransaction()
+                                ?.addSharedElement(tv, trId)
+                                ?.addSharedElement(iv, trId1)
+                                ?.addToBackStack("ProfileImg")
+                                ?.replace(
+                                    R.id.frameLayout,
+                                    ProfileUsersFragment.newInstance(feed, trId, trId1)
+                                )
+                                ?.commit()
+                        }
+                    }
                 })
                 recyclerView?.apply {
                     var linearLayoutMnager = LinearLayoutManager(this.context)
                     this.layoutManager = linearLayoutMnager
                     adapter = mFeedAdapter
-                }
-                if (it.isNotEmpty()) {
-                    progressBar?.visibility = View.GONE
-                } else {
-                    progressBar?.visibility = View.VISIBLE
                 }
 
             }, {
@@ -404,4 +475,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         initData()
         mSwipeRefreshLayout.setRefreshing(false)
     }
+
+
+
 }

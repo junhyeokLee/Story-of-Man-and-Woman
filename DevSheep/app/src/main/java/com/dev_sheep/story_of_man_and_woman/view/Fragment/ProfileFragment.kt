@@ -8,9 +8,9 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.provider.ContactsContract
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
@@ -22,6 +22,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,6 +30,7 @@ import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Member
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.MEMBER_SERVICE
 import com.dev_sheep.story_of_man_and_woman.view.activity.MyMessageActivity
@@ -55,6 +57,19 @@ import java.util.*
 
 class ProfileFragment: Fragment(),View.OnClickListener {
 
+    companion object {
+        fun newInstance(feed: Feed, transitionId : String, transitionId1 : String): ProfileFragment {
+            val args = Bundle()
+            args.putString("m_seq",feed.creater_seq)
+            args.putString("creater_nick", feed.creater)
+            args.putString("creater_image", feed.creater_image_url)
+            args.putString("trId", transitionId)
+            args.putString("trId1", transitionId1)
+            val fragment = ProfileFragment()
+            fragment.arguments = args
+            return fragment
+        }
+    }
 
     private var menu : Menu? = null
     private val memberViewModel: MemberViewModel by viewModel()
@@ -80,7 +95,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     var recyclerView : RecyclerView? = null
     var progressBar : ProgressBar? = null
     var layoutManager: GridLayoutManager? = null
-    lateinit var profileImage: CircleImageView
+    lateinit var profileImage: ImageView
     lateinit var profileBackground: ImageView
     lateinit var profileNickname: TextView
     var profileAdd : ImageView? = null
@@ -88,11 +103,36 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     var viewpager : ViewPager? = null
     var tablayout: TabLayout? = null
     lateinit var nickname: String
+    lateinit var email: String
     lateinit var preferecnes_img : ImageView
     lateinit var preferecnes_message : ImageView
     lateinit var followChecked : CheckBox
     lateinit var followerCount : TextView
     lateinit var followCount : TextView
+    lateinit var get_creater_nick_name: String
+    lateinit var get_creater_img: String
+    lateinit var my_m_seq : String
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        this.activity?.let { ActivityCompat.postponeEnterTransition(it) }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            sharedElementEnterTransition = androidx.transition.TransitionInflater.from(context)
+                .inflateTransition(android.R.transition.move)
+        }
+        get_creater_nick_name = arguments?.getString("creater_nick").toString()
+        get_creater_img = arguments?.getString("creater_image").toString()
+        m_seq = arguments?.getString("m_seq").toString()
+        // my_m_seq 가져오기
+        val preferences: SharedPreferences = context!!.getSharedPreferences(
+            "m_seq",
+            Context.MODE_PRIVATE
+        )
+        my_m_seq = preferences.getString("inputMseq", "")
+
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -108,7 +148,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
         progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         layoutManager = GridLayoutManager(view.context, 1)
-        profileImage = view.findViewById<CircleImageView>(R.id.id_Profile_Image)
+        profileImage = view.findViewById<ImageView>(R.id.id_Profile_Image)
         profileBackground = view.findViewById<ImageView>(R.id.id_ProfileBackground_Image)
         profileAdd = view.findViewById<ImageView>(R.id.id_Profile_add)
         backgroundAdd = view.findViewById<ImageView>(R.id.id_ProfileBackgorund_add)
@@ -121,6 +161,8 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         preferecnes_message = view.findViewById(R.id.preferecnes_message) as ImageView
         recyclerView?.layoutManager = layoutManager
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
+
+
 
 
         collapsingToolbarInit()
@@ -173,7 +215,6 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             }
         })
 
-
         initData()
 
         profileImage?.setOnClickListener(this)
@@ -181,47 +222,89 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         backgroundAdd?.setOnClickListener(this)
         preferecnes_img?.setOnClickListener(this)
         preferecnes_message?.setOnClickListener(this)
-        memberViewModel.memberMySubscribeCount(m_seq,followCount)
-        memberViewModel.memberUserSubscribeCount(m_seq,followerCount)
+        memberViewModel.memberMySubscribeCount(m_seq, followCount)
+        memberViewModel.memberUserSubscribeCount(m_seq, followerCount)
         return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            tv_profile_nick.transitionName = arguments?.getString("trId")
+            id_Profile_Image.transitionName = arguments?.getString("trId1")
+        }
+
+    }
+
     private fun initData(){
-        // m_seq 가져오기
-        val preferences: SharedPreferences = context!!.getSharedPreferences(
-            "m_seq",
-            Context.MODE_PRIVATE
-        )
-        m_seq = preferences.getString("inputMseq", "")
+        Log.e("getCreateImg",get_creater_img)
+        Log.e("getNickName",get_creater_nick_name)
+        Log.e("my_m_seq",my_m_seq)
 
-        val single = MEMBER_SERVICE.getMember(m_seq)
-        single.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                profileNickname.text = it.nick_name
-                nickname = it.nick_name.toString()
-                m_nick_name = it.nick_name.toString()
-                if (it.profile_img == null) {
-                    profileImage.background = resources.getDrawable(R.drawable.ic_user)
-                } else {
-                    //"http://www.storymaw.com/data/member/"+nickname+"/"+
-                    Glide.with(this)
-                        .load(it.profile_img)
-                        .apply(RequestOptions().circleCrop())
-                        .placeholder(android.R.color.transparent)
-                        .into(profileImage)
-                }
-                if (it.background_img != null) {
-                    Glide.with(this)
-                        .load(it.background_img)
-                        .placeholder(android.R.color.transparent)
-                        .into(profileBackground)
-                }
+        if(get_creater_img != "null" && get_creater_nick_name != "null") {
+            Glide.with(this)
+                .load(get_creater_img)
+                .apply(RequestOptions().circleCrop())
+                .placeholder(android.R.color.transparent)
+                .into(profileImage!!)
+
+            profileNickname.text = get_creater_nick_name
+
+            val single = MEMBER_SERVICE.getMember(my_m_seq)
+            single.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    nickname = it.nick_name.toString()
+                    email = it.email.toString()
+                    m_nick_name = it.nick_name.toString()
+                    if (it.background_img != null) {
+                        Glide.with(this)
+                            .load(it.background_img)
+                            .placeholder(android.R.color.transparent)
+                            .into(profileBackground)
+                    }
+
+                }, {
+                    Log.e("실패 Get Member", "" + it.message)
+                })
 
 
-            }, {
-                Log.e("실패 Get Member", "" + it.message)
-            })
+        }else{
+            val single = MEMBER_SERVICE.getMember(my_m_seq)
+            single.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+
+                    if(it.profile_img == null){
+                        Glide.with(this)
+                            .load("http://storymaw.com/data/member/user.png")
+                            .apply(RequestOptions().circleCrop())
+                            .placeholder(android.R.color.transparent)
+                            .into(profileImage!!)
+                    }else {
+                        Glide.with(this)
+                            .load(it.profile_img)
+                            .apply(RequestOptions().circleCrop())
+                            .placeholder(android.R.color.transparent)
+                            .into(profileImage!!)
+                    }
+                    profileNickname.text = it.nick_name
+                    nickname = it.nick_name.toString()
+                    email = it.email.toString()
+                    m_nick_name = it.nick_name.toString()
+
+                    if (it.background_img != null) {
+                        Glide.with(this)
+                            .load(it.background_img)
+                            .placeholder(android.R.color.transparent)
+                            .into(profileBackground)
+                    }
+
+                }, {
+                    Log.e("실패 Get Member", "" + it.message)
+                })
+        }
+
 
 
     }
@@ -334,6 +417,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                     } catch (e: Exception) {
                         Log.e("REQUEST_TAKE_PHOTO", e.toString())
                     }
+                    refreshFragment(this, getFragmentManager()!!)
                 } else {
                     Toast.makeText(this.context, "저장공간에 접근할 수 없는 기기 입니다.", Toast.LENGTH_SHORT)
                         .show()
@@ -349,6 +433,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                     } catch (e: Exception) {
                         Log.e("REQUEST_TAKE_PHOTO BACKGROUND", e.toString())
                     }
+                    refreshFragment(this, getFragmentManager()!!)
                 } else {
                     Toast.makeText(this.context, "저장공간에 접근할 수 없는 기기 입니다.", Toast.LENGTH_SHORT)
                         .show()
@@ -363,11 +448,13 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                             albumFile = createImageFile()
                             photoURI = data!!.data
                             albumURI = Uri.fromFile(albumFile)
+
                             cropImage(REQUEST_IMAGE_CROP)
                         } catch (e: IOException) {
                             Log.e("TAKE_ALBUM_SINLE_ERROR", e.toString())
                         }
                     }
+                    refreshFragment(this, getFragmentManager()!!)
                 }
             }
 
@@ -375,7 +462,6 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                 if (resultCode == Activity.RESULT_OK) {
                     if (data!!.data != null) {
                         try {
-
                             albumFile = createImageFile()
                             photoURI = data!!.data
                             albumURI = Uri.fromFile(albumFile)
@@ -384,23 +470,23 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                             Log.e("TAKE_ALBUM_SINLE_ERROR", e.toString())
                         }
                     }
+                    refreshFragment(this, getFragmentManager()!!)
                 }
             }
 
             REQUEST_IMAGE_CROP -> {
                 if (resultCode == Activity.RESULT_OK) {
-
                     val requestFile: RequestBody =
                         RequestBody.create(MediaType.parse("multipart/form-data"), albumFile)
                     val profile_img =
                         MultipartBody.Part.createFormData(
                             "uploaded_file",
-                            albumFile?.name,
+                            albumFile?.name.toString(),
                             requestFile
                         )
 
                     val resultCall: Call<Member> = MEMBER_SERVICE.uploadProfile(
-                        nickname,
+                        email,
                         profile_img
                     )
 
@@ -410,9 +496,10 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                             Log.e("filename", albumFile?.name)
                             memberViewModel.editProfileImg(
                                 m_seq,
-                                "http://www.storymaw.com/data/member/" + nickname + "/" + albumFile?.name.toString()
+                                "http://www.storymaw.com/data/member/" + email + "/" + albumFile?.name.toString()
                             )
-                            profileImage?.setImageURI(albumURI)
+                            profileImage.setImageURI(albumURI)
+
                         }
 
                         override fun onFailure(call: Call<Member?>, t: Throwable) {
@@ -420,7 +507,6 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                         }
 
                     })
-
                 }
 
             }
@@ -429,43 +515,42 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                 if (resultCode == Activity.RESULT_OK) {
 //                    galleryAddPic()
                     //사진 변환 error
-
-
                     val requestFile: RequestBody =
                         RequestBody.create(MediaType.parse("multipart/form-data"), albumFile)
                     val background_img =
                         MultipartBody.Part.createFormData(
                             "uploaded_file",
-                            albumFile?.name,
+                            albumFile?.name.toString(),
                             requestFile
                         )
 
                     val resultCall: Call<Member> = MEMBER_SERVICE.uploadProfile(
-                        nickname,
+                        email,
                         background_img
                     )
 
                     resultCall.enqueue(object : retrofit2.Callback<Member?> {
                         override fun onResponse(call: Call<Member?>, response: Response<Member?>) {
                             Log.e("성공함", response.toString())
-                            Log.e("filename", albumFile?.name)
+                            Log.e("filename", albumFile?.name.toString())
                             memberViewModel.editProfileBackgroundImg(
                                 m_seq,
-                                "http://www.storymaw.com/data/member/" + nickname + "/" + albumFile?.name.toString()
+                                "http://www.storymaw.com/data/member/" + email + "/" + albumFile?.name.toString()
                             )
                             profileBackground.setImageURI(albumURI)
+
                         }
 
                         override fun onFailure(call: Call<Member?>, t: Throwable) {
                             Log.e("에러", t.message)
                         }
-
                     })
 
                 }
-            }
-        }
 
+            }
+
+        }
     }
 
     private fun showAndHideOption(id: Int, vertical: Int) {
@@ -628,5 +713,12 @@ class ProfileFragment: Fragment(),View.OnClickListener {
 //                checkPermission()
 
     }
+
+
+    fun refreshFragment(fragment: Fragment, fragmentManager: FragmentManager) {
+        var ft: FragmentTransaction = fragmentManager.beginTransaction()
+        ft.detach(fragment).attach(fragment).commit()
+    }
+
 }
 

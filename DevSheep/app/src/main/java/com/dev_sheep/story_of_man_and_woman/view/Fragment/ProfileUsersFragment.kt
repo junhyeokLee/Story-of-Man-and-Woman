@@ -2,7 +2,9 @@ package com.dev_sheep.story_of_man_and_woman.view.Fragment
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
+import android.transition.TransitionInflater
 import android.util.Log
 import android.view.*
 import android.widget.CheckBox
@@ -11,6 +13,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +21,7 @@ import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.MEMBER_SERVICE
 import com.dev_sheep.story_of_man_and_woman.view.adapter.ProfileUserViewpagerAdapter
@@ -30,10 +34,26 @@ import com.google.android.material.tabs.TabLayout
 import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_profile.*
+import kotlinx.android.synthetic.main.adapter_feed.*
+import kotlinx.android.synthetic.main.fragment_profile.id_ProfileBackground_Image
+import kotlinx.android.synthetic.main.fragment_profile_users.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ProfileUsersFragment: Fragment(),View.OnClickListener {
+
+    companion object {
+        fun newInstance(feed: Feed, transitionId : String, transitionId1 : String): ProfileUsersFragment {
+            val args = Bundle()
+            args.putString("m_seq",feed.creater_seq)
+            args.putString("creater_nick", feed.creater)
+            args.putString("creater_image", feed.creater_image_url)
+            args.putString("trId", transitionId)
+            args.putString("trId1", transitionId1)
+            val fragment = ProfileUsersFragment()
+            fragment.arguments = args
+            return fragment
+        }
+    }
 
     private var menu : Menu? = null
     private val feedViewModel: FeedViewModel by viewModel()
@@ -47,17 +67,45 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
     var recyclerView : RecyclerView? = null
     var progressBar : ProgressBar? = null
     var layoutManager: GridLayoutManager? = null
-    var profileImage: CircleImageView? = null
+    var profileImage: ImageView? = null
     var viewpager : ViewPager? = null
     var tablayout: TabLayout? = null
+    var profileNickName : TextView? = null
 
     lateinit var nickname: String
     lateinit var m_nick_name : String
     lateinit var m_seq : String
     lateinit var my_m_seq : String
+    lateinit var feed_activity_m_seq: String
     lateinit var followChecked : CheckBox
     lateinit var followerCount : TextView
     lateinit var followCount : TextView
+    lateinit var get_creater_nick_name: String
+    lateinit var get_creater_img: String
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        this.activity?.let { ActivityCompat.postponeEnterTransition(it) }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            sharedElementEnterTransition = androidx.transition.TransitionInflater.from(context)
+                .inflateTransition(android.R.transition.move)
+        }
+        get_creater_nick_name = arguments?.getString("creater_nick").toString()
+        get_creater_img = arguments?.getString("creater_image").toString()
+        m_seq = arguments?.getString("m_seq").toString()
+
+        // user FeedActivity 에서 프로필 클릭시 ( MainActivity에서 argument 값 받음 )
+        feed_activity_m_seq = arguments?.getString("feed_activity_m_seq").toString()
+
+        // my_m_seq 가져오기
+        val preferences: SharedPreferences = context!!.getSharedPreferences(
+            "m_seq",
+            Context.MODE_PRIVATE
+        )
+        my_m_seq = preferences.getString("inputMseq", "")
+
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -72,7 +120,8 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
         recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
         progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         layoutManager = GridLayoutManager(view.context, 1)
-        profileImage = view.findViewById<CircleImageView>(R.id.id_Profile_Image)
+        profileImage = view.findViewById<ImageView>(R.id.id_Profile_Image_user)
+        profileNickName = view.findViewById<TextView>(R.id.tv_profile_nick_user)
         viewpager = view.findViewById(R.id.viewPager) as ViewPager
         tablayout = view.findViewById(R.id.tabLayout) as TabLayout
         followChecked = view.findViewById(R.id.check_follow) as CheckBox
@@ -85,16 +134,6 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
 
         collapsingToolbarInit()
 
-        // Adapter에서 user페이지로 이동시 seq 전달
-        val arguments = arguments
-        m_seq = arguments!!.getString("m_seq")
-
-        // my_m_seq 가져오기
-        val preferences: SharedPreferences = context!!.getSharedPreferences(
-            "m_seq",
-            Context.MODE_PRIVATE
-        )
-        my_m_seq = preferences.getString("inputMseq", "")
 
         tablayout?.apply {
             addTab(this.newTab().setIcon(R.drawable.ic_write).setText("나의 이야기"))
@@ -102,8 +141,14 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
 
         }
 
-        viewPagerAdapter = ProfileUserViewpagerAdapter(childFragmentManager, tablayout!!.tabCount,m_seq)
-        viewpager?.adapter = viewPagerAdapter
+        if(m_seq == "null") {
+            viewPagerAdapter =
+                ProfileUserViewpagerAdapter(childFragmentManager, tablayout!!.tabCount, feed_activity_m_seq)
+        }else{
+            viewPagerAdapter =
+                ProfileUserViewpagerAdapter(childFragmentManager, tablayout!!.tabCount, m_seq)
+        }
+            viewpager?.adapter = viewPagerAdapter
         viewpager?.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tablayout))
 
         tablayout?.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -142,40 +187,79 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
         return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            tv_profile_nick_user.transitionName = arguments?.getString("trId")
+            id_Profile_Image_user.transitionName = arguments?.getString("trId1")
+        }
+
+    }
+
     private fun initData(){
 
-        val single = APIService.MEMBER_SERVICE.getMember(m_seq)
-        single.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                tv_profile_nick.text = it.nick_name
-                nickname = it.nick_name.toString()
-                m_nick_name = it.nick_name.toString()
-//                id_Profile_Image.http://storymaw.com/data/feed/20200814_113842.jpg
-                if (it.profile_img == null) {
-                    id_Profile_Image.background = resources.getDrawable(R.drawable.ic_user)
-                } else {
-                    //"http://www.storymaw.com/data/member/"+nickname+"/"+
-                    Glide.with(this)
-                        .load(it.profile_img)
-                        .apply(RequestOptions().circleCrop())
-                        .placeholder(android.R.color.transparent)
-                        .into(id_Profile_Image)
-                }
-                if (it.background_img != null) {
-                    Glide.with(this)
-                        .load(it.background_img)
-                        .placeholder(android.R.color.transparent)
-                        .into(id_ProfileBackground_Image)
-                }
+        Log.e("m_seq",m_seq)
+        Log.e("activity_m_seq",feed_activity_m_seq)
 
+        if(m_seq == "null") {
 
-            }, {
-                Log.e("실패 Get Member", "" + it.message)
-            })
+            val single = APIService.MEMBER_SERVICE.getMember(feed_activity_m_seq)
+            single.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
 
+                    if(it.profile_img == null){
+                        Glide.with(this)
+                            .load("http://storymaw.com/data/member/user.png")
+                            .apply(RequestOptions().circleCrop())
+                            .placeholder(android.R.color.transparent)
+                            .into(profileImage!!)
+                    }else {
+                        Glide.with(this)
+                            .load(it.profile_img)
+                            .apply(RequestOptions().circleCrop())
+                            .placeholder(android.R.color.transparent)
+                            .into(profileImage!!)
+                    }
+                    profileNickName!!.text = it.nick_name.toString()
+                    nickname = it.nick_name.toString()
+                    m_nick_name = it.nick_name.toString()
 
+                    if (it.background_img != null) {
+                        Glide.with(this)
+                            .load(it.background_img)
+                            .placeholder(android.R.color.transparent)
+                            .into(id_ProfileBackground_Image)
+                    }
+                }, {
+                    Log.e("실패 Get Member", "" + it.message)
+                })
+        }else {
 
+            Glide.with(this)
+                .load(get_creater_img)
+                .apply(RequestOptions().circleCrop())
+                .placeholder(android.R.color.transparent)
+                .into(profileImage!!)
+
+            profileNickName!!.text = get_creater_nick_name
+            nickname = get_creater_nick_name
+            m_nick_name = get_creater_nick_name
+
+            val single = APIService.MEMBER_SERVICE.getMember(m_seq)
+            single.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    if (it.background_img != null) {
+                        Glide.with(this)
+                            .load(it.background_img)
+                            .placeholder(android.R.color.transparent)
+                            .into(id_ProfileBackground_Image)
+                    }
+                }, {
+                    Log.e("실패 Get Member", "" + it.message)
+                })
+        }
 
     }
 

@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
-import android.os.AsyncTask
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.text.Html
@@ -14,14 +13,13 @@ import android.text.Spanned
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentManager
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -29,20 +27,16 @@ import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
-import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
 import com.dev_sheep.story_of_man_and_woman.utils.PokemonColorUtil
 import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileFragment
 import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileUsersFragment
 import com.dev_sheep.story_of_man_and_woman.view.activity.FeedActivity
-import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import com.victor.loading.rotate.RotateLoading
 import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.android.synthetic.main.activity_feed.*
 import kotlinx.android.synthetic.main.adapter_feed.view.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.safety.Whitelist
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -51,7 +45,8 @@ class FeedAdapter(
     private var context: Context,
     private val onClickViewListener: OnClickViewListener,
     private val onClickLikeListener: OnClickLikeListener,
-    private val onClickBookMarkListener: OnClickBookMarkListener
+    private val onClickBookMarkListener: OnClickBookMarkListener,
+    private val onClickProfileListener: OnClickProfileListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     lateinit var mcontext: Context
     var mViewPagerState = HashMap<Int, Int>()
@@ -59,8 +54,6 @@ class FeedAdapter(
     private val VIEW_TYPE_LOADING = 1
 
 //    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         mcontext = parent.context
@@ -82,7 +75,13 @@ class FeedAdapter(
                     parent,
                     false
                 )
-                FeedHolder(view, onClickViewListener, onClickLikeListener,onClickBookMarkListener)
+                FeedHolder(
+                    view,
+                    onClickViewListener,
+                    onClickLikeListener,
+                    onClickBookMarkListener,
+                    onClickProfileListener
+                )
             }
             VIEW_TYPE_LOADING -> {
                 view = LayoutInflater.from(parent.context).inflate(
@@ -114,7 +113,7 @@ class FeedAdapter(
 
 
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int)  {
 
 
         when(holder.itemViewType){
@@ -158,29 +157,35 @@ class FeedAdapter(
     }
 
 
+
     internal class FeedHolder(
         itemView: View,
         onClickViewListener: OnClickViewListener,
         onClickLikeListener: OnClickLikeListener,
-        onClickBookMarkListener: OnClickBookMarkListener
-    ) :  RecyclerView.ViewHolder(itemView) {
-
+        onClickBookMarkListener: OnClickBookMarkListener,
+        onClickProfileListener: OnClickProfileListener
+    ) :  RecyclerView.ViewHolder(itemView){
         private val feed_layout: RelativeLayout = itemView.findViewById(R.id.feed_layout)
         private var favoriteButton: CheckBox = itemView.findViewById(R.id.favorite_btn)
         private val favoriteValue: TextView = itemView.findViewById(R.id.like_count)
         private val bookmarkButton: CheckBox = itemView.findViewById(R.id.bookmark)
-        private val img_profile : CircleImageView = itemView.findViewById(R.id.img_profile)
+        private val img_profile : ImageView = itemView.findViewById(R.id.img_profile)
         private val m_nick : TextView = itemView.findViewById(R.id.tv_m_nick)
+        private val profile_layout : RelativeLayout = itemView.findViewById(R.id.profile_layout)
         private val content : TextView = itemView.findViewById(R.id.tv_content)
         private val content_img : ImageView = itemView.findViewById(R.id.content_img)
         private var sdf : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         private val onClickFeedView = onClickViewListener
         private val onClickFeedLike = onClickLikeListener
         private val onClickBookMark = onClickBookMarkListener
+        private val onClickProfile = onClickProfileListener
         lateinit var m_seq : String
 
 
         fun bindView(item: Feed, position: Int) {
+
+            ViewCompat.setTransitionName(itemView.tv_m_nick, position.toString() + "Text")
+            ViewCompat.setTransitionName(itemView.img_profile, (position).toString() + "Img")
 
             itemView.tv_m_nick.text = item.creater
             itemView.tv_title.text = item.title
@@ -193,6 +198,8 @@ class FeedAdapter(
             itemView.comment_count.text = item.comment_seq.toString()
             itemView.like_count.text = item.like_no.toString()
             itemView.tv_gender.text = item.creater_gender
+
+
 //            Log.e("qdqwd",content.text.toString());
             setReadMore(itemView.tv_content, content.text.toString(), 3)
 
@@ -220,58 +227,9 @@ class FeedAdapter(
             )
             m_seq = preferences.getString("inputMseq", "")
 
-            with(m_nick){
+            with(profile_layout){
                 setOnClickListener {
-                    // 나의 seq가 같지 않으면 user프로필
-                    if(m_seq != item.creater_seq) {
-                        val fragment =
-                            ProfileUsersFragment()//The fragment that 로u want to open for example
-                        val arguments = Bundle()
-                        arguments.putString("m_seq", item.creater_seq)
-                        fragment.arguments = arguments
-                        var userFragmnet = (context as AppCompatActivity).supportFragmentManager
-                        var fragmentTransaction: FragmentTransaction = userFragmnet.beginTransaction()
-                        fragmentTransaction.setReorderingAllowed(true)
-                        fragmentTransaction.setCustomAnimations(
-                            R.anim.fragment_fade_in,
-                            R.anim.fragment_fade_out
-                        )
-                        fragmentTransaction.addToBackStack(null);
-                        fragmentTransaction.replace(R.id.frameLayout, fragment);
-                        fragmentTransaction.commit()
-                    }else if(m_seq == item.creater_seq){
-                        val fragment =
-                            ProfileFragment()//The fragment that u want to open for example
-                        var userFragmnet = (context as AppCompatActivity).supportFragmentManager
-                        var fragmentTransaction: FragmentTransaction = userFragmnet.beginTransaction()
-                        fragmentTransaction.setReorderingAllowed(true)
-                        fragmentTransaction.setCustomAnimations(
-                            R.anim.fragment_fade_in,
-                            R.anim.fragment_fade_out
-                        )
-                        fragmentTransaction.addToBackStack(null);
-                        fragmentTransaction.replace(R.id.frameLayout, fragment);
-                        fragmentTransaction.commit()
-                    }
-
-                }
-            }
-            with(img_profile){
-                setOnClickListener {
-                    val fragment = ProfileUsersFragment()//The fragment that u want to open for example
-                    val arguments = Bundle()
-                    arguments.putString("m_seq",item.creater_seq)
-                    fragment.arguments = arguments
-                    var userFragmnet = (context as AppCompatActivity).supportFragmentManager
-                    var fragmentTransaction: FragmentTransaction = userFragmnet.beginTransaction()
-                    fragmentTransaction.setReorderingAllowed(true)
-                    fragmentTransaction.setCustomAnimations(
-                        R.anim.fragment_fade_in,
-                        R.anim.fragment_fade_out
-                    )
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.replace(R.id.frameLayout, fragment);
-                    fragmentTransaction.commit()
+                    onClickProfile.OnClickProfile(item,m_nick,itemView.img_profile)
                 }
             }
 
@@ -282,8 +240,8 @@ class FeedAdapter(
                 val editor = preferences.edit()
 
 
-                if (preferences.contains("checked"+feed.feed_seq) &&
-                    preferences.getBoolean("checked"+feed.feed_seq, false) == true)
+                if (preferences.contains("checked" + feed.feed_seq) &&
+                    preferences.getBoolean("checked" + feed.feed_seq, false) == true)
                 {
                     this.isChecked = true
 
@@ -296,12 +254,12 @@ class FeedAdapter(
                         if(this.isChecked){
                             onClickFeedLike.OnClickFeed(feed.feed_seq, "true")
                             favCount = feed.like_no.toString()
-                            editor.putBoolean("checked"+feed.feed_seq, true)
+                            editor.putBoolean("checked" + feed.feed_seq, true)
                             editor.apply()
                         }else{
                             onClickFeedLike.OnClickFeed(feed.feed_seq, "false")
                             favCount = feed.like_no?.minus(1).toString()
-                            editor.putBoolean("checked"+feed.feed_seq, false)
+                            editor.putBoolean("checked" + feed.feed_seq, false)
                             editor.apply()
                         }
                         favoriteValue.setText(favCount)
@@ -311,12 +269,12 @@ class FeedAdapter(
                         if(this.isChecked){
                             onClickFeedLike.OnClickFeed(feed.feed_seq, "true")
                             favCount = feed.like_no?.plus(1).toString()
-                            editor.putBoolean("checked"+feed.feed_seq, true)
+                            editor.putBoolean("checked" + feed.feed_seq, true)
                             editor.apply()
                         }else{
                             onClickFeedLike.OnClickFeed(feed.feed_seq, "false")
                             favCount = feed.like_no.toString()
-                            editor.putBoolean("checked"+feed.feed_seq, false)
+                            editor.putBoolean("checked" + feed.feed_seq, false)
                             editor.apply()
                         }
                         favoriteValue.setText(favCount)
@@ -330,8 +288,8 @@ class FeedAdapter(
                 val editor = preferences.edit()
 
 
-                if (preferences.contains("bookmark_checked"+feed.feed_seq) &&
-                    preferences.getBoolean("bookmark_checked"+feed.feed_seq, false) == true)
+                if (preferences.contains("bookmark_checked" + feed.feed_seq) &&
+                    preferences.getBoolean("bookmark_checked" + feed.feed_seq, false) == true)
                 {
                     this.isChecked = true
                 } else {
@@ -341,25 +299,25 @@ class FeedAdapter(
                 if(this.isChecked == true){
                     setOnCheckedChangeListener { compoundButton, b ->
                         if(this.isChecked){
-                            onClickBookMark.OnClickBookMark(m_seq,feed.feed_seq,"true")
-                            editor.putBoolean("bookmark_checked"+feed.feed_seq, true)
+                            onClickBookMark.OnClickBookMark(m_seq, feed.feed_seq, "true")
+                            editor.putBoolean("bookmark_checked" + feed.feed_seq, true)
                             editor.apply()
 //                            FEED_SERVICE.addBookMark(m_seq,item.feed_seq)
                         }else{
-                            onClickBookMark.OnClickBookMark(m_seq,feed.feed_seq,"false")
-                            editor.putBoolean("bookmark_checked"+feed.feed_seq, false)
+                            onClickBookMark.OnClickBookMark(m_seq, feed.feed_seq, "false")
+                            editor.putBoolean("bookmark_checked" + feed.feed_seq, false)
                             editor.apply()
                         }
                     }
                 }else{
                     setOnCheckedChangeListener { compoundButton, b ->
                         if(this.isChecked){
-                            onClickBookMark.OnClickBookMark(m_seq,feed.feed_seq,"true")
-                            editor.putBoolean("bookmark_checked"+feed.feed_seq, true)
+                            onClickBookMark.OnClickBookMark(m_seq, feed.feed_seq, "true")
+                            editor.putBoolean("bookmark_checked" + feed.feed_seq, true)
                             editor.apply()
                         }else{
-                            onClickBookMark.OnClickBookMark(m_seq,feed.feed_seq,"false")
-                            editor.putBoolean("bookmark_checked"+feed.feed_seq, false)
+                            onClickBookMark.OnClickBookMark(m_seq, feed.feed_seq, "false")
+                            editor.putBoolean("bookmark_checked" + feed.feed_seq, false)
                             editor.apply()
                         }
                     }
@@ -368,18 +326,13 @@ class FeedAdapter(
 
             with(feed_layout){
                 setOnClickListener {
-                    onClickFeedView.OnClickFeed(item.feed_seq)
-                    val lintent = Intent(itemView.context, FeedActivity::class.java)
-                    lintent.putExtra("feed_seq", item.feed_seq)
-                    lintent.putExtra("checked"+item.feed_seq,favoriteButton.isChecked)
-                    lintent.putExtra("creater_seq",item.creater_seq)
-                    lintent.putExtra("bookmark_checked"+item.feed_seq,bookmarkButton.isChecked)
-                    itemView.context.startActivity(lintent)
-
+                    onClickFeedView.OnClickFeed(item,itemView.tv_m_nick,itemView.img_profile,itemView.favorite_btn,position)
                 }
             }
 
         }
+
+
 
 
 //        private fun setFavoriteDrawable(favorited: Boolean, feed: Feed) {
@@ -399,7 +352,6 @@ class FeedAdapter(
 //            favoriteValue.setText(favCount)
 //
 //        }
-
 
         private fun setReadMore(view: TextView, text: String, maxLine: Int) {
             val context = view.context
@@ -481,8 +433,6 @@ class FeedAdapter(
             )
         }
 
-
-
     }
 
     internal class LoadingViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
@@ -506,7 +456,7 @@ class FeedAdapter(
 
     // omeFragment에서 클릭시 뷰모델 사용하여 조회수 올리기위함
     interface OnClickViewListener {
-        fun OnClickFeed(feed_seq: Int)
+        fun OnClickFeed(feed: Feed,tv: TextView,iv: ImageView,chb:CheckBox,position: Int)
     }
     // omeFragment에서 클릭시 뷰모델 사용하여 좋아 올리기위함
     interface OnClickLikeListener {
@@ -514,8 +464,12 @@ class FeedAdapter(
     }
     // omeFragment에서 클릭시 뷰모델 사용하여 저장하기위
     interface OnClickBookMarkListener {
-        fun OnClickBookMark(m_seq: String,feed_seq: Int, boolean_value: String)
+        fun OnClickBookMark(m_seq: String, feed_seq: Int, boolean_value: String)
     }
+    interface OnClickProfileListener{
+        fun OnClickProfile(feed:Feed,tv:TextView,iv:ImageView)
+    }
+
 
 }
 
@@ -555,6 +509,3 @@ fun calculateTime(date: Date): String? {
     }
     return msg
 }
-
-
-

@@ -7,10 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.dev_sheep.story_of_man_and_woman.R
-import com.dev_sheep.story_of_man_and_woman.view.Fragment.HomeFragment
-import com.dev_sheep.story_of_man_and_woman.view.Fragment.NotificationFragment
-import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileFragment
-import com.dev_sheep.story_of_man_and_woman.view.Fragment.SearchFragment
+import com.dev_sheep.story_of_man_and_woman.view.Fragment.*
 import com.dev_sheep.story_of_man_and_woman.view.dialog.WriteDialog
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -23,6 +20,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
     val homeFragment = HomeFragment()
     val profileFragment = ProfileFragment()
+    val userProfileFragment = ProfileUsersFragment()
     val searchFragment = SearchFragment()
     val notificationFragment = NotificationFragment()
 
@@ -42,13 +40,38 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
         val bottomNavigation = bottomNavigationView
 
-        val fragmentManager : FragmentManager = supportFragmentManager
-        val fragmentTransaction: FragmentTransaction
+        // FeedAcitivity 에서 유저 클릭시
+        if(intent.hasExtra("ProfileUsersFragment")) {
 
-        fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frameLayout, homeFragment).commitAllowingStateLoss();
+            var checked = intent.getBooleanExtra("ProfileUsersFragment" , false)
+            if(checked == true){
+                if(intent.hasExtra("m_seq")){
+                    var m_seq = intent.getStringExtra("m_seq");
+                    val arguments = Bundle()
+                    arguments.putString("feed_activity_m_seq", m_seq)
+                    userProfileFragment.arguments = arguments
+                    supportFragmentManager.beginTransaction().replace(R.id.frameLayout, userProfileFragment)
+                        .commit()
 
+                }
+            }
+        }
+        // FeedAcitivity 에서 자신을 클릭시
+        else if(intent.hasExtra("ProfileMyFragment")){
+            var checked = intent.getBooleanExtra("ProfileMyFragment" , false)
+            if(checked == true){
+                supportFragmentManager.beginTransaction().replace(R.id.frameLayout, profileFragment)
+                    .commit()
+            }
+        }else {
+            val fragmentManager: FragmentManager = supportFragmentManager
+            val fragmentTransaction: FragmentTransaction
+            fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.frameLayout, homeFragment).commitAllowingStateLoss();
+        }
         bottomNavigation.setOnNavigationItemSelectedListener(this)
+
+
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

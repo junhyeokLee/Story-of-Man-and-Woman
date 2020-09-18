@@ -33,7 +33,7 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.e("성공함 Insert Member", "" + it.toString())
+                Log.e("Insert Member", "" + it.toString())
 
                 if (it.toString() == "true") { // email 중복되면 false 반환
 
@@ -53,6 +53,12 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
                     Toast.makeText(
                         context.applicationContext,
                         "이미 사용중인 이메일 입니다.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else if(it.toString() == "false_nick_name"){
+                    Toast.makeText(
+                        context.applicationContext,
+                        "이미 사용중인 닉네임 입니다.",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
