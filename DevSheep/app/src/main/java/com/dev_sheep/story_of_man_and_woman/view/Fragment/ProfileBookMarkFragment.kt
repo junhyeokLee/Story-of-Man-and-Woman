@@ -1,5 +1,6 @@
 package com.dev_sheep.story_of_man_and_woman.view.Fragment
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -61,18 +62,19 @@ class ProfileBookMarkFragment: Fragment() {
                     it,
                     contexts,
                     object : FeedAdapter.OnClickViewListener {
-                        override fun OnClickFeed(feed: Feed, tv:TextView, iv: ImageView, ckb: CheckBox, position:Int) {
+                        override fun OnClickFeed(feed: Feed,tv:TextView,iv: ImageView,cb:CheckBox,cb2:CheckBox,position:Int) {
                             feedViewModel.increaseViewCount(feed.feed_seq)
 
                             val lintent = Intent(context, FeedActivity::class.java)
                             lintent.putExtra("feed_seq", feed.feed_seq)
-                            lintent.putExtra("checked" + feed.feed_seq, ckb.isChecked)
+                            lintent.putExtra("checked" + feed.feed_seq, cb.isChecked)
                             lintent.putExtra("creater_seq", feed.creater_seq)
-                            lintent.putExtra("bookmark_checked" + feed.feed_seq, ckb.isChecked)
+                            lintent.putExtra("bookmark_checked" + feed.feed_seq, cb2.isChecked)
                             lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
 
 //                        context.transitionName = position.toString()
                             context!!.startActivity(lintent)
+                            (context as Activity).overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
 
                         }
                     },

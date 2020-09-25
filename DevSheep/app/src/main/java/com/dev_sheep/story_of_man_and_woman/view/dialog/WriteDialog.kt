@@ -1,5 +1,6 @@
 package com.dev_sheep.story_of_man_and_woman.view.dialog
 
+import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.view.View
@@ -27,6 +28,7 @@ class WriteDialog : BottomSheetDialogFragment() {
             val lintent = Intent(context, SelectTagActivity::class.java)
             lintent.putExtra("type",TYPE_PUBLIC)
             startActivity(lintent)
+            (context as Activity).overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
             dismiss()
         }
 
@@ -34,6 +36,8 @@ class WriteDialog : BottomSheetDialogFragment() {
             val lintent = Intent(context, SelectTagActivity::class.java)
             lintent.putExtra("type",TYPE_SUBSCRIBER)
             startActivity(lintent)
+            (context as Activity).overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+
             dismiss()
         }
 
@@ -41,6 +45,7 @@ class WriteDialog : BottomSheetDialogFragment() {
             val lintent = Intent(context, SelectTagActivity::class.java)
             lintent.putExtra("type",TYPE_PRIVATE)
             startActivity(lintent)
+            (context as Activity).overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
             dismiss()
         }
 

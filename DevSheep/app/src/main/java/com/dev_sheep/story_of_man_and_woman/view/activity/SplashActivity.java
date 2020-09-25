@@ -21,6 +21,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.dev_sheep.story_of_man_and_woman.BuildConfig;
+import com.dev_sheep.story_of_man_and_woman.R;
 import com.google.gson.Gson;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
@@ -68,7 +69,6 @@ public class SplashActivity extends Activity {
                     @Override
                     public void run() {
                         startActivity(new Intent(SplashActivity.this, SignUpActivity.class));
-
                         finish();
                     }
                 },SPLASH_TIME_OUT);

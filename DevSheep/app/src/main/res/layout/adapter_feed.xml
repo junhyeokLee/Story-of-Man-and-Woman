@@ -109,7 +109,7 @@
     <RelativeLayout
         android:id="@+id/feed_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1.5"
         android:background="@color/white"
         android:clickable="true"
@@ -118,7 +118,7 @@
         android:padding="8dp">
 
         <LinearLayout
-            android:layout_width="320dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white"
             android:orientation="vertical"
@@ -144,7 +144,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="16dp"
                 android:autoLink="web|email"
                 android:gravity="left"
                 android:lineSpacingExtra="4sp"
@@ -154,11 +154,22 @@
                 android:textSize="13sp"
                 app:fontFamily="@font/ridi_batang"></TextView>
 
-            <ImageView
-                android:id="@+id/content_img"
+
+
+            <com.dev_sheep.story_of_man_and_woman.view.Assymetric.AsymmetricRecyclerView
+                android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scaleType="fitStart"></ImageView>
+                android:layout_height="match_parent"
+                android:background="#ffffff"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="3dp"
+                android:fadingEdge="none"
+                android:focusable="false"
+                android:gravity="center"
+                android:listSelector="#00000000"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                />
+
 
         </LinearLayout>
 

@@ -1,5 +1,6 @@
 package com.dev_sheep.story_of_man_and_woman.view.activity
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -248,6 +249,8 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                 intent.putExtra("feed_seq", feed_seq)
 
                 startActivity(intent)
+                overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+
                 finish()
 
             }
@@ -258,6 +261,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                     val intent = Intent(this, MainActivity::class.java)
                     intent.putExtra("ProfileMyFragment", true)
                     startActivity(intent)
+                    overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
 
                     finish()
 
@@ -268,12 +272,10 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                     intent.putExtra("m_seq", m_seq)
                     intent.putExtra("ProfileUsersFragment", true)
                     startActivity(intent)
+                    overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+
                     finish()
                 }
-
-            }
-            R.id.img_profile -> {
-                Toast.makeText(this, "유저 페이지로 이동하기", Toast.LENGTH_SHORT).show()
 
             }
         }

@@ -1,11 +1,10 @@
 package com.dev_sheep.story_of_man_and_woman.view.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
-import android.os.Bundle
 import android.preference.PreferenceManager
 import android.text.Html
 import android.text.SpannableString
@@ -13,14 +12,13 @@ import android.text.Spanned
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
-import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -28,11 +26,11 @@ import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
 import com.dev_sheep.story_of_man_and_woman.utils.PokemonColorUtil
-import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileFragment
-import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileUsersFragment
-import com.dev_sheep.story_of_man_and_woman.view.activity.FeedActivity
+import com.dev_sheep.story_of_man_and_woman.utils.SpacesItemDecoration
+import com.dev_sheep.story_of_man_and_woman.view.Assymetric.AsymmetricRecyclerView
+import com.dev_sheep.story_of_man_and_woman.view.Assymetric.AsymmetricRecyclerViewAdapter
+import com.dev_sheep.story_of_man_and_woman.view.Assymetric.Utils
 import com.victor.loading.rotate.RotateLoading
-import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.adapter_feed.view.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -77,6 +75,7 @@ class FeedAdapter(
                 )
                 FeedHolder(
                     view,
+                    list,
                     onClickViewListener,
                     onClickLikeListener,
                     onClickBookMarkListener,
@@ -160,6 +159,7 @@ class FeedAdapter(
 
     internal class FeedHolder(
         itemView: View,
+        list: List<Feed>,
         onClickViewListener: OnClickViewListener,
         onClickLikeListener: OnClickLikeListener,
         onClickBookMarkListener: OnClickBookMarkListener,
@@ -173,15 +173,17 @@ class FeedAdapter(
         private val m_nick : TextView = itemView.findViewById(R.id.tv_m_nick)
         private val profile_layout : RelativeLayout = itemView.findViewById(R.id.profile_layout)
         private val content : TextView = itemView.findViewById(R.id.tv_content)
-        private val content_img : ImageView = itemView.findViewById(R.id.content_img)
+        //        private val content_img : ImageView = itemView.findViewById(R.id.content_img)
         private var sdf : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         private val onClickFeedView = onClickViewListener
         private val onClickFeedLike = onClickLikeListener
         private val onClickBookMark = onClickBookMarkListener
         private val onClickProfile = onClickProfileListener
+        private val recyclerView : AsymmetricRecyclerView = itemView.findViewById(R.id.recyclerView)
         lateinit var m_seq : String
+        private val listImg = list
 
-
+        @SuppressLint("Range")
         fun bindView(item: Feed, position: Int) {
 
             ViewCompat.setTransitionName(itemView.tv_m_nick, position.toString() + "Text")
@@ -199,6 +201,57 @@ class FeedAdapter(
             itemView.like_count.text = item.like_no.toString()
             itemView.tv_gender.text = item.creater_gender
 
+            recyclerView.setRequestedColumnCount(3)
+            recyclerView.isDebugging = true
+            recyclerView.requestedHorizontalSpacing = Utils.dpToPx(itemView.context, 3F)
+            recyclerView.addItemDecoration(
+                SpacesItemDecoration(
+                    itemView.context.getResources().getDimensionPixelSize(R.dimen.recycler_padding)
+                )
+            )
+
+            itemView.recyclerView.apply {
+
+                var feed: Feed = listImg.get(position)
+                Log.e("feedIMG SIZE = ", "" + feed.images.size)
+                Log.e("feedIMGs = ", "" + feed.images.toString())
+                if (feed.images.size >= 3) {
+                    val adapter = ChildAdapter(feed.images, 3, feed.images.size)
+                    this.setAdapter(
+                        AsymmetricRecyclerViewAdapter(
+                            itemView.context,
+                            this,
+                            adapter
+                        )
+                    )
+                }else if(feed.images.size == 2){
+                    val adapter = ChildAdapter(feed.images, 2, feed.images.size)
+                    this.setAdapter(
+                        AsymmetricRecyclerViewAdapter(
+                            itemView.context,
+                            this,
+                            adapter
+                        )
+                    )
+                }else if(feed.images.size == 1){
+                    val adapter = ChildAdapter(feed.images, 1, feed.images.size)
+                    this.setAdapter(
+                        AsymmetricRecyclerViewAdapter(
+                            itemView.context,
+                            this,
+                            adapter
+                        )
+                    )
+                } else if(feed.images.size == 0){
+
+                }
+            }
+
+
+
+
+
+
 
 //            Log.e("qdqwd",content.text.toString());
             setReadMore(itemView.tv_content, content.text.toString(), 3)
@@ -215,10 +268,9 @@ class FeedAdapter(
                 .placeholder(android.R.color.transparent)
                 .into(itemView.img_profile)
 
-//            Glide.with(itemView.context)
-//                .load(item.creater_image_url)
-//                .placeholder(android.R.color.transparent)
-//                .into(itemView.content_img)
+
+
+
 
             // 자신의 seq 가져오기
             val preferences: SharedPreferences = itemView.context!!.getSharedPreferences(
@@ -229,7 +281,7 @@ class FeedAdapter(
 
             with(profile_layout){
                 setOnClickListener {
-                    onClickProfile.OnClickProfile(item,m_nick,itemView.img_profile)
+                    onClickProfile.OnClickProfile(item, m_nick, itemView.img_profile)
                 }
             }
 
@@ -326,7 +378,14 @@ class FeedAdapter(
 
             with(feed_layout){
                 setOnClickListener {
-                    onClickFeedView.OnClickFeed(item,itemView.tv_m_nick,itemView.img_profile,itemView.favorite_btn,position)
+                    onClickFeedView.OnClickFeed(
+                        item,
+                        itemView.tv_m_nick,
+                        itemView.img_profile,
+                        itemView.favorite_btn,
+                        itemView.bookmark,
+                        position
+                    )
                 }
             }
 
@@ -456,7 +515,14 @@ class FeedAdapter(
 
     // omeFragment에서 클릭시 뷰모델 사용하여 조회수 올리기위함
     interface OnClickViewListener {
-        fun OnClickFeed(feed: Feed,tv: TextView,iv: ImageView,chb:CheckBox,position: Int)
+        fun OnClickFeed(
+            feed: Feed,
+            tv: TextView,
+            iv: ImageView,
+            cb: CheckBox,
+            cb2: CheckBox,
+            position: Int
+        )
     }
     // omeFragment에서 클릭시 뷰모델 사용하여 좋아 올리기위함
     interface OnClickLikeListener {
@@ -467,7 +533,7 @@ class FeedAdapter(
         fun OnClickBookMark(m_seq: String, feed_seq: Int, boolean_value: String)
     }
     interface OnClickProfileListener{
-        fun OnClickProfile(feed:Feed,tv:TextView,iv:ImageView)
+        fun OnClickProfile(feed: Feed, tv: TextView, iv: ImageView)
     }
 
 

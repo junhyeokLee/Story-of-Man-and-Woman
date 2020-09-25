@@ -62,6 +62,7 @@ interface FeedService {
     @POST("feed_item_get.php")
     fun getFeed(@Field("feed_seq") feed_seq: Int): Single<Feed>
 
+
     //사용자가 프로필 이미지를 변경했을때 해당 이미지를 서버로 전송하는 통신
     @Multipart
     @POST("content_upload.php")

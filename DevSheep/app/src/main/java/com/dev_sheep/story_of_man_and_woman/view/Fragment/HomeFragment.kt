@@ -1,5 +1,6 @@
 package com.dev_sheep.story_of_man_and_woman.view.Fragment
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -14,6 +15,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -29,11 +31,9 @@ import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedRankAdapter
 import com.dev_sheep.story_of_man_and_woman.view.adapter.Test_tag_Adapter
 import com.dev_sheep.story_of_man_and_woman.view.dialog.FilterDialog
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
-import de.hdodenhof.circleimageview.CircleImageView
 import eu.micer.circlesloadingindicator.CirclesLoadingIndicator
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_home.*
 import me.relex.circleindicator.CircleIndicator
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -71,6 +71,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     private var firstVisibleItem = 0
     private var visibleItemCount = 0
     private var totalItemCount = 0
+
 
     private var handler = Handler()
     private var delay : Long = 5000
@@ -132,18 +133,25 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             .doOnSuccess { progressBar?.visibility = View.GONE }
             .subscribe({
                 mFeedAdapter = FeedAdapter(it, contexts, object : FeedAdapter.OnClickViewListener {
-                    override fun OnClickFeed(feed: Feed,tv:TextView,iv: ImageView,ckb:CheckBox,position:Int) {
+                    override fun OnClickFeed(
+                        feed: Feed,
+                        tv: TextView,
+                        iv: ImageView,
+                        cb: CheckBox,
+                        cb2: CheckBox,
+                        position: Int
+                    ) {
                         feedViewModel.increaseViewCount(feed.feed_seq)
 
                         val lintent = Intent(context, FeedActivity::class.java)
                         lintent.putExtra("feed_seq", feed.feed_seq)
-                        lintent.putExtra("checked" + feed.feed_seq, ckb.isChecked)
+                        lintent.putExtra("checked" + feed.feed_seq, cb.isChecked)
                         lintent.putExtra("creater_seq", feed.creater_seq)
-                        lintent.putExtra("bookmark_checked" + feed.feed_seq, ckb.isChecked)
+                        lintent.putExtra("bookmark_checked" + feed.feed_seq, cb2.isChecked)
                         lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
-
 //                        context.transitionName = position.toString()
-                        context!!.startActivity(lintent)
+                        (context as Activity).startActivity(lintent)
+                        (context as Activity).overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
 
                     }
                 }, object : FeedAdapter.OnClickLikeListener {
@@ -160,7 +168,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                         feedViewModel.onClickBookMark(m_seq, feed_seq, boolean_value)
                     }
 
-                }, object : FeedAdapter.OnClickProfileListener{
+                }, object : FeedAdapter.OnClickProfileListener {
                     override fun OnClickProfile(feed: Feed, tv: TextView, iv: ImageView) {
 
                         val trId = ViewCompat.getTransitionName(tv).toString()
@@ -194,7 +202,8 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 recyclerView?.apply {
                     var linearLayoutMnager = LinearLayoutManager(this.context)
                     this.layoutManager = linearLayoutMnager
-                    adapter = mFeedAdapter
+                    this.itemAnimator = DefaultItemAnimator()
+                    this.adapter = mFeedAdapter
                 }
 
             }, {
