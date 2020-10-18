@@ -46,6 +46,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feed)
 
+
         position = intent.getIntExtra(
             EXTRA_POSITION, DEFAULT_POSITION
         )
@@ -59,7 +60,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
 
         write_content
             .setEditorFontSize(16)
-            .setEditorPadding(16, 16, 16, 8)
+            .setEditorPadding(8, 16, 8, 8)
 
         im_back.setOnClickListener { onBackPressed() }
 

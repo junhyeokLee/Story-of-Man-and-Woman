@@ -109,10 +109,14 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     lateinit var followChecked : CheckBox
     lateinit var followerCount : TextView
     lateinit var followCount : TextView
+    lateinit var gender : TextView
+    lateinit var age : TextView
     lateinit var get_creater_nick_name: String
     lateinit var get_creater_img: String
     lateinit var my_m_seq : String
-
+    lateinit var profile_img: String
+    lateinit var layout_subscriber: LinearLayout
+    lateinit var layout_subscribing: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -148,7 +152,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
         progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         layoutManager = GridLayoutManager(view.context, 1)
-        profileImage = view.findViewById<ImageView>(R.id.id_Profile_Image)
+        profileImage = view.findViewById<CircleImageView>(R.id.id_Profile_Image)
         profileBackground = view.findViewById<ImageView>(R.id.id_ProfileBackground_Image)
         profileAdd = view.findViewById<ImageView>(R.id.id_Profile_add)
         backgroundAdd = view.findViewById<ImageView>(R.id.id_ProfileBackgorund_add)
@@ -157,6 +161,10 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         tablayout = view.findViewById(R.id.tabLayout) as TabLayout
         followCount = view.findViewById(R.id.count_follow) as TextView
         followerCount = view.findViewById(R.id.count_follower) as TextView
+        layout_subscriber = view.findViewById(R.id.layout_subscriber) as LinearLayout
+        layout_subscribing = view.findViewById(R.id.layout_subscribing) as LinearLayout
+        gender = view.findViewById(R.id.tv_gender) as TextView
+        age = view.findViewById(R.id.tv_age) as TextView
         preferecnes_img = view.findViewById(R.id.preferecnes_img) as ImageView
         preferecnes_message = view.findViewById(R.id.preferecnes_message) as ImageView
         recyclerView?.layoutManager = layoutManager
@@ -221,9 +229,11 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         profileAdd?.setOnClickListener(this)
         backgroundAdd?.setOnClickListener(this)
         preferecnes_img?.setOnClickListener(this)
+        layout_subscribing?.setOnClickListener(this)
+        layout_subscriber?.setOnClickListener(this)
         preferecnes_message?.setOnClickListener(this)
-        memberViewModel.memberMySubscribeCount(m_seq, followCount)
-        memberViewModel.memberUserSubscribeCount(m_seq, followerCount)
+        memberViewModel.memberMySubscribeCount(my_m_seq, followCount)
+        memberViewModel.memberUserSubscribeCount(my_m_seq, followerCount)
         return view
     }
 
@@ -237,11 +247,8 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     }
 
     private fun initData(){
-        Log.e("getCreateImg",get_creater_img)
-        Log.e("getNickName",get_creater_nick_name)
-        Log.e("my_m_seq",my_m_seq)
-
         if(get_creater_img != "null" && get_creater_nick_name != "null") {
+            profile_img = get_creater_img
             Glide.with(this)
                 .load(get_creater_img)
                 .apply(RequestOptions().circleCrop())
@@ -257,6 +264,8 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                     nickname = it.nick_name.toString()
                     email = it.email.toString()
                     m_nick_name = it.nick_name.toString()
+                    gender.text = it.gender.toString()
+                    age.text = it.age.toString()
                     if (it.background_img != null) {
                         Glide.with(this)
                             .load(it.background_img)
@@ -275,26 +284,32 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
 
-                    if(it.profile_img == null){
-                        Glide.with(this)
-                            .load("http://storymaw.com/data/member/user.png")
+                    if(it.profile_img == null && context != null){
+                        profile_img = "http://storymaw.com/data/member/user.png"
+                        Glide.with(context!!)
+                            .load(profile_img)
                             .apply(RequestOptions().circleCrop())
                             .placeholder(android.R.color.transparent)
                             .into(profileImage!!)
                     }else {
-                        Glide.with(this)
-                            .load(it.profile_img)
-                            .apply(RequestOptions().circleCrop())
-                            .placeholder(android.R.color.transparent)
-                            .into(profileImage!!)
+                        profile_img = it.profile_img!!
+                        if(context != null) {
+                            Glide.with(context!!)
+                                .load(profile_img)
+                                .apply(RequestOptions().circleCrop())
+                                .placeholder(android.R.color.transparent)
+                                .into(profileImage!!)
+                        }
                     }
                     profileNickname.text = it.nick_name
                     nickname = it.nick_name.toString()
                     email = it.email.toString()
                     m_nick_name = it.nick_name.toString()
+                    gender.text = it.gender.toString()
+                    age.text = it.age.toString()
 
-                    if (it.background_img != null) {
-                        Glide.with(this)
+                    if (it.background_img != null && context != null) {
+                        Glide.with(context!!)
                             .load(it.background_img)
                             .placeholder(android.R.color.transparent)
                             .into(profileBackground)
@@ -495,7 +510,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                             Log.e("성공함", response.toString())
                             Log.e("filename", albumFile?.name)
                             memberViewModel.editProfileImg(
-                                m_seq,
+                                my_m_seq,
                                 "http://www.storymaw.com/data/member/" + email + "/" + albumFile?.name.toString()
                             )
                             profileImage.setImageURI(albumURI)
@@ -534,7 +549,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                             Log.e("성공함", response.toString())
                             Log.e("filename", albumFile?.name.toString())
                             memberViewModel.editProfileBackgroundImg(
-                                m_seq,
+                                my_m_seq,
                                 "http://www.storymaw.com/data/member/" + email + "/" + albumFile?.name.toString()
                             )
                             profileBackground.setImageURI(albumURI)
@@ -545,22 +560,19 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                             Log.e("에러", t.message)
                         }
                     })
-
                 }
-
             }
-
         }
     }
 
     private fun showAndHideOption(id: Int, vertical: Int) {
-        if(vertical > 150){
+        if(vertical > 240){
             if(menu != null) {
                 collapsingToolbar?.title = ""
                 val item = menu!!.findItem(id)
                 item.isVisible = false
             }
-        }else if(vertical < 150) {
+        }else if(vertical < 240) {
             if (menu != null) {
                 collapsingToolbar?.title = nickname
                 val item = menu!!.findItem(id)
@@ -646,14 +658,14 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     }
 
     // 갤러리에 사진 추가 함수
-    private fun galleryAddPic() {
-        val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-        val file = File(mCurrentPhotoPath)
-        val contentURI = Uri.fromFile(file)
-        mediaScanIntent.data = contentURI
-//        sendBroadcast(mediaScanIntent)
-        Toast.makeText(this.context, "앨범에 저장되었습니다.", Toast.LENGTH_SHORT).show()
-    }
+//    private fun galleryAddPic() {
+//        val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+//        val file = File(mCurrentPhotoPath)
+//        val contentURI = Uri.fromFile(file)
+//        mediaScanIntent.data = contentURI
+////        sendBroadcast(mediaScanIntent)
+//        Toast.makeText(this.context, "앨범에 저장되었습니다.", Toast.LENGTH_SHORT).show()
+//    }
 
     override fun onClick(v: View?) {
         when(v?.id){
@@ -664,7 +676,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                 getBackGroundAlbum()
             }
             R.id.id_Profile_Image -> {
-                ImageDialog(context!!, R.drawable.ic_user).start("dqwq")
+                ImageDialog(context!!,profile_img).start("")
             }
             R.id.preferecnes_img -> {
                 val preference = PrefsFragment()//The fragment that u want to open for example
@@ -677,6 +689,32 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                 )
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.replace(R.id.frameLayout, preference);
+                fragmentTransaction.commit()
+            }
+            R.id.layout_subscribing ->{
+                val subscribingFragment = SubscribingFragment(my_m_seq)//The fragment that u want to open for example
+                var SubscribeFragmnet = (context as AppCompatActivity).supportFragmentManager
+                var fragmentTransaction: FragmentTransaction = SubscribeFragmnet.beginTransaction()
+                fragmentTransaction.setReorderingAllowed(true)
+                fragmentTransaction.setCustomAnimations(
+                    R.anim.fragment_fade_in,
+                    R.anim.fragment_fade_out
+                )
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.replace(R.id.frameLayout, subscribingFragment);
+                fragmentTransaction.commit()
+            }
+            R.id.layout_subscriber ->{
+                val subscribersFragment = SubscribersFragment(my_m_seq)//The fragment that u want to open for example
+                var SubscribeFragmnet = (context as AppCompatActivity).supportFragmentManager
+                var fragmentTransaction: FragmentTransaction = SubscribeFragmnet.beginTransaction()
+                fragmentTransaction.setReorderingAllowed(true)
+                fragmentTransaction.setCustomAnimations(
+                    R.anim.fragment_fade_in,
+                    R.anim.fragment_fade_out
+                )
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.replace(R.id.frameLayout, subscribersFragment);
                 fragmentTransaction.commit()
             }
             R.id.preferecnes_message -> {

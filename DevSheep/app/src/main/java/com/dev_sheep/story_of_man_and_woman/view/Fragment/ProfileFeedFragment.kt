@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -98,22 +99,42 @@ class ProfileFeedFragment: Fragment() {
 
                     }, object : FeedAdapter.OnClickProfileListener{
                         override fun OnClickProfile(feed: Feed, tv: TextView, iv: ImageView) {
+
                             val trId = ViewCompat.getTransitionName(tv).toString()
                             val trId1 = ViewCompat.getTransitionName(iv).toString()
-                            activity?.supportFragmentManager
-                                ?.beginTransaction()
-                                ?.addSharedElement(tv, trId)
-                                ?.addSharedElement(iv, trId1)
-                                ?.addToBackStack("ProfileImg")
-                                ?.replace(R.id.frameLayout, ProfileUsersFragment.newInstance(feed, trId, trId1))
-                                ?.commit()
+
+                            if (feed.creater_seq == m_seq) {
+                                activity?.supportFragmentManager
+                                    ?.beginTransaction()
+                                    ?.addSharedElement(tv, trId)
+                                    ?.addSharedElement(iv, trId1)
+                                    ?.addToBackStack("ProfileImg")
+                                    ?.replace(
+                                        R.id.frameLayout,
+                                        ProfileFragment.newInstance(feed, trId, trId1)
+                                    )
+                                    ?.commit()
+                            } else {
+                                activity?.supportFragmentManager
+                                    ?.beginTransaction()
+                                    ?.addSharedElement(tv, trId)
+                                    ?.addSharedElement(iv, trId1)
+                                    ?.addToBackStack("ProfileImg")
+                                    ?.replace(
+                                        R.id.frameLayout,
+                                        ProfileUsersFragment.newInstance(feed, trId, trId1)
+                                    )
+                                    ?.commit()
+                            }
+
                         }
 
                     })
                 recyclerView?.apply {
                     var linearLayoutMnager = LinearLayoutManager(this.context)
                     this.layoutManager = linearLayoutMnager
-                    adapter = mFeedAdapter
+                    this.itemAnimator = DefaultItemAnimator()
+                    this.adapter = mFeedAdapter
                 }
 //                if (it.isNotEmpty()) {
 //                    progressBar?.visibility = View.GONE

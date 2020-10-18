@@ -41,6 +41,9 @@ interface FeedService {
     @GET("feed_get_all.php")
     fun getList(): Single<List<Feed>>
 
+    @GET("feed_get_tag_search.php")
+    fun getTagSearch(@Query("tag_seq") tag_seq: Int): Single<List<Feed>>
+
     @GET("feed_get_mystory.php")
     fun getListMystory(@Query("m_seq") m_seq: String): Single<List<Feed>>
 

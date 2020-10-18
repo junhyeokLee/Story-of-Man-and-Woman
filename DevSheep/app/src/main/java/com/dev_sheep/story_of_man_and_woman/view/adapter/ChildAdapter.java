@@ -10,6 +10,9 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.dev_sheep.story_of_man_and_woman.R;
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.ItemImage;
 import com.dev_sheep.story_of_man_and_woman.view.Assymetric.AGVRecyclerViewAdapter;
@@ -56,6 +59,8 @@ class ChildAdapter extends AGVRecyclerViewAdapter<FeedImageHolder> {
     @Override public int getItemViewType(int position) {
         return position % 2 == 0 ? 1 : 0;
     }
+
+
 }
 
 
@@ -78,27 +83,12 @@ class FeedImageHolder extends RecyclerView.ViewHolder {
     public void bind(List<ItemImage> item, int position, int mDisplay, int mTotal) {
 //        ImageLoader.getInstance().displayImage(String.valueOf(item.get(position).getImagePath()), mImageView);
 
-Log.e("position = ",""+position);
-        Log.e("mDisplay = ",""+mDisplay);
-        Log.e("mTotal = ",""+mTotal);
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions = requestOptions.transform(new CenterCrop(), new RoundedCorners(16));
 
-        int currentOffset = 0;
-        boolean isCol2Avail = false;
-        int colSpan = Math.random() < 0.2f ? 2 : 1;
-        int rowSpan = colSpan;
-        if(colSpan == 2 && !isCol2Avail)
-            isCol2Avail = true;
-        else if(colSpan == 2 && isCol2Avail)
-            colSpan = 3;
-
-        item.get(position).setColumnSpan(colSpan);
-        item.get(position).setRowSpan(rowSpan);
-        item.get(position).setPosition( currentOffset + position);
-
-        Log.e("ChildAdapter = ",""+item.get(position).getImagePath());
         Glide.with(itemView.getContext())
                 .load(item.get(position).getImagePath())
-                .centerCrop()
+                .apply(requestOptions)
                 .placeholder(android.R.color.transparent)
                 .into(mImageView);
 

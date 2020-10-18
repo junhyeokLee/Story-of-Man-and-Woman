@@ -7,14 +7,12 @@ import android.os.Bundle
 import android.transition.TransitionInflater
 import android.util.Log
 import android.view.*
-import android.widget.CheckBox
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
@@ -82,6 +80,11 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
     lateinit var followCount : TextView
     lateinit var get_creater_nick_name: String
     lateinit var get_creater_img: String
+    lateinit var gender : TextView
+    lateinit var age : TextView
+    lateinit var profile_img: String
+    lateinit var layout_subscriber: LinearLayout
+    lateinit var layout_subscribing: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,7 +96,6 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
         get_creater_nick_name = arguments?.getString("creater_nick").toString()
         get_creater_img = arguments?.getString("creater_image").toString()
         m_seq = arguments?.getString("m_seq").toString()
-
         // user FeedActivity 에서 프로필 클릭시 ( MainActivity에서 argument 값 받음 )
         feed_activity_m_seq = arguments?.getString("feed_activity_m_seq").toString()
 
@@ -127,6 +129,10 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
         followChecked = view.findViewById(R.id.check_follow) as CheckBox
         followerCount = view.findViewById(R.id.count_follower) as TextView
         followCount = view.findViewById(R.id.count_follow) as TextView
+        layout_subscriber = view.findViewById(R.id.layout_subscriber) as LinearLayout
+        layout_subscribing = view.findViewById(R.id.layout_subscribing) as LinearLayout
+        gender = view.findViewById(R.id.tv_gender) as TextView
+        age = view.findViewById(R.id.tv_age) as TextView
         recyclerView?.layoutManager = layoutManager
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
 
@@ -140,6 +146,9 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
             addTab(this.newTab().setIcon(R.drawable.ic_heart_empty).setText("구독자 에게"))
 
         }
+        Log.e("m_seq userfragment",""+m_seq)
+        Log.e("feed_activity_m_seq userfragment",""+feed_activity_m_seq)
+
 
         if(m_seq == "null") {
             viewPagerAdapter =
@@ -148,7 +157,7 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
             viewPagerAdapter =
                 ProfileUserViewpagerAdapter(childFragmentManager, tablayout!!.tabCount, m_seq)
         }
-            viewpager?.adapter = viewPagerAdapter
+        viewpager?.adapter = viewPagerAdapter
         viewpager?.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tablayout))
 
         tablayout?.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -176,7 +185,8 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
 
         profileImage?.setOnClickListener(this)
         followChecked?.setOnClickListener(this)
-
+        layout_subscribing?.setOnClickListener(this)
+        layout_subscriber?.setOnClickListener(this)
         followChecked.apply {
             memberViewModel.memberSubscribeChecked(m_seq,my_m_seq,"checked",this,context);
 
@@ -209,14 +219,18 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
                 .subscribe({
 
                     if(it.profile_img == null){
+
+                        profile_img = "http://storymaw.com/data/member/user.png"
+
                         Glide.with(this)
-                            .load("http://storymaw.com/data/member/user.png")
+                            .load(profile_img)
                             .apply(RequestOptions().circleCrop())
                             .placeholder(android.R.color.transparent)
                             .into(profileImage!!)
                     }else {
+                        profile_img = it.profile_img!!
                         Glide.with(this)
-                            .load(it.profile_img)
+                            .load(profile_img)
                             .apply(RequestOptions().circleCrop())
                             .placeholder(android.R.color.transparent)
                             .into(profileImage!!)
@@ -224,6 +238,8 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
                     profileNickName!!.text = it.nick_name.toString()
                     nickname = it.nick_name.toString()
                     m_nick_name = it.nick_name.toString()
+                    gender.text = it.gender.toString()
+                    age.text = it.age.toString()
 
                     if (it.background_img != null) {
                         Glide.with(this)
@@ -236,8 +252,9 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
                 })
         }else {
 
+            profile_img = get_creater_img
             Glide.with(this)
-                .load(get_creater_img)
+                .load(profile_img)
                 .apply(RequestOptions().circleCrop())
                 .placeholder(android.R.color.transparent)
                 .into(profileImage!!)
@@ -250,6 +267,9 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
             single.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    gender.text = it.gender.toString()
+                    age.text = it.age.toString()
+
                     if (it.background_img != null) {
                         Glide.with(this)
                             .load(it.background_img)
@@ -303,13 +323,13 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
 
 
     private fun showAndHideOption(id: Int, vertical: Int) {
-        if(vertical > 150){
+        if(vertical > 240){
             if(menu != null) {
                 collapsingToolbar?.title = ""
                 val item = menu!!.findItem(id)
                 item.isVisible = false
             }
-        }else if(vertical < 150) {
+        }else if(vertical < 240) {
             if (menu != null) {
                 collapsingToolbar?.title = nickname
                 val item = menu!!.findItem(id)
@@ -322,8 +342,8 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
 
     override fun onClick(v: View?) {
         when(v?.id){
-            R.id.id_Profile_Image -> {
-                ImageDialog(context!!, R.mipmap.user).start("dqwq")
+            R.id.id_Profile_Image_user -> {
+                ImageDialog(context!!,profile_img).start("")
             }
             R.id.check_follow -> {
 
@@ -339,8 +359,33 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
 //                    followerCount.setText("0")
                     memberViewModel.memberSubscribe(m_seq,my_m_seq,"false",followerCount)
                 }
+            }
 
-
+            R.id.layout_subscribing ->{
+                val subscribingFragment = SubscribingFragment(m_seq)//The fragment that u want to open for example
+                var SubscribeFragmnet = (context as AppCompatActivity).supportFragmentManager
+                var fragmentTransaction: FragmentTransaction = SubscribeFragmnet.beginTransaction()
+                fragmentTransaction.setReorderingAllowed(true)
+                fragmentTransaction.setCustomAnimations(
+                    R.anim.fragment_fade_in,
+                    R.anim.fragment_fade_out
+                )
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.replace(R.id.frameLayout, subscribingFragment);
+                fragmentTransaction.commit()
+            }
+            R.id.layout_subscriber ->{
+                val subscribersFragment = SubscribersFragment(m_seq)//The fragment that u want to open for example
+                var SubscribeFragmnet = (context as AppCompatActivity).supportFragmentManager
+                var fragmentTransaction: FragmentTransaction = SubscribeFragmnet.beginTransaction()
+                fragmentTransaction.setReorderingAllowed(true)
+                fragmentTransaction.setCustomAnimations(
+                    R.anim.fragment_fade_in,
+                    R.anim.fragment_fade_out
+                )
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.replace(R.id.frameLayout, subscribersFragment);
+                fragmentTransaction.commit()
             }
         }
 

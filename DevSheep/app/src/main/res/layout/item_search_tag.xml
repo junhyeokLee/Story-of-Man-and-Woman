@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="30dp"
+    android:layout_height="46dp"
     android:background="@drawable/background_tag_span"
     android:layout_marginTop="16dp"
     android:layout_marginRight="6dp"
@@ -18,10 +18,9 @@
         android:gravity="center"
         android:singleLine="true"
         android:text="#사연/이별"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textSize="14sp"
         android:fontFamily="@font/ridi_batang"
-        android:textStyle="bold"
         tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

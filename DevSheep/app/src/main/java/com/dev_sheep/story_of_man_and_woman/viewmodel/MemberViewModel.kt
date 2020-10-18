@@ -176,6 +176,19 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
 
             })
     }
+    fun memberSubscribe2(target_m_seq:String,m_seq:String,type:String){
+        val single = memberService.memberSubscribe(target_m_seq,m_seq,type)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                    Log.e("성공함 구독", "" + it.toString())
+
+            }, {
+                Log.e("실패함 구독", "" + it.message)
+
+            })
+    }
+
     fun memberSubscribeChecked(target_m_seq:String, m_seq:String, type:String, checkBox: CheckBox,context: Context){
         val single = memberService.memberSubscribe(target_m_seq,m_seq,type)
         single.subscribeOn(Schedulers.io())
@@ -212,6 +225,29 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
             .subscribe({
                 count.text = it
             }, {
+            })
+    }
+
+    fun getSubscribing(m_seq: String){
+        val single = memberService.getSubscribing(m_seq)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.e("성공함 ", "" + it.toString())
+            }, {
+                Log.e("실패함", "" + it.message)
+
+            })
+    }
+    fun getSubscriber(m_seq: String){
+        val single = memberService.getSubsribers(m_seq)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.e("성공함 ", "" + it.toString())
+            }, {
+                Log.e("실패함", "" + it.message)
+
             })
     }
 }

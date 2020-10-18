@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="#사연/이별"
-        android:textColor="@color/white"
+        android:textColor="@color/sub_Accent"
         android:textSize="14sp"
         app:fontFamily="@font/ridi_batang"
         tools:ignore="MissingConstraints" />

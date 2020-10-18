@@ -12,7 +12,7 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="470dp"
+        android:layout_height="500dp"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:layout_scrollFlags="scroll|enterAlways"
@@ -64,7 +64,7 @@
                 android:layout_marginBottom="46dp"
                 />
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/id_Profile_Image"
                 android:layout_width="110dp"
                 android:layout_height="110dp"
@@ -112,6 +112,57 @@
                     android:textColor="@color/black"
                     android:textSize="18sp"></TextView>
 
+                <LinearLayout
+                    android:id="@+id/profile_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+
+                        <TextView
+                            android:id="@+id/tv_gender"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="남"
+                            android:textSize="12sp"
+                            android:textColor="@color/blue_gray_light"
+                            android:fontFamily="@font/ridi_batang"
+                            />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="4dp"
+                            android:layout_marginRight="4dp"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:textColor="@color/blue_gray_light"
+                            android:textSize="11sp"
+                            android:text="/"
+                            />
+                        <TextView
+                            android:id="@+id/tv_age"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="20대"
+                            android:textSize="12sp"
+                            android:textColor="@color/blue_gray_light"
+                            android:fontFamily="@font/ridi_batang"
+                            />
+
+
+                    </LinearLayout>
+                </LinearLayout>
+
+
                 <TextView
                     android:id="@+id/tv_edit"
                     android:layout_width="160dp"
@@ -126,12 +177,13 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="100dp"
+                    android:layout_height="92dp"
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:orientation="horizontal"
                     >
                     <LinearLayout
+                        android:id="@+id/layout_subscribing"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
@@ -139,7 +191,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/ridi_batang"
-                            android:textColor="@color/gray"
+                            android:textColor="@color/blue_gray_light"
                             android:text="구독중" />
 
                         <TextView
@@ -161,6 +213,7 @@
                         android:background="@color/deep_white"/>
 
                     <LinearLayout
+                        android:id="@+id/layout_subscriber"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
@@ -168,7 +221,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/ridi_batang"
-                            android:textColor="@color/gray"
+                            android:textColor="@color/blue_gray_light"
                             android:text="구독자" />
 
                         <TextView
@@ -199,7 +252,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/ridi_batang"
-                            android:textColor="@color/gray"
+                            android:textColor="@color/blue_gray_light"
                             android:text="쪽지함" />
 
                         <ImageView
@@ -229,7 +282,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/ridi_batang"
-                            android:textColor="@color/gray"
+                            android:textColor="@color/blue_gray_light"
                             android:text="설정" />
 
                         <ImageView

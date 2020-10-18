@@ -24,7 +24,7 @@ class ProfileUserViewpagerAdapter(fm: FragmentManager, pageCount: Int,m_seq: Str
         val fragment = when(position)
         {
             0 -> ProfileUserFeedFragment(m_seq!!)
-            1 -> ProfileUserSubscripterFragment(m_seq!!)
+            1 -> ProfileUserSubscriberFragment(m_seq!!)
 
             else -> null
         }

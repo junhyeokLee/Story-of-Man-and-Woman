@@ -48,22 +48,66 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    >
+                    <TextView
+                        android:id="@+id/tv_m_nick"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:gravity="center|left"
+                        android:layout_marginLeft="8dp"
+                        android:maxLines="1"
+                        android:text="null"
+                        android:textColor="@color/black"
+                        android:transitionName="@string/profile_name"
+                        android:textSize="12sp"
+                        app:fontFamily="@font/poppins" />
+                    <TextView
+                        android:layout_width="4dp"
+                        android:layout_height="4dp"
+                        android:layout_marginLeft="6dp"
+                        android:layout_marginRight="6dp"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:background="@drawable/shape"
+                        />
+                    <TextView
+                        android:id="@+id/tv_gender"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="남"
+                        android:textSize="11sp"
+                        android:textColor="@color/blue_gray_light"
+                        android:fontFamily="@font/ridi_batang"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="4dp"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:textColor="@color/blue_gray_light"
+                        android:textSize="11sp"
+                        android:text="/"
+                        />
+                    <TextView
+                        android:id="@+id/tv_age"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="20대"
+                        android:textSize="11sp"
+                        android:textColor="@color/blue_gray_light"
+                        android:fontFamily="@font/ridi_batang"
+                        />
 
-                <TextView
-                    android:id="@+id/tv_m_nick"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:gravity="center|left"
-                    android:layout_marginLeft="8dp"
-                    android:maxLines="1"
-                    android:text="null"
-                    android:textColor="@color/black"
-                    android:transitionName="@string/profile_name"
-                    android:textSize="12sp"
-                    app:fontFamily="@font/poppins" />
-
-
+                </LinearLayout>
                 <TextView
                     android:id="@+id/tv_feed_date"
                     android:layout_width="wrap_content"
@@ -73,9 +117,8 @@
                     android:layout_marginLeft="8dp"
                     android:textSize="11sp"
                     app:fontFamily="@font/poppins"
-                    android:textColor="@color/dark_gray"
+                    android:textColor="@color/gray2"
                     android:text="시간 전" />
-
 
             </LinearLayout>
 
@@ -148,28 +191,40 @@
                 android:autoLink="web|email"
                 android:gravity="left"
                 android:lineSpacingExtra="4sp"
-                android:maxLines="3"
+                android:maxLines="2"
                 android:text="null"
                 android:textColor="@color/black"
                 android:textSize="13sp"
                 app:fontFamily="@font/ridi_batang"></TextView>
 
-
-
-            <com.dev_sheep.story_of_man_and_woman.view.Assymetric.AsymmetricRecyclerView
-                android:id="@+id/recyclerView"
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#ffffff"
-                android:divider="@android:color/transparent"
-                android:dividerHeight="3dp"
-                android:fadingEdge="none"
-                android:focusable="false"
-                android:gravity="center"
-                android:listSelector="#00000000"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                />
 
+                >
+                <com.dev_sheep.story_of_man_and_woman.view.Assymetric.AsymmetricRecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#ffffff"
+                    android:divider="@android:color/transparent"
+                    android:dividerHeight="3dp"
+                    android:fadingEdge="none"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:listSelector="#00000000"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/recycler_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                </LinearLayout>
+            </FrameLayout>
 
         </LinearLayout>
 
@@ -177,15 +232,15 @@
 
         <TextView
             android:id="@+id/tag_id"
-            android:layout_width="240dp"
+            android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:maxLines="1"
             android:alpha="0.5"
             android:singleLine="true"
-            android:gravity="center|right"
-            android:layout_marginRight="16dp"
+            android:gravity="center|left"
+            android:layout_marginLeft="12dp"
             android:textColor="@color/gray2"
             android:text="#001"
             android:textSize="13sp"
@@ -193,46 +248,46 @@
             tools:text="# 사연남녀" />
 
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
-            android:gravity="center"
-            android:orientation="horizontal">
+        <!--        <LinearLayout-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="30dp"-->
+        <!--            android:layout_alignParentBottom="true"-->
+        <!--            android:layout_alignParentStart="true"-->
+        <!--            android:gravity="center"-->
+        <!--            android:orientation="horizontal">-->
 
 
-            <TextView
-                android:id="@+id/tv_gender"
-                android:layout_width="wrap_content"
-                android:layout_height="22dp"
-                android:layout_margin="6dp"
-                android:background="@drawable/background_item_pokemon_span"
-                android:gravity="center"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:text="남"
-                android:textColor="@color/white"
-                android:textSize="11sp"
-                android:alpha="0.5"
-                app:fontFamily="@font/ridi_batang" />
+        <!--            <TextView-->
+        <!--                android:id="@+id/tv_gender"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="22dp"-->
+        <!--                android:layout_margin="6dp"-->
+        <!--                android:gravity="center"-->
+        <!--                android:paddingStart="8dp"-->
+        <!--                android:paddingEnd="8dp"-->
+        <!--                android:text="남"-->
+        <!--                android:textColor="@color/white"-->
+        <!--                android:background="@drawable/background_item_pokemon_span"-->
+        <!--                android:textSize="12sp"-->
+        <!--                android:alpha="0.5"-->
+        <!--                app:fontFamily="@font/ridi_batang" />-->
 
-            <TextView
-                android:id="@+id/tv_age"
-                android:layout_width="wrap_content"
-                android:layout_height="22dp"
-                android:layout_margin="6dp"
-                android:background="@drawable/background_item_pokemon_span"
-                android:gravity="center"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:text="30 대"
-                android:textColor="@color/white"
-                android:textSize="11sp"
-                android:alpha="0.5"
-                app:fontFamily="@font/ridi_batang" />
+        <!--            <TextView-->
+        <!--                android:id="@+id/tv_age"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="22dp"-->
+        <!--                android:layout_margin="6dp"-->
+        <!--                android:gravity="center"-->
+        <!--                android:paddingStart="8dp"-->
+        <!--                android:paddingEnd="8dp"-->
+        <!--                android:text="30 대"-->
+        <!--                android:textColor="@color/white"-->
+        <!--                android:background="@drawable/background_item_pokemon_span"-->
+        <!--                android:textSize="12sp"-->
+        <!--                android:alpha="0.5"-->
+        <!--                app:fontFamily="@font/ridi_batang" />-->
 
-        </LinearLayout>
+        <!--        </LinearLayout>-->
 
     </RelativeLayout>
 

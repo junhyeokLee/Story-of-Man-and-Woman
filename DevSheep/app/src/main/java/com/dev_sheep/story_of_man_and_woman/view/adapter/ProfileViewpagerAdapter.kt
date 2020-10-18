@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentPagerAdapter
 import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileBookMarkFragment
 import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileFeedFragment
 import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileScretFragment
-import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileSubscripterFragment
+import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileSubscriberFragment
 
 class ProfileViewpagerAdapter(fm: FragmentManager,pageCount: Int) : FragmentPagerAdapter(fm) {
 
@@ -25,7 +25,7 @@ class ProfileViewpagerAdapter(fm: FragmentManager,pageCount: Int) : FragmentPage
         val fragment = when(position)
         {
             0 -> ProfileFeedFragment()
-            1 -> ProfileSubscripterFragment()
+            1 -> ProfileSubscriberFragment()
             2 -> ProfileScretFragment()
             3 -> ProfileBookMarkFragment()
 

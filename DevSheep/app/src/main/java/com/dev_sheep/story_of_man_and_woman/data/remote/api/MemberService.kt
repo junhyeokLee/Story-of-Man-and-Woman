@@ -1,7 +1,9 @@
 package com.dev_sheep.story_of_man_and_woman.data.remote.api
 
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.FollowMember
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Member
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Tag
 import io.reactivex.Single
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -57,4 +59,13 @@ interface MemberService {
     @FormUrlEncoded
     @POST("follow_member_user_count.php")
     fun memberUserSubscribeCount(@Field("m_seq") m_seq:String): Single<String>
+
+    @FormUrlEncoded
+    @POST("subscribers_get.php")
+    fun getSubsribers(@Field("m_seq") m_seq: String): Single<List<Member>>
+
+    @FormUrlEncoded
+    @POST("subscribing_get.php")
+    fun getSubscribing(@Field("m_seq") m_seq: String): Single<List<Member>>
+
 }

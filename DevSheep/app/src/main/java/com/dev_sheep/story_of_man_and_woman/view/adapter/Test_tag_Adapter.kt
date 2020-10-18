@@ -1,6 +1,7 @@
 package com.dev_sheep.story_of_man_and_woman.view.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,8 @@ import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Tag
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
+import com.dev_sheep.story_of_man_and_woman.view.activity.FeedSearchActivity
+import com.dev_sheep.story_of_man_and_woman.view.activity.MystoryActivity
 import kotlinx.android.synthetic.main.adpater_tag.view.*
 
 abstract class Test_tag_Adapter(
@@ -27,7 +30,12 @@ abstract class Test_tag_Adapter(
             itemView.tag_name.text = "  # "+item.tag_name+"   "
 
             itemView.tag_name.setOnClickListener {
-                Toast.makeText(itemView.context, ""+item.tag_name+" 클릭", Toast.LENGTH_SHORT).show();
+
+                val intent = Intent(itemView.context, FeedSearchActivity::class.java)
+                intent.putExtra("tag_seq",item.tag_seq.toString())
+                intent.putExtra("tag_name",item.tag_name)
+                itemView.context.startActivity(intent)
+
             }
 
 //1 . # 모든사연

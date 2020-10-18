@@ -4,7 +4,8 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="color_Accent">#ed207b</color>
 
-    <color name="main_Accent">#FA6555</color>
+    <color name="main_Accent">#ec6674</color>
+    <color name="main_Accent2">#f0925f</color>
     <color name="sub_Accent">#d7dfea</color>
     <color name="main_Accent_translate">#99FA6555</color>
     <color name="main_Primary">#0aaab4</color>
@@ -18,7 +19,7 @@
     <color name="facebook_color3">#5c79ff</color>
     <color name="facebook_color4">#9ec9ff</color>
     <color name="facebook_color5">#f8fbff</color>
-<!--    <color name="bottom_navi_color">#e1e9f5</color>-->
+    <!--    <color name="bottom_navi_color">#e1e9f5</color>-->
 
     <color name="background">#E8E8E8</color>
     <color name="backgroundLight">#F5F5F5</color>

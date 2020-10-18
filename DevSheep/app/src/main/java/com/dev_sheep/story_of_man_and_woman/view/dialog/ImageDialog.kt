@@ -7,11 +7,13 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.ImageView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
 import com.mikhaellopez.circularimageview.CircularImageView
 import java.nio.file.Path
 
-class ImageDialog(context: Context, imagePath: Int) : View.OnClickListener {
+class ImageDialog(context: Context, imagePath: String) : View.OnClickListener {
 
     private val dlg = Dialog(context,android.R.style.Theme_Black_NoTitleBar_Fullscreen)
 
@@ -31,7 +33,14 @@ class ImageDialog(context: Context, imagePath: Int) : View.OnClickListener {
         img_back = dlg.findViewById(R.id.im_back)
         img_url = dlg.findViewById(R.id.id_Profile_Image)
 
-        img_url.setImageResource(img)
+        with(img_url){
+            Glide.with(this)
+                .load(img)
+                .centerInside()
+                .placeholder(android.R.color.transparent)
+                .into(this)
+        }
+
 
 
         img_back.setOnClickListener(this)

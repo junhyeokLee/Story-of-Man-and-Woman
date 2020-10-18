@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -36,7 +37,7 @@ import kotlinx.android.synthetic.main.fragment_profile_feed.*
 import kotlinx.android.synthetic.main.fragment_profile_subscribe.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class ProfileSubscripterFragment: Fragment() {
+class ProfileSubscriberFragment: Fragment() {
     private val feedViewModel: FeedViewModel by viewModel()
     private var recyclerView: RecyclerView? = null
     lateinit var mFeedAdapter: FeedAdapter
@@ -114,7 +115,8 @@ class ProfileSubscripterFragment: Fragment() {
                 recyclerView?.apply {
                     var linearLayoutMnager = LinearLayoutManager(this.context)
                     this.layoutManager = linearLayoutMnager
-                    adapter = mFeedAdapter
+                    this.itemAnimator = DefaultItemAnimator()
+                    this.adapter = mFeedAdapter
                 }
 //                if (it.isNotEmpty()) {
 //                    progressBar?.visibility = View.GONE

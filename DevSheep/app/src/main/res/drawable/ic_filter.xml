@@ -2,32 +2,32 @@
     android:viewportWidth="64" android:width="32dp" xmlns:android="http://schemas.android.com/apk/res/android">
     <path android:fillColor="@color/white"
         android:pathData="M21,18m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0"
-        android:strokeColor="@color/red_deep" android:strokeLineCap="round"
+        android:strokeColor="@color/main_Accent" android:strokeLineCap="round"
         android:strokeLineJoin="round" android:strokeWidth="3"/>
     <path android:fillColor="@color/white"
         android:pathData="M44,32m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0"
-        android:strokeColor="@color/red_deep" android:strokeLineCap="round"
+        android:strokeColor="@color/main_Accent" android:strokeLineCap="round"
         android:strokeLineJoin="round" android:strokeWidth="3"/>
     <path android:fillColor="@color/white"
         android:pathData="M31,46m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0"
-        android:strokeColor="@color/red_deep" android:strokeLineCap="round"
+        android:strokeColor="@color/main_Accent" android:strokeLineCap="round"
         android:strokeLineJoin="round" android:strokeWidth="3"/>
-    <path android:fillColor="@color/red_deep" android:pathData="M24,18L54,18"
-        android:strokeColor="@color/red_deep" android:strokeLineCap="round"
+    <path android:fillColor="@color/main_Accent" android:pathData="M24,18L54,18"
+        android:strokeColor="@color/main_Accent" android:strokeLineCap="round"
         android:strokeLineJoin="round" android:strokeWidth="3"/>
-    <path android:fillColor="@color/red_deep" android:pathData="M11,18L18,18"
-        android:strokeColor="@color/red_deep" android:strokeLineCap="round"
+    <path android:fillColor="@color/main_Accent" android:pathData="M11,18L18,18"
+        android:strokeColor="@color/main_Accent" android:strokeLineCap="round"
         android:strokeLineJoin="round" android:strokeWidth="3"/>
-    <path android:fillColor="@color/red_deep" android:pathData="M34,46L54,46"
-        android:strokeColor="@color/red_deep" android:strokeLineCap="round"
+    <path android:fillColor="@color/main_Accent" android:pathData="M34,46L54,46"
+        android:strokeColor="@color/main_Accent" android:strokeLineCap="round"
         android:strokeLineJoin="round" android:strokeWidth="3"/>
-    <path android:fillColor="@color/red_deep" android:pathData="M11,46L28,46"
-        android:strokeColor="@color/red_deep" android:strokeLineCap="round"
+    <path android:fillColor="@color/main_Accent" android:pathData="M11,46L28,46"
+        android:strokeColor="@color/main_Accent" android:strokeLineCap="round"
         android:strokeLineJoin="round" android:strokeWidth="3"/>
-    <path android:fillColor="@color/red_deep" android:pathData="M47,32L54,32"
-        android:strokeColor="@color/red_deep" android:strokeLineCap="round"
+    <path android:fillColor="@color/main_Accent" android:pathData="M47,32L54,32"
+        android:strokeColor="@color/main_Accent" android:strokeLineCap="round"
         android:strokeLineJoin="round" android:strokeWidth="3"/>
-    <path android:fillColor="@color/red_deep" android:pathData="M11,32L41,32"
-        android:strokeColor="@color/red_deep" android:strokeLineCap="round"
+    <path android:fillColor="@color/main_Accent" android:pathData="M11,32L41,32"
+        android:strokeColor="@color/main_Accent" android:strokeLineCap="round"
         android:strokeLineJoin="round" android:strokeWidth="3"/>
 </vector>

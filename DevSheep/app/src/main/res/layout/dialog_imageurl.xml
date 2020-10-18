@@ -37,15 +37,21 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/id_Profile_Image"
-        android:layout_gravity="center"
-        android:scaleType="fitCenter"
-        android:src="@drawable/image"
-        tools:ignore="MissingConstraints">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
 
-    </ImageView>
+        <ImageView
+            android:id="@+id/id_Profile_Image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:scaleType="centerInside"
+            android:src="@drawable/image">
+
+        </ImageView>
+    </LinearLayout>
 
 </LinearLayout>

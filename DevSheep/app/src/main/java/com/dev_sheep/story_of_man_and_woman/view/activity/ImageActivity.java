@@ -14,7 +14,7 @@ import com.dev_sheep.story_of_man_and_woman.R;
 public class ImageActivity extends AppCompatActivity {
 
     ImageView imageView;
-   private Bitmap image;
+    private Bitmap image;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

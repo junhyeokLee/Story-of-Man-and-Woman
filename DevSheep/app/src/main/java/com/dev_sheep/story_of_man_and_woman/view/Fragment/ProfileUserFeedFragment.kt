@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -42,7 +43,7 @@ class ProfileUserFeedFragment(get_m_seq : String): Fragment() {
     private var limit: Int = 10
     private var offset: Int = 0
     lateinit var contexts: Context
-    private val m_seq = get_m_seq
+    private val get_m_seq = get_m_seq
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -56,9 +57,12 @@ class ProfileUserFeedFragment(get_m_seq : String): Fragment() {
     }
 
     private fun initData() {
-
+        // 저장된 m_seq 가져오기
+        val preferences: SharedPreferences =
+            context!!.getSharedPreferences("m_seq", Context.MODE_PRIVATE)
+        val m_seq = preferences.getString("inputMseq", "")
         // 전체보기
-        val single = FEED_SERVICE.getListMystory(m_seq)
+        val single = FEED_SERVICE.getListMystory(get_m_seq)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess { progressBarfeed?.visibility = View.GONE }
@@ -97,20 +101,37 @@ class ProfileUserFeedFragment(get_m_seq : String): Fragment() {
                         override fun OnClickProfile(feed: Feed, tv: TextView, iv: ImageView) {
                             val trId = ViewCompat.getTransitionName(tv).toString()
                             val trId1 = ViewCompat.getTransitionName(iv).toString()
-                            activity?.supportFragmentManager
-                                ?.beginTransaction()
-                                ?.addSharedElement(tv, trId)
-                                ?.addSharedElement(iv, trId1)
-                                ?.addToBackStack("ProfileImg")
-                                ?.replace(R.id.frameLayout, ProfileUsersFragment.newInstance(feed, trId, trId1))
-                                ?.commit()
+                            if (feed.creater_seq == m_seq) {
+                                activity?.supportFragmentManager
+                                    ?.beginTransaction()
+                                    ?.addSharedElement(tv, trId)
+                                    ?.addSharedElement(iv, trId1)
+                                    ?.addToBackStack("ProfileImg")
+                                    ?.replace(
+                                        R.id.frameLayout,
+                                        ProfileFragment.newInstance(feed, trId, trId1)
+                                    )
+                                    ?.commit()
+                            } else {
+                                activity?.supportFragmentManager
+                                    ?.beginTransaction()
+                                    ?.addSharedElement(tv, trId)
+                                    ?.addSharedElement(iv, trId1)
+                                    ?.addToBackStack("ProfileImg")
+                                    ?.replace(
+                                        R.id.frameLayout,
+                                        ProfileUsersFragment.newInstance(feed, trId, trId1)
+                                    )
+                                    ?.commit()
+                            }
                         }
 
                     })
                 recyclerView?.apply {
                     var linearLayoutMnager = LinearLayoutManager(this.context)
                     this.layoutManager = linearLayoutMnager
-                    adapter = mFeedAdapter
+                    this.itemAnimator = DefaultItemAnimator()
+                    this.adapter = mFeedAdapter
                 }
 //                if (it.isNotEmpty()) {
 //                    progressBar?.visibility = View.GONE

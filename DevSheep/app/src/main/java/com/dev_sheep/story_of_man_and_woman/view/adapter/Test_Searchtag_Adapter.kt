@@ -1,14 +1,17 @@
 package com.dev_sheep.story_of_man_and_woman.view.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Tag
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
+import com.dev_sheep.story_of_man_and_woman.view.activity.FeedSearchActivity
 import kotlinx.android.synthetic.main.adpater_tag.view.*
 
 class Test_Searchtag_Adapter(
@@ -23,6 +26,14 @@ class Test_Searchtag_Adapter(
         fun bindView(item: Tag) {
 
             itemView.tag_name.text = "  # "+item.tag_name+"   "
+
+            itemView.tag_name.setOnClickListener {
+                val intent = Intent(itemView.context, FeedSearchActivity::class.java)
+                intent.putExtra("tag_seq",item.tag_seq.toString())
+                intent.putExtra("tag_name",item.tag_name)
+                itemView.context.startActivity(intent)
+
+            }
 
 //1 . # 모든사연
 //2 . # 잡담

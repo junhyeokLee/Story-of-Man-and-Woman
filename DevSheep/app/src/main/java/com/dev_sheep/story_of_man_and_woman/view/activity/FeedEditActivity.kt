@@ -52,7 +52,7 @@ class FeedEditActivity : AppCompatActivity() {
 
         // 저장된 m_seq 가져오기
         val getM_seq = getSharedPreferences("m_seq", AppCompatActivity.MODE_PRIVATE)
-         M_SEQ = getM_seq.getString("inputMseq", null)
+        M_SEQ = getM_seq.getString("inputMseq", null)
 
         val getEMAIL = getSharedPreferences("autoLogin", AppCompatActivity.MODE_PRIVATE)
         EMAIL = getEMAIL.getString("inputEmail", null)
@@ -72,19 +72,19 @@ class FeedEditActivity : AppCompatActivity() {
     fun initData(){
 
 
-            val single = FEED_SERVICE.getFeed(FEED_SEQ!!)
-            single.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    // Editable 스트링으로 변경해서 가져오기
-                    val editable: Editable = SpannableStringBuilder(it.title)
+        val single = FEED_SERVICE.getFeed(FEED_SEQ!!)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                // Editable 스트링으로 변경해서 가져오기
+                val editable: Editable = SpannableStringBuilder(it.title)
 
-                    richwysiwygeditor.headlineEditText.text = editable
-                    richwysiwygeditor.content.html = it.content
-                    richwysiwygeditor.tagName.text = it.tag_name
-                },{
+                richwysiwygeditor.headlineEditText.text = editable
+                richwysiwygeditor.content.html = it.content
+                richwysiwygeditor.tagName.text = it.tag_name
+            },{
 
-                })
+            })
 
 
     }
@@ -113,9 +113,9 @@ class FeedEditActivity : AppCompatActivity() {
         while (i < l) {
 
             //파일 생성
-        //img_url은 이미지의 경로
-        //파일 생성
-        //img_url은 이미지의 경로
+            //img_url은 이미지의 경로
+            //파일 생성
+            //img_url은 이미지의 경로
             val file = File(images.get(i).path)
             val requestFile: RequestBody =
                 RequestBody.create(MediaType.parse("multipart/form-data"), file)
