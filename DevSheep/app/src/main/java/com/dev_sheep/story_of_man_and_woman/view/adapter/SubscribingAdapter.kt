@@ -6,6 +6,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -13,18 +15,22 @@ import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Member
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import kotlinx.android.synthetic.main.adapter_subscribers.view.*
+import kotlinx.android.synthetic.main.adapter_subscribers.view.tv_age
+import kotlinx.android.synthetic.main.adapter_subscribers.view.tv_gender
 
 class SubscribingAdapter(
     private val member: List<Member>,
     private val context: Context,
     private val memberViewModel: MemberViewModel,
-    private val m_seq: String
+    private val m_seq: String,
+    private val onClickProfileListener: OnClickProfileListener
 )
     : RecyclerView.Adapter<SubscribingAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         lateinit var my_m_seq : String
-        fun bindView(item: Member, memberViewModel: MemberViewModel,m_seq: String) {
+
+        fun bindView(item: Member, memberViewModel: MemberViewModel,m_seq: String,onClickProfileListener: OnClickProfileListener) {
             // my_m_seq 가져오기
             val preferences: SharedPreferences = itemView.context.getSharedPreferences(
                 "m_seq",
@@ -37,16 +43,25 @@ class SubscribingAdapter(
             itemView.tv_gender.text = item.gender
             itemView.tv_age.text = item.age
 
-            Glide.with(itemView.context)
-                .load(item.profile_img)
-                .apply(RequestOptions().circleCrop())
-                .placeholder(android.R.color.white)
-                .into(itemView.iv_profile)
+            if(item.profile_img == null){
+                var profile_img = "http://storymaw.com/data/member/user.png"
+                Glide.with(itemView.context)
+                    .load(profile_img)
+                    .apply(RequestOptions().circleCrop())
+                    .placeholder(android.R.color.transparent)
+                    .into(itemView.iv_profile)
+            }else {
+                Glide.with(itemView.context)
+                    .load(item.profile_img)
+                    .apply(RequestOptions().circleCrop())
+                    .placeholder(android.R.color.white)
+                    .into(itemView.iv_profile)
+            }
 
             itemView.check_follow.apply {
                 memberViewModel.memberSubscribeChecked(
                     item.m_seq,
-                    m_seq,
+                    my_m_seq,
                     "checked",
                     this,
                     context
@@ -68,6 +83,13 @@ class SubscribingAdapter(
                     memberViewModel.memberSubscribe2(item.m_seq, m_seq, "false")
 
                 }
+            }
+
+            val onClickProfile = onClickProfileListener
+
+            itemView.layout_item.setOnClickListener {
+                onClickProfile.OnClickProfile(item, itemView.tv_profile_nick, itemView.iv_profile)
+
             }
 
 
@@ -97,12 +119,15 @@ class SubscribingAdapter(
         val item = member[position]
         var viewModel = memberViewModel
         var seq = m_seq
+
         Log.e("어답터실행됨", "실행")
-        holder.bindView(item, viewModel,seq)
+        holder.bindView(item, viewModel,seq,onClickProfileListener)
 
 
     }
-
+    interface OnClickProfileListener{
+        fun OnClickProfile(member: Member, tv: TextView, iv: ImageView)
+    }
     override fun getItemCount(): Int {
         Log.e("어답터실행됨", "실행")
 

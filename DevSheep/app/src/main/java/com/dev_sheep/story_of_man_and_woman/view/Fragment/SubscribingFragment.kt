@@ -7,10 +7,14 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dev_sheep.story_of_man_and_woman.R
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Member
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.MEMBER_SERVICE
 import com.dev_sheep.story_of_man_and_woman.view.activity.MainActivity
 import com.dev_sheep.story_of_man_and_woman.view.adapter.SubscribersAdapter
@@ -49,7 +53,36 @@ class SubscribingFragment(val m_seq: String): Fragment() {
                 Log.e("list member", "" + it)
 
                 if (it.isNotEmpty()) {
-                    mSubscribingAdapter = SubscribingAdapter(it, view.context, memberViewModel,m_seq)
+                    mSubscribingAdapter = SubscribingAdapter(it, view.context, memberViewModel,m_seq,object :SubscribingAdapter.OnClickProfileListener{
+                        override fun OnClickProfile(member: Member, tv: TextView, iv: ImageView) {
+                            val trId = ViewCompat.getTransitionName(tv).toString()
+                            val trId1 = ViewCompat.getTransitionName(iv).toString()
+                            if (member.m_seq == m_seq) {
+                                activity?.supportFragmentManager
+                                    ?.beginTransaction()
+                                    ?.addSharedElement(tv, trId)
+                                    ?.addSharedElement(iv, trId1)
+                                    ?.addToBackStack("ProfileImg")
+                                    ?.replace(
+                                        R.id.frameLayout,
+                                        ProfileFragment.newInstanceMember(member, trId, trId1)
+                                    )
+                                    ?.commit()
+                            } else {
+                                activity?.supportFragmentManager
+                                    ?.beginTransaction()
+                                    ?.addSharedElement(tv, trId)
+                                    ?.addSharedElement(iv, trId1)
+                                    ?.addToBackStack("ProfileImg")
+                                    ?.replace(
+                                        R.id.frameLayout,
+                                        ProfileUsersFragment.newInstanceMember(member, trId, trId1)
+                                    )
+                                    ?.commit()
+                            }
+                        }
+
+                    })
                     rv_subscribers?.apply {
 //                        this?.layoutManager = layoutManager_Tag
                         this.adapter = mSubscribingAdapter

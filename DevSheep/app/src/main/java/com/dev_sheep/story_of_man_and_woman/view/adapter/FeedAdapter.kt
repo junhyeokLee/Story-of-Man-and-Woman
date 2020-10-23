@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.os.Handler
+import android.os.Looper
 import android.preference.PreferenceManager
 import android.text.Html
 import android.text.SpannableString
@@ -29,6 +31,7 @@ import com.dev_sheep.story_of_man_and_woman.utils.SpacesItemDecoration
 import com.dev_sheep.story_of_man_and_woman.view.Assymetric.AsymmetricRecyclerView
 import com.dev_sheep.story_of_man_and_woman.view.Assymetric.AsymmetricRecyclerViewAdapter
 import com.dev_sheep.story_of_man_and_woman.view.Assymetric.Utils
+import com.github.florent37.fiftyshadesof.FiftyShadesOf
 import com.victor.loading.rotate.RotateLoading
 import kotlinx.android.synthetic.main.adapter_feed.view.*
 import org.jsoup.Jsoup
@@ -56,22 +59,17 @@ class FeedAdapter(
         mcontext = parent.context
 
         val view: View?
-//        val viewHolder: RecyclerView.ViewHolder
-//        var viewHolder: RecyclerView.ViewHolder? = null
 
         if(list == null){
             VIEW_TYPE_LOADING
+
         }else{
             VIEW_TYPE_ITEM
         }
 
         return when (viewType) {
             VIEW_TYPE_ITEM -> {
-                view = LayoutInflater.from(parent.context).inflate(
-                    R.layout.adapter_feed,
-                    parent,
-                    false
-                )
+                view = LayoutInflater.from(parent.context).inflate(R.layout.adapter_feed, parent, false)
                 FeedHolder(
                     view,
                     list,
@@ -185,6 +183,22 @@ class FeedAdapter(
 
         @SuppressLint("Range")
         fun bindView(item: Feed, position: Int) {
+
+//            FiftyShadesOf.with(itemView.context)
+//                .on(feed_layout,profile_layout,content)
+//                .start();
+
+//            if(item == null){
+//                FiftyShadesOf.with(itemView.context)
+//                    .on(feed_layout,profile_layout,content)
+//                    .start();
+//            }else
+//            {
+//                FiftyShadesOf.with(itemView.context)
+//                    .on(feed_layout,profile_layout,content)
+//                    .fadein(true)
+//                    .start()
+//            }
 
             ViewCompat.setTransitionName(itemView.tv_m_nick, position.toString() + "Text")
             ViewCompat.setTransitionName(itemView.img_profile, (position).toString() + "Img")
@@ -549,6 +563,9 @@ class FeedAdapter(
 
         fun bindView() {
             progressBar.start()
+            FiftyShadesOf.with(itemView.context)
+                .on(R.id.recyclerView)
+                .start();
         }
 
     }

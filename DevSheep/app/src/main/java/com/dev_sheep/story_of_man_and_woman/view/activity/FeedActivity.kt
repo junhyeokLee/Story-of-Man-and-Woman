@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -226,7 +227,20 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                     Log.e("errors", it.message)
                 })
 
+        et_comment.setOnTouchListener(object: View.OnTouchListener {
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                if(event!!.getAction() == MotionEvent.ACTION_DOWN){
 
+                    val intent = Intent(applicationContext, MainActivity::class.java)
+                    intent.putExtra("feed_seq",feed_seq.toString())
+                    intent.putExtra("CommentFragment", true)
+                    startActivity(intent)
+                    overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+                }
+
+                return false;
+            }
+        })
 
     }
 
@@ -279,6 +293,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                 }
 
             }
+
         }
     }
 

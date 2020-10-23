@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Member
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.MEMBER_SERVICE
 import com.dev_sheep.story_of_man_and_woman.view.adapter.ProfileUserViewpagerAdapter
@@ -51,7 +52,20 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
             fragment.arguments = args
             return fragment
         }
+        fun newInstanceMember(member: Member, transitionId : String, transitionId1 : String): ProfileUsersFragment {
+            val args = Bundle()
+            args.putString("m_seq",member.m_seq)
+            args.putString("creater_nick", member.nick_name)
+            args.putString("creater_image", member.profile_img)
+            args.putString("trId", transitionId)
+            args.putString("trId1", transitionId1)
+            val fragment = ProfileUsersFragment()
+            fragment.arguments = args
+            return fragment
+        }
     }
+
+
 
     private var menu : Menu? = null
     private val feedViewModel: FeedViewModel by viewModel()
@@ -210,6 +224,7 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
 
         Log.e("m_seq",m_seq)
         Log.e("activity_m_seq",feed_activity_m_seq)
+        Log.e("creater Image",get_creater_img)
 
         if(m_seq == "null") {
 
@@ -253,12 +268,20 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
         }else {
 
             profile_img = get_creater_img
-            Glide.with(this)
-                .load(profile_img)
-                .apply(RequestOptions().circleCrop())
-                .placeholder(android.R.color.transparent)
-                .into(profileImage!!)
-
+            if(profile_img == "null"){
+                profile_img = "http://storymaw.com/data/member/user.png"
+                Glide.with(this)
+                    .load(profile_img)
+                    .apply(RequestOptions().circleCrop())
+                    .placeholder(android.R.color.transparent)
+                    .into(profileImage!!)
+            }else {
+                Glide.with(this)
+                    .load(profile_img)
+                    .apply(RequestOptions().circleCrop())
+                    .placeholder(android.R.color.transparent)
+                    .into(profileImage!!)
+            }
             profileNickName!!.text = get_creater_nick_name
             nickname = get_creater_nick_name
             m_nick_name = get_creater_nick_name

@@ -12,14 +12,8 @@ import java.util.*
 
 
 class FeedRankAdapter (
-    private val context: Context,
     private var fragmentManager: FragmentManager
-
 ) : FragmentPagerAdapter(fragmentManager) {
-    lateinit var mcontext: Context
-    var mViewPagerState = HashMap<Int, Int>()
-    var previousPostition: Int = -1
-
 
 
     override fun getItem(position: Int): Fragment {

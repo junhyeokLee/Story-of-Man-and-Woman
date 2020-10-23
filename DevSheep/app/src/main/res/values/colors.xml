@@ -46,6 +46,7 @@
     <color name="red_deep">#eb5a46</color>
     <color name="red_accent">#FF5252</color>
     <color name="pink">#fa796b</color>
+    <color name="placeholder_bg">#dddddd</color>
 
     <color name="teal">#4FC1A6</color>
     <color name="yellow">#F6C747</color>

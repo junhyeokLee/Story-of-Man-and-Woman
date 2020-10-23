@@ -1,5 +1,4 @@
 package com.dev_sheep.story_of_man_and_woman.view.Fragment
-
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
@@ -63,6 +62,17 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             args.putString("m_seq",feed.creater_seq)
             args.putString("creater_nick", feed.creater)
             args.putString("creater_image", feed.creater_image_url)
+            args.putString("trId", transitionId)
+            args.putString("trId1", transitionId1)
+            val fragment = ProfileFragment()
+            fragment.arguments = args
+            return fragment
+        }
+        fun newInstanceMember(member: Member, transitionId : String, transitionId1 : String): ProfileFragment {
+            val args = Bundle()
+            args.putString("m_seq",member.m_seq)
+            args.putString("creater_nick", member.nick_name)
+            args.putString("creater_image", member.profile_img)
             args.putString("trId", transitionId)
             args.putString("trId1", transitionId1)
             val fragment = ProfileFragment()
@@ -248,12 +258,22 @@ class ProfileFragment: Fragment(),View.OnClickListener {
 
     private fun initData(){
         if(get_creater_img != "null" && get_creater_nick_name != "null") {
+
             profile_img = get_creater_img
-            Glide.with(this)
-                .load(get_creater_img)
-                .apply(RequestOptions().circleCrop())
-                .placeholder(android.R.color.transparent)
-                .into(profileImage!!)
+            if(profile_img == "null"){
+                profile_img = "http://storymaw.com/data/member/user.png"
+                Glide.with(this)
+                    .load(profile_img)
+                    .apply(RequestOptions().circleCrop())
+                    .placeholder(android.R.color.transparent)
+                    .into(profileImage)
+            }else {
+                Glide.with(this)
+                    .load(profile_img)
+                    .apply(RequestOptions().circleCrop())
+                    .placeholder(android.R.color.transparent)
+                    .into(profileImage)
+            }
 
             profileNickname.text = get_creater_nick_name
 
@@ -290,15 +310,15 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                             .load(profile_img)
                             .apply(RequestOptions().circleCrop())
                             .placeholder(android.R.color.transparent)
-                            .into(profileImage!!)
+                            .into(profileImage)
                     }else {
-                        profile_img = it.profile_img!!
                         if(context != null) {
+                            profile_img = it.profile_img
                             Glide.with(context!!)
                                 .load(profile_img)
                                 .apply(RequestOptions().circleCrop())
                                 .placeholder(android.R.color.transparent)
-                                .into(profileImage!!)
+                                .into(profileImage)
                         }
                     }
                     profileNickname.text = it.nick_name

@@ -1,18 +1,25 @@
 package com.dev_sheep.story_of_man_and_woman.view.Fragment
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dev_sheep.story_of_man_and_woman.R
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Member
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.MEMBER_SERVICE
 import com.dev_sheep.story_of_man_and_woman.view.adapter.SubscribersAdapter
+import com.dev_sheep.story_of_man_and_woman.view.adapter.SubscribingAdapter
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -25,6 +32,7 @@ class SubscribersFragment(val m_seq: String) : Fragment() {
     private val memberViewModel: MemberViewModel by viewModel()
     lateinit var BtnBack: ImageButton
     lateinit var mSubscribersAdapter: SubscribersAdapter
+    lateinit var my_m_seq:String
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -36,15 +44,50 @@ class SubscribersFragment(val m_seq: String) : Fragment() {
 
         val layoutManager_Tag = GridLayoutManager(view.context, 1)
         rv_subscribers?.layoutManager = layoutManager_Tag
+        // my_m_seq 가져오기
+        val preferences: SharedPreferences = context!!.getSharedPreferences(
+            "m_seq",
+            Context.MODE_PRIVATE
+        )
+        my_m_seq = preferences.getString("inputMseq", "")
 
         val single_subscribers = MEMBER_SERVICE.getSubsribers(m_seq)
         single_subscribers.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 Log.e("list member",""+it.toString())
-
                 if (it.isNotEmpty()) {
-                    mSubscribersAdapter = SubscribersAdapter(it, view.context, memberViewModel)
+                    mSubscribersAdapter = SubscribersAdapter(it, view.context, memberViewModel,object :
+                        SubscribersAdapter.OnClickProfileListener{
+                        override fun OnClickProfile(member: Member, tv: TextView, iv: ImageView) {
+                            val trId = ViewCompat.getTransitionName(tv).toString()
+                            val trId1 = ViewCompat.getTransitionName(iv).toString()
+                            if (member.m_seq == my_m_seq) {
+                                activity?.supportFragmentManager
+                                    ?.beginTransaction()
+                                    ?.addSharedElement(tv, trId)
+                                    ?.addSharedElement(iv, trId1)
+                                    ?.addToBackStack("ProfileImg")
+                                    ?.replace(
+                                        R.id.frameLayout,
+                                        ProfileFragment.newInstanceMember(member, trId, trId1)
+                                    )
+                                    ?.commit()
+                            } else {
+                                activity?.supportFragmentManager
+                                    ?.beginTransaction()
+                                    ?.addSharedElement(tv, trId)
+                                    ?.addSharedElement(iv, trId1)
+                                    ?.addToBackStack("ProfileImg")
+                                    ?.replace(
+                                        R.id.frameLayout,
+                                        ProfileUsersFragment.newInstanceMember(member, trId, trId1)
+                                    )
+                                    ?.commit()
+                            }
+                        }
+
+                    })
                     rv_subscribers?.apply {
 //                        this?.layoutManager = layoutManager_Tag
                         this.adapter = mSubscribersAdapter

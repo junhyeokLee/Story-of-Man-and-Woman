@@ -32,18 +32,18 @@ class HomeRankFragment(position: Int) : Fragment() {
             tv.setText("오늘의 사연")
             rank_tag_img.setBackgroundResource(0)
 //            rank_tag_img.setBackgroundResource(R.drawable.ic_thumbs_up)
-            rank_img.setBackgroundResource(R.drawable.ic_first)
+            rank_img.setBackgroundResource(R.drawable.couple)
         }else if(position == 2){
             tv.setText("이달의 사연")
             rank_tag_img.setBackgroundResource(0)
 //            rank_tag_img.setBackgroundResource(R.drawable.ic_first)
-            rank_img.setBackgroundResource(R.drawable.image)
+            rank_img.setBackgroundResource(R.drawable.bike)
         }
         else if(position == 3){
             tv.setText("화제의 사연")
             rank_tag_img.setBackgroundResource(0)
 //            rank_tag_img.setBackgroundResource(R.drawable.ic_offer)
-            rank_img.setBackgroundResource(R.drawable.ic_first)
+            rank_img.setBackgroundResource(R.drawable.christmas)
         }
         else if(position == 4){
             tv.setText("동이들의 선택")
@@ -54,7 +54,7 @@ class HomeRankFragment(position: Int) : Fragment() {
         else if(position == 5){
             tv.setText("공지사항")
             rank_tag_img.setBackgroundResource(0)
-            rank_img.setBackgroundResource(R.drawable.image)
+            rank_img.setBackgroundResource(R.drawable.bike)
         }
 
 //                chefImage.drawable.setColorFilter(

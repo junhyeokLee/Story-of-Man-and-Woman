@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
@@ -62,7 +64,7 @@ class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshList
         }
         if(intent.hasExtra("tag_name")) {
             tag_name = intent.getStringExtra("tag_name")
-            tv_tag_search_name.text = "#"+tag_name
+            tv_tag_search_name.text = tag_name
         }
 
         initData()
@@ -71,7 +73,8 @@ class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshList
 
 
     private fun initData(){
-
+        // display loading indicator
+        val handlerFeed: Handler = Handler(Looper.myLooper())
         // tag_search
         val single = APIService.FEED_SERVICE.getTagSearch(Integer.parseInt(tag_seq))
         single.subscribeOn(Schedulers.io())
@@ -153,12 +156,20 @@ class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshList
                             }
                         }
                     })
-                    recyclerView?.apply {
-                        var linearLayoutMnager = LinearLayoutManager(this.context)
-                        this.layoutManager = linearLayoutMnager
-                        this.itemAnimator = DefaultItemAnimator()
-                        this.adapter = mFeedAdapterTag
-                    }
+
+                    handlerFeed.postDelayed({
+                        // stop animating Shimmer and hide the layout
+                        shimmer_view_container.stopShimmerAnimation()
+                        shimmer_view_container.visibility = View.GONE
+//                    progressBar?.visibility = View.GONE
+                        recyclerView?.apply {
+                            var linearLayoutMnager = LinearLayoutManager(this.context)
+                            this.layoutManager = linearLayoutMnager
+                            this.itemAnimator = DefaultItemAnimator()
+                            this.adapter = mFeedAdapterTag
+
+                        }
+                    }, 1000)
                 }
 
             }, {
@@ -193,5 +204,17 @@ class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshList
     override fun onRefresh() {
         initData()
         sr_refresh.setRefreshing(false)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        initData()
+        shimmer_view_container.startShimmerAnimation()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        initData()
+        shimmer_view_container.stopShimmerAnimation()
     }
 }

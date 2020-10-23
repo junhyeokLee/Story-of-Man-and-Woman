@@ -187,8 +187,8 @@
 
                     <ImageView
                         android:id="@+id/img_profile"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:layout_alignParentStart="true"
                         android:layout_gravity="center|left"
                         android:src="@drawable/ic_launcher_background"

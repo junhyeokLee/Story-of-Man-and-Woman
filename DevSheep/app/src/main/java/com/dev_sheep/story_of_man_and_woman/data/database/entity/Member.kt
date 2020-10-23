@@ -13,18 +13,18 @@ data class Member( @PrimaryKey
                    @SerializedName("email")
                    var email: String? = null,
                    @SerializedName("password")
-                   var password: String? = null,
+                   var password: String,
                    @SerializedName("nick_name")
-                   var nick_name: String? = null,
+                   var nick_name: String,
                    @SerializedName("profile_img")
-                   var profile_img: String? = null,
+                   var profile_img: String,
                    @SerializedName("background_img")
-                   var background_img: String? = null,
+                   var background_img: String ,
                    @SerializedName("gender")
-                   var gender : String? = null,
+                   var gender : String,
                    @SerializedName("age")
-                   var age: String? = null,
+                   var age: String,
                    @SerializedName("wdate")
-                   var wdate: String? = null,
+                   var wdate: String,
                    @SerializedName("memo")
-                   var memo: String? = null)
+                   var memo: String)

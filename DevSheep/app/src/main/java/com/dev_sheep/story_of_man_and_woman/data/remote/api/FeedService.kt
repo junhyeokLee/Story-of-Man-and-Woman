@@ -2,6 +2,7 @@ package com.dev_sheep.story_of_man_and_woman.data.remote.api
 
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.*
 import com.google.gson.JsonObject
+import io.reactivex.Observable
 import io.reactivex.Single
 import okhttp3.MultipartBody
 import retrofit2.Call
@@ -39,7 +40,19 @@ interface FeedService {
 
 
     @GET("feed_get_all.php")
-    fun getList(): Single<List<Feed>>
+    fun getList(): Observable<List<Feed>>
+
+    @GET("feed_get_today.php")
+    fun getTodayList(): Observable<List<Feed>>
+
+    @GET("feed_get_recommend.php")
+    fun getRecommendList(): Observable<List<Feed>>
+
+    @GET("feed_get_best.php")
+    fun getBestList(): Observable<List<Feed>>
+
+    @GET("feed_get_week.php")
+    fun getWeekList(): Observable<List<Feed>>
 
     @GET("feed_get_tag_search.php")
     fun getTagSearch(@Query("tag_seq") tag_seq: Int): Single<List<Feed>>
@@ -64,6 +77,7 @@ interface FeedService {
     @FormUrlEncoded
     @POST("feed_item_get.php")
     fun getFeed(@Field("feed_seq") feed_seq: Int): Single<Feed>
+
 
 
     //사용자가 프로필 이미지를 변경했을때 해당 이미지를 서버로 전송하는 통신

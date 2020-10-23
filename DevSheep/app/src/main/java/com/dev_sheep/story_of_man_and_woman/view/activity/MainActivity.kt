@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     val userProfileFragment = ProfileUsersFragment()
     val searchFragment = SearchFragment()
     val notificationFragment = NotificationFragment()
+    val commentFragment = CommentFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +70,23 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.frameLayout, homeFragment).commitAllowingStateLoss();
         }
+
+        if(intent.hasExtra("CommentFragment")) {
+            var checked = intent.getBooleanExtra("CommentFragment" , false)
+            if(checked == true){
+                if(intent.hasExtra("feed_seq")){
+                    var feed_seq = intent.getStringExtra("feed_seq")
+                    val arguments = Bundle()
+                    arguments.putString("feed_seq", feed_seq)
+                    commentFragment.arguments = arguments
+                    supportFragmentManager.beginTransaction().replace(R.id.frameLayout, commentFragment)
+                        .commit()
+                }
+            }
+        }
+
+
+
         bottomNavigation.setOnNavigationItemSelectedListener(this)
 
 

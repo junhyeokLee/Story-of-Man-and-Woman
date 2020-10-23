@@ -329,148 +329,213 @@
         </LinearLayout>
 
     </LinearLayout>
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/write_bottom_toolbar"
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@drawable/top_border_white"
-        android:minHeight="?attr/actionBarSize"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:gravity="bottom"
         android:layout_gravity="bottom"
-        app:contentInsetEnd="0dp"
-        app:contentInsetLeft="0dp"
-        app:contentInsetRight="0dp"
-        app:layout_collapseMode="pin"
-        app:titleMarginStart="20dp">
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center|left">
+            android:layout_height="46dp"
+            android:orientation="horizontal">
 
-            <LinearLayout
+            <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="horizontal">
+                android:theme="?attr/actionBarTheme"
+                android:background="@drawable/top_border_white"
+                app:layout_collapseMode="pin">
 
                 <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_gravity="center"
-                    android:background="@android:color/transparent"
-                    android:src="@drawable/ic_eye"
-                    android:tint="@color/sub_Accent">
-
-                </ImageView>
-
-                <TextView
-                    android:id="@+id/view_count"
-                    android:layout_width="wrap_content"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/ic_camera"
+                    android:backgroundTint="@color/gray"
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="12dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:gravity="center"
-                    android:text="1"
-                    android:textColor="@color/sub_Accent"
-                    android:textSize="14sp" />
+                    android:background="@drawable/top_border_comment"
+                    android:layout_margin="8dp"
+                    android:orientation="horizontal"
+                    >
 
-            </LinearLayout>
+                    <EditText
+                        android:id="@+id/et_comment"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fontFamily="@font/ridi_batang"
+                        android:textStyle="bold"
+                        android:layout_weight="1"
+                        android:hint="어떻게 생각하세요?"
+                        android:layout_gravity="center"
+                        android:background="@android:color/transparent"
+                        android:textCursorDrawable="@drawable/comment_cursor"
+                        android:textSize="12sp"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/gray"
+                        android:layout_marginLeft="12dp"
+                        />
 
-
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_gravity="center"
-                    android:background="@android:color/transparent"
-                    android:src="@drawable/ic_chat"
-                    android:tint="@color/sub_Accent">
-
-                </ImageView>
-
-                <TextView
-                    android:id="@+id/comment_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="12dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:gravity="center"
-                    android:text="1"
-                    android:textColor="@color/sub_Accent"
-                    android:textSize="14sp" />
-
-            </LinearLayout>
+                </LinearLayout>
 
 
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-
-                <CheckBox
-                    android:id="@+id/favorite_btn"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_gravity="center"
-                    android:button="@null"
-                    android:checked="false"
-                    android:background="@drawable/background_like_count"
-                    app:layout_constraintStart_toEndOf="@+id/chefActionMessage"
-                    app:layout_constraintTop_toBottomOf="@+id/chefDivider" />
-
-
-                <TextView
-                    android:id="@+id/like_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="12dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:gravity="center"
-                    android:text="0"
-                    android:textColor="@color/sub_Accent"
-                    android:textSize="14sp" />
-            </LinearLayout>
-
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <CheckBox
-                    android:id="@+id/bookmark"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_gravity="center"
-                    android:button="@null"
-                    android:background="@drawable/background_bookmark"
-                    android:src="@drawable/ic_bookmark_hollow">
-
-                </CheckBox>
-
-
-            </LinearLayout>
-
+            </androidx.appcompat.widget.Toolbar>
 
         </LinearLayout>
 
-    </androidx.appcompat.widget.Toolbar>
+
+
+
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/write_bottom_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:background="@drawable/top_border_white"
+            android:minHeight="?attr/actionBarSize"
+            app:contentInsetEnd="0dp"
+            app:contentInsetLeft="0dp"
+            app:contentInsetRight="0dp"
+            app:layout_collapseMode="pin"
+            app:titleMarginStart="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center|left">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/ic_eye"
+                        android:tint="@color/sub_Accent">
+
+                    </ImageView>
+
+                    <TextView
+                        android:id="@+id/view_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="12dp"
+                        android:fontFamily="@font/roboto_regular"
+                        android:gravity="center"
+                        android:text="1"
+                        android:textColor="@color/sub_Accent"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/ic_chat"
+                        android:tint="@color/sub_Accent">
+
+                    </ImageView>
+
+                    <TextView
+                        android:id="@+id/comment_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="12dp"
+                        android:fontFamily="@font/roboto_regular"
+                        android:gravity="center"
+                        android:text="1"
+                        android:textColor="@color/sub_Accent"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+
+                    <CheckBox
+                        android:id="@+id/favorite_btn"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:button="@null"
+                        android:checked="false"
+                        android:background="@drawable/background_like_count"
+                        app:layout_constraintStart_toEndOf="@+id/chefActionMessage"
+                        app:layout_constraintTop_toBottomOf="@+id/chefDivider" />
+
+
+                    <TextView
+                        android:id="@+id/like_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="12dp"
+                        android:fontFamily="@font/roboto_regular"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textColor="@color/sub_Accent"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/bookmark"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:button="@null"
+                        android:background="@drawable/background_bookmark"
+                        android:src="@drawable/ic_bookmark_hollow">
+
+                    </CheckBox>
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </LinearLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
@@ -27,10 +28,12 @@ import com.dev_sheep.story_of_man_and_woman.data.database.entity.Tag
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
 import com.dev_sheep.story_of_man_and_woman.view.activity.FeedActivity
 import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedAdapter
+import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedCardAdapter
 import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedRankAdapter
 import com.dev_sheep.story_of_man_and_woman.view.adapter.Test_tag_Adapter
 import com.dev_sheep.story_of_man_and_woman.view.dialog.FilterDialog
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
+import com.facebook.shimmer.ShimmerFrameLayout
 import eu.micer.circlesloadingindicator.CirclesLoadingIndicator
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -55,6 +58,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     private var recyclerView : RecyclerView? = null
     private var recyclerViewTag : RecyclerView? = null
     private var viewpager : ViewPager? = null
+    private var viewpager_card : ViewPager? = null
     private var indicators: CircleIndicator? = null
     private var tollbar : androidx.appcompat.widget.Toolbar? = null
     private var progressBar : CirclesLoadingIndicator? = null
@@ -62,7 +66,9 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     lateinit var mFeedAdapter: FeedAdapter
     lateinit var mSwipeRefreshLayout: SwipeRefreshLayout
     lateinit var mTagAdapter: Test_tag_Adapter
-    lateinit var mRankAdapter: FeedRankAdapter
+    private var mRankAdapter: FeedRankAdapter? = null
+    lateinit var mFeedCardAdater: FeedCardAdapter
+    lateinit var mShimmerViewContainer: ShimmerFrameLayout
     private var limit: Int = 10
     private var offset: Int = 0
     private var previousTotal = 0
@@ -93,12 +99,12 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         progressBar = view.findViewById<View>(R.id.progressBar) as CirclesLoadingIndicator?
         recyclerViewTag = view.findViewById<View>(R.id.recyclerView_tag) as RecyclerView?
         mSwipeRefreshLayout = view.findViewById<View>(R.id.sr_refresh) as SwipeRefreshLayout
+        mShimmerViewContainer = view.findViewById<View>(R.id.shimmer_view_container) as ShimmerFrameLayout
         viewpager = view.findViewById<View>(R.id.vp) as ViewPager?
+        viewpager_card = view.findViewById<View>(R.id.vp_feed_card) as ViewPager
         indicators = view.findViewById<CircleIndicator>(R.id.indicator)
         // 프래그먼트에 toolbar 세팅
         (activity as AppCompatActivity).setSupportActionBar(tollbar)
-
-
 
         mSwipeRefreshLayout.setOnRefreshListener(this)
         mSwipeRefreshLayout.setColorSchemeResources(
@@ -119,18 +125,21 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         )
         m_seq = preferences.getString("inputMseq", "")
 
+
         initData()
     }
 
     private fun initData(){
 
-        setViewPager()
+
 //        setTagAdapter()
         // 전체보기
+        // display loading indicator
+        val handlerFeed: Handler = Handler(Looper.myLooper())
+
         val single = FEED_SERVICE.getList()
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnSuccess { progressBar?.visibility = View.GONE }
             .subscribe({
                 mFeedAdapter = FeedAdapter(it, contexts, object : FeedAdapter.OnClickViewListener {
                     override fun OnClickFeed(
@@ -151,7 +160,10 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                         lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
 //                        context.transitionName = position.toString()
                         (context as Activity).startActivity(lintent)
-                        (context as Activity).overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+                        (context as Activity).overridePendingTransition(
+                            R.anim.fragment_fade_in,
+                            R.anim.fragment_fade_out
+                        )
 
                     }
                 }, object : FeedAdapter.OnClickLikeListener {
@@ -199,12 +211,21 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                         }
                     }
                 })
-                recyclerView?.apply {
-                    var linearLayoutMnager = LinearLayoutManager(this.context)
-                    this.layoutManager = linearLayoutMnager
-                    this.itemAnimator = DefaultItemAnimator()
-                    this.adapter = mFeedAdapter
-                }
+                handlerFeed.postDelayed({
+                    // stop animating Shimmer and hide the layout
+                    mShimmerViewContainer.stopShimmerAnimation()
+                    mShimmerViewContainer.visibility = View.GONE
+//                    progressBar?.visibility = View.GONE
+                    recyclerView?.apply {
+                        var linearLayoutMnager = LinearLayoutManager(this.context)
+                        this.layoutManager = linearLayoutMnager
+                        this.itemAnimator = DefaultItemAnimator()
+                        this.adapter = mFeedAdapter
+
+                        setViewPager(it)
+
+                    }
+                }, 1000)
 
             }, {
                 Log.e("feed 보기 실패함", "" + it.message)
@@ -296,10 +317,13 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     }
 
-    private fun setViewPager(){
-        mRankAdapter = FeedRankAdapter(contexts, childFragmentManager)
+    private fun setViewPager(feed:List<Feed>){
+
+        if(!isAdded()) return
+
+        mRankAdapter = FeedRankAdapter(childFragmentManager)
         viewpager?.apply {
-            adapter = mRankAdapter
+            this.adapter = mRankAdapter
 
             this.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
                 override fun onPageScrollStateChanged(state: Int) {
@@ -317,6 +341,30 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 }
             })
             indicators?.setViewPager(this)
+
+        }
+
+        mFeedCardAdater = FeedCardAdapter(feed,contexts,feedViewModel)
+        viewpager_card?.apply {
+            this.adapter = mFeedCardAdater
+            this.setPadding(72, 0, 72, 0);
+
+            this.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+                override fun onPageScrollStateChanged(state: Int) {
+                }
+
+                override fun onPageScrolled(
+                    position: Int,
+                    positionOffset: Float,
+                    positionOffsetPixels: Int
+                ) {
+
+                }
+
+                override fun onPageSelected(position: Int) {
+
+                }
+            })
 
         }
     }
@@ -440,12 +488,14 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     override fun onResume() {
         super.onResume()
         initData()
+        mShimmerViewContainer.startShimmerAnimation()
         handler.postDelayed(runnable, delay)
 
     }
 
     override fun onPause() {
         super.onPause()
+        mShimmerViewContainer.stopShimmerAnimation()
         handler.removeCallbacks(runnable)
     }
 
@@ -470,7 +520,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     // autoscroll Viewpager
     var runnable: Runnable = object : Runnable {
         override fun run() {
-            if (mRankAdapter.getCount() === page) {
+            if (mRankAdapter!!.getCount() === page) {
                 page = 0
             } else {
                 page++

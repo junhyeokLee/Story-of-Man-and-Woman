@@ -194,7 +194,7 @@
                 android:maxLines="2"
                 android:text="null"
                 android:textColor="@color/black"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 app:fontFamily="@font/ridi_batang"></TextView>
 
             <FrameLayout
@@ -293,7 +293,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="46dp"
         android:layout_gravity="center"
         android:background="@drawable/background_feed_bottom"
         android:gravity="center"
@@ -335,12 +335,6 @@
             </LinearLayout>
 
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="30dp"
-                android:background="@color/sub_Accent"
-                >
-            </View>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -373,12 +367,7 @@
             </LinearLayout>
 
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="30dp"
-                android:background="@color/sub_Accent"
-                >
-            </View>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -408,12 +397,7 @@
                     android:text="0"
                     android:textSize="14sp" />
             </LinearLayout>
-            <View
-                android:layout_width="1dp"
-                android:layout_height="30dp"
-                android:background="@color/sub_Accent"
-                >
-            </View>
+
 
 
 
