@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="40dp"
-    android:background="@drawable/background_tag_span"
+    android:layout_height="32dp"
     android:layout_marginTop="16dp"
     android:layout_marginRight="6dp"
     android:layout_marginLeft="6dp">
@@ -34,7 +33,7 @@
         android:text="#사연/이별"
         android:textColor="@color/black"
         android:textSize="14sp"
-        app:fontFamily="@font/ridi_batang"
+        app:fontFamily="@font/roboto_regular"
         tools:ignore="MissingConstraints" />
 
 

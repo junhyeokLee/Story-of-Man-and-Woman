@@ -467,20 +467,20 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.menu_search, menu)
+//        inflater.inflate(R.menu.menu_search, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         super.onOptionsItemSelected(item)
         when(item.itemId){
 
-            R.id.filter -> {
-
-//                feedViewModel.getFeed()
-                val dialog = FilterDialog()
-                dialog.show(childFragmentManager, dialog.tag)
-
-            }
+//            R.id.filter -> {
+//
+////                feedViewModel.getFeed()
+//                val dialog = FilterDialog()
+//                dialog.show(childFragmentManager, dialog.tag)
+//
+//            }
         }
         return true
     }

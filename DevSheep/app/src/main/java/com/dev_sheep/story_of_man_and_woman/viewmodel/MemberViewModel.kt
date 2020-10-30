@@ -181,7 +181,7 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                    Log.e("성공함 구독", "" + it.toString())
+                Log.e("성공함 구독", "" + it.toString())
 
             }, {
                 Log.e("실패함 구독", "" + it.message)

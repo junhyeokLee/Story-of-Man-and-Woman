@@ -41,6 +41,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
     var checked : Boolean? = false
     var checked_bookmark: Boolean? = false
     var feed_seq: Int? = null
+    lateinit var type : String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +59,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
         }
 
         write_content.setInputEnabled(false)
-
+        write_content.isNestedScrollingEnabled = false
         write_content
             .setEditorFontSize(16)
             .setEditorPadding(8, 16, 8, 8)
@@ -143,6 +144,8 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                 tv_feed_date.text = it.feed_date!!.substring(0, 10);
                 view_count.text = it.view_no.toString()
                 like_count.text = it.like_no.toString()
+
+                type = it.type.toString()
 
                 check_follow.setOnClickListener(this)
                 check_edit.setOnClickListener(this)
@@ -262,6 +265,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
             R.id.check_edit -> {
                 val intent = Intent(this, FeedEditActivity::class.java)
                 intent.putExtra("feed_seq", feed_seq)
+                intent.putExtra("type",type)
 
                 startActivity(intent)
                 overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)

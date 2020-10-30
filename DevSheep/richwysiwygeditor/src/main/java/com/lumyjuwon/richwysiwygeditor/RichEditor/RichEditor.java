@@ -171,7 +171,7 @@ public class RichEditor extends WebView implements NestedScrollingChild {
     setWebViewClient(createWebviewClient());
 
     mChildHelper = new NestedScrollingChildHelper(this);
-    setNestedScrollingEnabled(true);
+    setNestedScrollingEnabled(false);
     loadUrl(SETUP_HTML);
 
     applyAttributes(context, attrs);

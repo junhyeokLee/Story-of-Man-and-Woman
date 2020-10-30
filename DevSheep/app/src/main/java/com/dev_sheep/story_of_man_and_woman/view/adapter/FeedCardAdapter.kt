@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +18,7 @@ import androidx.viewpager.widget.ViewPager
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.view.activity.FeedActivity
+import com.dev_sheep.story_of_man_and_woman.view.activity.FeedRankActivity
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 
 
@@ -42,15 +44,30 @@ class FeedCardAdapter (
 
         val tv_content: TextView
         val recyclerview: RecyclerView
+        val cv_feed: CardView
 //        val desc: TextView
 
         tv_content = view.findViewById(R.id.tv_content)
         recyclerview = view.findViewById(R.id.recyclerview)
+        cv_feed = view.findViewById(R.id.cv_feed)
 //        desc = view.findViewById(R.id.desc)
+
+        with(cv_feed){
+            setOnClickListener {
+                val lintent = Intent(context, FeedRankActivity::class.java)
+                lintent.putExtra("tv_title", tv_content.text.toString())
+//                        context.transitionName = position.toString()
+                (context as Activity).startActivity(lintent)
+                (context as Activity).overridePendingTransition(
+                    R.anim.fragment_fade_in,
+                    R.anim.fragment_fade_out
+                )
+            }
+        }
 
 //        imageView.setImageResource(models.get(position).getImage())
         if(position == 0){
-            tv_content.text = "오늘의 사연"
+            tv_content.text = "오늘의 Top 100"
             mFeedCardItemAdater = FeedCardItemAdapter(feed,context,object :FeedCardItemAdapter.OnClickViewListener{
                 override fun OnClickFeed(
                     feed: Feed,

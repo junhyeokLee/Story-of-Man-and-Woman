@@ -14,6 +14,10 @@ font-weight: normal;
 font-style: normal;
 }
 
+@font-face {  font-family: 'Roboto';  font-style: normal;  font-weight: 100;
+  src: url(../font/Roboto-Thin.woff2) format('woff2'),
+       url(../font/Roboto-Thin.woff) format('woff'),
+       url(../font/Roboto-Thin.otf) format('opentype');}
 
 body {
   overflow: scroll;
@@ -24,7 +28,7 @@ body {
 }
 img {
   max-width: 100%;
-  max-height: 100%;
+  max-height: wrap;
 }
 
 #player{
@@ -48,7 +52,7 @@ blockquote {
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
-font-family: 'RIDIBatang';
+font-family: 'Roboto';
 
 
 }

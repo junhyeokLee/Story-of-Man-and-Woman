@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".view.activity.MystoryActivity"
     >
 
@@ -14,47 +16,162 @@
         android:background="?attr/colorPrimary"
         android:elevation="1dp"
         android:gravity="center"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:background="?attr/colorPrimary"
-            android:layout_marginRight="28dp"
-            android:gravity="center"
-            >
+        android:theme="?attr/actionBarTheme"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:layout_collapseMode="pin" >
 
 
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:background="@drawable/ic_write_empty"
-                android:layout_marginRight="6dp"
-                android:backgroundTint="@color/gray"
-                >
-            </ImageView>
-            <TextView
-                android:id="@+id/toolbar_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:fontFamily="@font/ridi_batang"
-                android:textColor="@color/black"
-                android:text="새 글 작성하기"
-                android:textSize="14sp" />
 
-        </LinearLayout>
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:fontFamily="@font/roboto_regular"
+            android:textColor="@color/black"
+            android:text="새 글 작성하기"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_public"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:fontFamily="@font/roboto_regular"
+            android:textColor="@color/main_Accent"
+            android:text="(공개)"
+            android:textSize="12sp" />
 
     </androidx.appcompat.widget.Toolbar>
 
 
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/profile_layout"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:background="@android:color/transparent"
+            android:paddingStart="16dp"
+            android:layout_marginTop="16dp"
+            android:paddingEnd="8dp"
+            android:layout_marginBottom="16dp"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center|right"
+                android:orientation="horizontal"
+                android:layout_alignParentStart="true"
+                android:gravity="center|right"
+                >
+
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/img_profile"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_gravity="center|left"
+                    android:src="@drawable/ic_launcher_background"
+                    app:civ_border_color="@android:color/transparent"
+                    app:civ_border_width="1dp">
+
+                </de.hdodenhof.circleimageview.CircleImageView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/tv_creater"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginLeft="8dp"
+                        android:gravity="center|left"
+                        android:maxLines="1"
+                        android:text="null"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        app:fontFamily="@font/roboto_regular" />
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="8dp"
+                        android:orientation="horizontal"
+                        >
+                        <TextView
+                            android:id="@+id/tv_gender"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="남"
+                            android:textSize="12sp"
+                            android:textColor="@color/blue_gray_light"
+                            android:fontFamily="@font/roboto_regular"
+                            />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="4dp"
+                            android:layout_marginRight="4dp"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:textColor="@color/blue_gray_light"
+                            android:textSize="12sp"
+                            android:text="/"
+                            />
+                        <TextView
+                            android:id="@+id/tv_age"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="20대"
+                            android:textSize="12sp"
+                            android:textColor="@color/blue_gray_light"
+                            android:fontFamily="@font/roboto_regular"
+                            />
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+    </LinearLayout>
+
     <com.lumyjuwon.richwysiwygeditor.RichWysiwyg
         android:id="@+id/richwysiwygeditor"
-        android:layout_marginTop="60dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:autoLink="web|email"
+        android:fillViewport="true"
+        android:focusable="true"
+        android:gravity="start"
+        android:isScrollContainer="false"
+        android:clipToPadding="false"
+        android:textCursorDrawable="@drawable/edit_cursor"
+        android:visibility="visible"
+        app:layout_scrollFlags="scroll|exitUntilCollapsed"
+        >
 
     </com.lumyjuwon.richwysiwygeditor.RichWysiwyg>
 
-</RelativeLayout>
+
+
+
+
+</LinearLayout>

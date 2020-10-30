@@ -29,7 +29,7 @@ class SearchFragment: Fragment() {
         val view = inflater.inflate(R.layout.fragment_search,null)
         recyclerViewTag = view.findViewById<View>(R.id.recyclerView_tag) as RecyclerView?
 
-        val layoutManager_Tag = GridLayoutManager(view.context,3 )
+        val layoutManager_Tag = GridLayoutManager(view.context,2 )
         recyclerViewTag?.layoutManager = layoutManager_Tag
 //        (recyclerViewTag?.layoutManager as GridLayoutManager).canScrollHorizontally().not()
 

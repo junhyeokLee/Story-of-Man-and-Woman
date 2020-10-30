@@ -3,8 +3,8 @@
     <!-- Booleans -->
     <string name="pref_boolean1">boolean1</string>
     <bool name="pref_boolean1_default">false</bool>
-    <string name="boolean1_title">First boolean</string>
-    <string name="boolean1_desc">This toggles the first boolean</string>
+    <string name="boolean1_title">푸쉬알람</string>
+    <string name="boolean1_desc">새 소식 알림</string>
 
     <string name="pref_boolean2">boolean2</string>
     <bool name="pref_boolean2_default">false</bool>

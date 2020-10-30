@@ -246,7 +246,7 @@ RE.setBlockquote = function() {
 
 
 RE.insertImage = function(url, alt) {
-    var html = '<img src="' + url + '" alt="' + alt + '" /><br><br>';
+    var html = '<img class="feed_img" src="' + url + '" alt="' + alt + '" /><br><br>';
     RE.insertHTML(html);
 }
 

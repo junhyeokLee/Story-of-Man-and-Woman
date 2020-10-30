@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/bottom_border_white"
             android:hint="@string/headline"
-            android:fontFamily="@font/ridi_batang"
+            android:fontFamily="@font/roboto_regular"
             android:textColor="@color/black"
             android:textColorHint="@color/sub_Accent"
             android:paddingStart="12dp"
@@ -58,7 +58,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="46dp"
             android:background="@color/white"
             >
             <TextView
@@ -77,7 +77,7 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/write_bottom_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="46dp"
             android:background="@drawable/top_border_white"
             android:fitsSystemWindows="true"
             android:minHeight="?attr/actionBarSize"
@@ -136,7 +136,7 @@
 
                     <com.lumyjuwon.richwysiwygeditor.WriteCustomButton
                         android:id="@+id/write_textSize"
-                        android:layout_width="30dp"
+                        android:layout_width="28dp"
                         android:layout_height="@dimen/toolbar_icon_height_size"
                         android:layout_marginLeft="12dp"
                         android:background="?attr/selectableItemBackground"

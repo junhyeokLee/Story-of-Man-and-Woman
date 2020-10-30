@@ -58,6 +58,7 @@ class Tag_Select_Adapter(
 
         }
 
+
         holder.itemView.select_tag_name.setOnClickListener {
             lastCheckedPosition = list[position].tag_seq
             Log.e("Tag Name",""+holder.itemView.select_tag_name.text.toString())

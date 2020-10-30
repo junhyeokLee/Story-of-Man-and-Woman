@@ -27,9 +27,10 @@
             android:id="@+id/text_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:fontFamily="@font/roundwindregular"
+            android:layout_gravity="left"
+            android:layout_marginLeft="16dp"
+            android:gravity="left"
+            android:fontFamily="@font/roboto_regular"
             android:text="ImageUrl"
             android:textColor="@color/white"
             android:textSize="16sp" />

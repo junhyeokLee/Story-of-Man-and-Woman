@@ -10,8 +10,14 @@ import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
@@ -23,7 +29,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_feed_edit.*
 import kotlinx.android.synthetic.main.activity_feed_edit.richwysiwygeditor
-import kotlinx.android.synthetic.main.activity_feed_write.*
 import kotlinx.android.synthetic.main.activity_feed_write.toolbar_write
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -39,7 +44,9 @@ class FeedEditActivity : AppCompatActivity() {
     private val feedViewModel: FeedViewModel by viewModel()
     lateinit var EMAIL : String
     lateinit var M_SEQ: String
+    lateinit var TYPE: String
 
+    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feed_edit)
@@ -58,8 +65,36 @@ class FeedEditActivity : AppCompatActivity() {
         EMAIL = getEMAIL.getString("inputEmail", null)
 
         getExtraData()
+
+
+        val single = APIService.MEMBER_SERVICE.getMember(M_SEQ)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                tv_creater.text = it.nick_name
+                tv_gender.text = it.gender
+                tv_age.text = it.age
+
+                Glide.with(this)
+                    .load(it.profile_img)
+                    .apply(RequestOptions().circleCrop())
+                    .placeholder(android.R.color.transparent)
+                    .error(R.drawable.error_loading)
+                    .into(img_profile)
+            },
+                {
+                    Log.e("errors", it.message)
+                })
+
         initData()
 
+        if(TYPE == "public") {
+            spinner_public.setSelection(0)
+        }else if(TYPE == "subscriber"){
+            spinner_public.setSelection(1)
+        }else {
+            spinner_public.setSelection(2)
+        }
     }
 
     fun getExtraData(){
@@ -67,9 +102,47 @@ class FeedEditActivity : AppCompatActivity() {
             val feed_seq = intent.getIntExtra("feed_seq", 0)
             FEED_SEQ = feed_seq
         }
+
+        if(intent.hasExtra("type")) {
+            val type = intent.getStringExtra("type")
+            TYPE = type
+        }
     }
 
+    @SuppressLint("CheckResult")
     fun initData(){
+
+
+        val items = resources.getStringArray(R.array.date_public)
+        var spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, items)
+//        spinner_public.dropDownWidth(android.R.layout.simple_spinner_dropdown_item)android.R.layout.simple_spinner_item
+        spinner_public.adapter = spinnerAdapter
+
+        spinner_public.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                //아이템이 클릭 되면 맨 위부터 position 0번부터 순서대로 동작하게 됩니다.
+                when(position) {
+                    0   ->  {
+                        TYPE = "public"
+                    }
+                    1   ->  {
+                        TYPE = "subscriber"
+
+                    }
+                    2 ->{
+                        TYPE = "private"
+                    }
+                    //...
+                    else -> {
+
+                    }
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+
+            }
+        }
 
 
         val single = FEED_SERVICE.getFeed(FEED_SEQ!!)
@@ -182,7 +255,7 @@ class FeedEditActivity : AppCompatActivity() {
                     FEED_SEQ!!,
                     richwysiwygeditor.getHeadlineEditText().getText().toString(),
                     richwysiwygeditor.getContent().getHtml().plus("<br>"),
-                    M_SEQ
+                    TYPE
                 )
                 finish()
 

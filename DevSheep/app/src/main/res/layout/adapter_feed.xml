@@ -65,7 +65,7 @@
                         android:textColor="@color/black"
                         android:transitionName="@string/profile_name"
                         android:textSize="12sp"
-                        app:fontFamily="@font/poppins" />
+                        app:fontFamily="@font/roboto_regular" />
                     <TextView
                         android:layout_width="4dp"
                         android:layout_height="4dp"
@@ -83,7 +83,7 @@
                         android:text="남"
                         android:textSize="11sp"
                         android:textColor="@color/blue_gray_light"
-                        android:fontFamily="@font/ridi_batang"
+                        android:fontFamily="@font/roboto_regular"
                         />
                     <TextView
                         android:layout_width="wrap_content"
@@ -104,7 +104,7 @@
                         android:text="20대"
                         android:textSize="11sp"
                         android:textColor="@color/blue_gray_light"
-                        android:fontFamily="@font/ridi_batang"
+                        android:fontFamily="@font/roboto_regular"
                         />
 
                 </LinearLayout>
@@ -195,7 +195,7 @@
                 android:text="null"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                app:fontFamily="@font/ridi_batang"></TextView>
+                app:fontFamily="@font/roboto_regular"></TextView>
 
             <FrameLayout
                 android:layout_width="match_parent"

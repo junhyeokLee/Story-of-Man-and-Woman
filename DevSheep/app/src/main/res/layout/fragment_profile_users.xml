@@ -81,7 +81,7 @@
                     android:text="null"
                     android:transitionName="@string/profile_name"
                     android:textColor="@color/black"
-                    android:fontFamily="@font/roundwindregular"
+                    android:fontFamily="@font/roboto_bold"
                     android:textSize="18sp"></TextView>
 
                 <LinearLayout
@@ -106,7 +106,7 @@
                             android:text="남"
                             android:textSize="12sp"
                             android:textColor="@color/blue_gray_light"
-                            android:fontFamily="@font/ridi_batang"
+                            android:fontFamily="@font/roboto_regular"
                             />
                         <TextView
                             android:layout_width="wrap_content"
@@ -127,7 +127,7 @@
                             android:text="20대"
                             android:textSize="12sp"
                             android:textColor="@color/blue_gray_light"
-                            android:fontFamily="@font/ridi_batang"
+                            android:fontFamily="@font/roboto_regular"
                             />
 
 
@@ -137,15 +137,15 @@
 
                 <CheckBox
                     android:id="@+id/check_follow"
-                    android:layout_width="160dp"
+                    android:layout_width="120dp"
                     android:layout_height="40dp"
                     android:layout_marginTop="12dp"
                     android:background="@drawable/background_follow_rounded"
                     android:button="@null"
-                    android:fontFamily="@font/ridi_batang"
+                    android:fontFamily="@font/roboto_regular"
                     android:text="구독하기"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
+                    android:textSize="12sp"
                     android:gravity="center"
                     android:orientation="vertical">
                 </CheckBox>
@@ -167,6 +167,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/ridi_batang"
                             android:textColor="@color/gray"
+                            android:textSize="11sp"
                             android:text="구독중" />
 
                         <TextView
@@ -177,6 +178,7 @@
                             android:gravity="center"
                             android:fontFamily="@font/roboto_regular"
                             android:textColor="@color/black"
+                            android:textSize="13sp"
                             android:text="0" />
 
                     </LinearLayout>
@@ -197,6 +199,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/ridi_batang"
                             android:textColor="@color/gray"
+                            android:textSize="11sp"
                             android:text="구독자" />
 
                         <TextView
@@ -207,6 +210,7 @@
                             android:gravity="center"
                             android:fontFamily="@font/roboto_regular"
                             android:textColor="@color/black"
+                            android:textSize="13sp"
                             android:text="0" />
                     </LinearLayout>
 
@@ -228,6 +232,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/ridi_batang"
                             android:textColor="@color/gray"
+                            android:textSize="11sp"
                             android:text="쪽지 보내기" />
 
                         <ImageView
@@ -271,7 +276,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            app:tabTextAppearance="@style/tab_text"
+            app:tabTextAppearance="@style/MineCustomTabText"
             app:tabGravity="fill"
             app:tabMode="fixed"
             app:tabIndicatorColor="@color/main_Accent"

@@ -190,6 +190,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             addTab(this.newTab().setIcon(R.drawable.ic_heart_empty).setText("구독자 에게"))
             addTab(this.newTab().setIcon(R.drawable.ic_lock_empty).setText("비밀 이야기"))
             addTab(this.newTab().setIcon(R.drawable.ic_bookmark_hollow).setText("북마크"))
+
         }
 
 

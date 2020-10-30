@@ -14,9 +14,7 @@ import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
 import com.dev_sheep.story_of_man_and_woman.view.adapter.Tag_Select_Adapter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_tag_select.progressBar_tag
-import kotlinx.android.synthetic.main.activity_tag_select.recyclerView_tag
-import kotlinx.android.synthetic.main.activity_tag_select.toolbar_write
+import kotlinx.android.synthetic.main.activity_tag_select.*
 
 class SelectTagActivity : AppCompatActivity(){
 
@@ -40,7 +38,17 @@ class SelectTagActivity : AppCompatActivity(){
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        val layoutManager_Tag = GridLayoutManager(this,3)
+        val layoutManager_Tag = GridLayoutManager(this, 11)
+        layoutManager_Tag.setSpanSizeLookup(object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                val gridPosition = position % 5
+                when (gridPosition) {
+                    0, 1, 2 -> return 4
+                    3, 4 -> return 5
+                }
+                return 0
+            }
+        })
         recyclerView_tag.layoutManager = layoutManager_Tag
 
         val single_tag = APIService.FEED_SERVICE.getTagList()
@@ -50,28 +58,30 @@ class SelectTagActivity : AppCompatActivity(){
 
                 if (it.isNotEmpty()) {
                     recyclerView_tag.layoutManager = layoutManager_Tag
-                    recyclerView_tag.adapter = Tag_Select_Adapter(it,this,object : Tag_Select_Adapter.OnTagCheckedSeq{
-                        override fun getTagCheckedSeq(tag_seq: String,tag_name:String) {
-                            CHECKED_TAG_SEQ = tag_seq
-                            CHECKED_TAG_NAME = tag_name
-                        }
+                    recyclerView_tag.adapter = Tag_Select_Adapter(
+                        it,
+                        this,
+                        object : Tag_Select_Adapter.OnTagCheckedSeq {
+                            override fun getTagCheckedSeq(tag_seq: String, tag_name: String) {
+                                CHECKED_TAG_SEQ = tag_seq
+                                CHECKED_TAG_NAME = tag_name
+                            }
 
-                    })
-                }else {
+                        })
+                } else {
                     progressBar_tag.visibility = View.VISIBLE
                 }
 //                recyclerViewTag?.layoutManager = layoutManager_Tag
 //                recyclerViewTag?.adapter = Test_Searchtag_Adapter(it,view.context)
 //                mTagAdapter = object : Test_tag_Adapter(it,contexts)
 
-            }
-                ,{
+            }, {
 
-                })
+            })
 
         if (intent.hasExtra("type")) {
             TYPE_VALUE = intent.getStringExtra("type")
-            Log.e("TYPE 테스트 ",""+TYPE_VALUE)
+            Log.e("TYPE 테스트 ", "" + TYPE_VALUE)
         } else {
             Toast.makeText(this, "전달된 이름이 없습니다", Toast.LENGTH_SHORT).show()
         }
@@ -80,46 +90,46 @@ class SelectTagActivity : AppCompatActivity(){
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_tag_select,menu)
+        menuInflater.inflate(R.menu.menu_tag_select, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when(item!!.itemId){
 
-            android.R.id.home ->{
+            android.R.id.home -> {
                 onBackPressed()
                 true
             }
 
-            R.id.next_activity ->{
+            R.id.next_activity -> {
 
-                Log.e("TAG 이름 전송",""+CHECKED_TAG_SEQ)
+                Log.e("TAG 이름 전송", "" + CHECKED_TAG_SEQ)
 
-                if(TYPE_VALUE == TYPE_PUBLIC) {
+                if (TYPE_VALUE == TYPE_PUBLIC) {
                     val intent = Intent(this, MystoryActivity::class.java)
-                    intent.putExtra("type",TYPE_PUBLIC)
-                    intent.putExtra("tag_seq",CHECKED_TAG_SEQ)
-                    intent.putExtra("tag_name",CHECKED_TAG_NAME)
+                    intent.putExtra("type", "공개")
+                    intent.putExtra("tag_seq", CHECKED_TAG_SEQ)
+                    intent.putExtra("tag_name", CHECKED_TAG_NAME)
                     startActivity(intent)
                     finish()
-                }else if(TYPE_VALUE == TYPE_SUBSCRIBER){
+                } else if (TYPE_VALUE == TYPE_SUBSCRIBER) {
                     val intent = Intent(this, MystoryActivity::class.java)
-                    intent.putExtra("type",TYPE_SUBSCRIBER)
-                    intent.putExtra("tag_seq",CHECKED_TAG_SEQ)
-                    intent.putExtra("tag_name",CHECKED_TAG_NAME)
+                    intent.putExtra("type", "구독자에게 공개")
+                    intent.putExtra("tag_seq", CHECKED_TAG_SEQ)
+                    intent.putExtra("tag_name", CHECKED_TAG_NAME)
                     startActivity(intent)
                     finish()
-                }else if(TYPE_VALUE == TYPE_PRIVATE){
+                } else if (TYPE_VALUE == TYPE_PRIVATE) {
                     val intent = Intent(this, MystoryActivity::class.java)
-                    intent.putExtra("type",TYPE_PRIVATE)
-                    intent.putExtra("tag_seq",CHECKED_TAG_SEQ)
-                    intent.putExtra("tag_name",CHECKED_TAG_NAME)
+                    intent.putExtra("type", "비공개")
+                    intent.putExtra("tag_seq", CHECKED_TAG_SEQ)
+                    intent.putExtra("tag_name", CHECKED_TAG_NAME)
                     startActivity(intent)
                     finish()
                 }
 
-                Log.e("TYPE VALUE ",""+TYPE_VALUE)
+                Log.e("TYPE VALUE ", "" + TYPE_VALUE)
 
                 true
             }

@@ -94,6 +94,12 @@ interface FeedService {
     @POST("book_mark_get.php")
     fun getBookMark(@Field("m_seq") m_seq: String): Single<List<Feed>>
 
+    //comment 등록
+    @FormUrlEncoded
+    @POST("comment_add.php")
+    fun addComment(@Field("m_seq") m_seq: String, @Field("feed_seq") feed_seq: Int,@Field("comment") comment: String): Single<BookMark>
+
+
 //    @FormUrlEncoded
 //    @POST("update_feed.php")
 //    fun updateFeed():Call<Test>

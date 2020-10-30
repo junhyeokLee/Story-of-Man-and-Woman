@@ -25,7 +25,7 @@ class Test_Searchtag_Adapter(
 
         fun bindView(item: Tag) {
 
-            itemView.tag_name.text = "  # "+item.tag_name+"   "
+            itemView.tag_name.text = item.tag_name+"   "
 
             itemView.tag_name.setOnClickListener {
                 val intent = Intent(itemView.context, FeedSearchActivity::class.java)

@@ -215,8 +215,6 @@
                         android:fillViewport="true"
                         android:focusable="true"
                         android:gravity="start"
-                        android:isScrollContainer="false"
-                        android:clipToPadding="false"
                         android:textCursorDrawable="@drawable/edit_cursor"
                         android:visibility="visible"
                         app:layout_scrollFlags="scroll|exitUntilCollapsed" />
@@ -369,7 +367,7 @@
                         android:id="@+id/et_comment"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:fontFamily="@font/ridi_batang"
+                        android:fontFamily="@font/roboto_regular"
                         android:textStyle="bold"
                         android:layout_weight="1"
                         android:hint="어떻게 생각하세요?"

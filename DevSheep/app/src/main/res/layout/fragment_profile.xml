@@ -108,7 +108,7 @@
                     android:transitionName="@string/profile_name"
                     android:gravity="center"
                     android:text="null"
-                    android:fontFamily="@font/roundwindregular"
+                    android:fontFamily="@font/roboto_bold"
                     android:textColor="@color/black"
                     android:textSize="18sp"></TextView>
 
@@ -134,7 +134,7 @@
                             android:text="남"
                             android:textSize="12sp"
                             android:textColor="@color/blue_gray_light"
-                            android:fontFamily="@font/ridi_batang"
+                            android:fontFamily="@font/roboto_regular"
                             />
                         <TextView
                             android:layout_width="wrap_content"
@@ -155,7 +155,7 @@
                             android:text="20대"
                             android:textSize="12sp"
                             android:textColor="@color/blue_gray_light"
-                            android:fontFamily="@font/ridi_batang"
+                            android:fontFamily="@font/roboto_regular"
                             />
 
 
@@ -165,15 +165,15 @@
 
                 <TextView
                     android:id="@+id/tv_edit"
-                    android:layout_width="160dp"
+                    android:layout_width="120dp"
                     android:layout_height="40dp"
                     android:background="@drawable/background_edit_rounded"
-                    android:fontFamily="@font/ridi_batang"
+                    android:fontFamily="@font/roboto_regular"
                     android:layout_marginTop="12dp"
                     android:gravity="center"
                     android:text="편 집"
                     android:textColor="@color/color_third_text"
-                    android:textSize="16sp" />
+                    android:textSize="12sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -190,8 +190,9 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/ridi_batang"
+                            android:fontFamily="@font/roboto_regular"
                             android:textColor="@color/blue_gray_light"
+                            android:textSize="11sp"
                             android:text="구독중" />
 
                         <TextView
@@ -200,8 +201,9 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
                             android:gravity="center"
-                            android:fontFamily="@font/ridi_batang"
+                            android:fontFamily="@font/roboto_regular"
                             android:textColor="@color/black"
+                            android:textSize="13sp"
                             android:text="0" />
 
                     </LinearLayout>
@@ -220,8 +222,9 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/ridi_batang"
+                            android:fontFamily="@font/roboto_regular"
                             android:textColor="@color/blue_gray_light"
+                            android:textSize="11sp"
                             android:text="구독자" />
 
                         <TextView
@@ -232,6 +235,7 @@
                             android:gravity="center"
                             android:fontFamily="@font/roboto_regular"
                             android:textColor="@color/black"
+                            android:textSize="13sp"
                             android:text="0" />
                     </LinearLayout>
 
@@ -251,8 +255,9 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/ridi_batang"
+                            android:fontFamily="@font/roboto_regular"
                             android:textColor="@color/blue_gray_light"
+                            android:textSize="11sp"
                             android:text="쪽지함" />
 
                         <ImageView
@@ -281,8 +286,9 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/ridi_batang"
+                            android:fontFamily="@font/roboto_regular"
                             android:textColor="@color/blue_gray_light"
+                            android:textSize="11sp"
                             android:text="설정" />
 
                         <ImageView
@@ -326,9 +332,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            app:tabTextAppearance="@style/tab_text"
             app:tabGravity="fill"
             app:tabMode="fixed"
+            app:tabTextAppearance="@style/MineCustomTabText"
             app:tabIndicatorColor="@color/main_Accent"
             app:tabTextColor="@color/sub_Accent"
             app:tabIconTint="@color/sub_Accent"

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
@@ -37,13 +37,31 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryDark">@android:color/darker_gray</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/main_Accent</item>
         <item name="titleTextColor">@color/color_primary_text</item>
-        <item name="titleTextStyle">@font/roboto_regular</item>
-        <item name="android:windowTitleSize">12sp</item>
-        <item name="android:textSize">12sp</item>
+        <item name="titleTextStyle">@font/ridi_batang</item>
+        <item name="android:windowTitleSize">14sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/color_primary_text</item>
+        <item name="actionMenuTextColor">@color/main_Accent</item>
+        <item name="android:actionMenuTextColor">@color/main_Accent</item>
 
+    </style>
+
+    <style name="SpinnerDivideStyle" parent="android:style/Widget.ListView.DropDown">
+        <item name="android:divider">@color/main_lightGray</item> <!-- divider 색 -->
+        <item name="android:dividerHeight">2dp</item> <!-- divider 높이 -->
+    </style>
+
+
+    <style name="MineCustomTabText" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">11sp</item>
+        <item name="fontFamily">@font/roboto_regular</item>
+    </style>
+
+    <style name="SpinnerTheme" parent="AppTheme">
+        <item name="android:dropDownListViewStyle">@style/SpinnerDivideStyle</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
     <style name="AppTheme.Title.Collapsed" parent="android:TextAppearance">

@@ -147,6 +147,18 @@ class FeedViewModel(private val testDAO: TestDAO, private val feedService: FeedS
             })
     }
 
+    fun addComment(m_seq: String,feed_seq: Int){
+        val single = feedService.addComment(m_seq,feed_seq,"")
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.e("BookMark m_seq = ",m_seq)
+
+            },{
+
+            })
+    }
+
 
     override fun onCleared() {
         disposable.clear()

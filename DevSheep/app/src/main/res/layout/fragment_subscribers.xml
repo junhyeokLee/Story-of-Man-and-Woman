@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="32dp"
             android:text="구독자"
-            android:fontFamily="@font/ridi_batang"
+            android:fontFamily="@font/roboto_regular"
             android:textColor="@color/black"
             android:textSize="16sp" />
 

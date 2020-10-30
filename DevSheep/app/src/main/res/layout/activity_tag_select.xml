@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
@@ -21,19 +21,18 @@
             android:layout_height="match_parent"
             android:orientation="horizontal"
             android:background="?attr/colorPrimary"
-            android:layout_marginRight="28dp"
-            android:gravity="center"
             >
 
             <TextView
                 android:id="@+id/toolbar_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:fontFamily="@font/ridi_batang"
+                android:layout_gravity="left|center"
+                android:fontFamily="@font/roboto_regular"
+                android:layout_marginLeft="16dp"
                 android:textColor="@color/black"
-                android:text="태그 선택하기"
-                android:textSize="14sp" />
+                android:text="태그"
+                android:textSize="18sp" />
 
         </LinearLayout>
 
@@ -44,6 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="@color/white"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         >
 
@@ -51,7 +51,7 @@
             android:layout_width="match_parent"
             android:layout_marginTop="4dp"
             android:layout_height="1dp"
-            android:background="@color/lighterGrey"
+            android:background="@color/white"
             ></View>
 
         <ProgressBar
@@ -64,9 +64,12 @@
         <!-- 스크롤뷰 , 리싸이클러뷰 이중스크롤 방 -->
 
 
+
+
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/white"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             >
 
@@ -79,28 +82,29 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textSize="24sp"
-                    android:text="# 선택해주세요"
-                    android:textColor="@color/black"
+                    android:textSize="11sp"
+                    android:text="# 하나의 태그를 선택해주세요."
+                    android:textColor="@color/gray"
+                    android:gravity="right"
+                    android:layout_marginRight="12dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="6dp"
                     android:fontFamily="@font/roundwindregular"
-                    android:layout_margin="12dp"
-
                     ></TextView>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView_tag"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_margin="6dp"
                     android:background="@color/white"
-                    app:layoutManager="GridLayoutManager"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                    tools:itemCount="10"
-                    tools:listitem="@layout/adpater_tag"
-                    tools:spanCount="3"></androidx.recyclerview.widget.RecyclerView>
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never"
+                    tools:listitem="@layout/adapter_tag_select"
+                    ></androidx.recyclerview.widget.RecyclerView>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
     </LinearLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

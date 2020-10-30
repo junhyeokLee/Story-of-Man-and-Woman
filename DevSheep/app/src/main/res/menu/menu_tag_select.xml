@@ -5,6 +5,6 @@
 
     <item
         android:id="@+id/next_activity"
-        app:showAsAction="always"
-        android:title="글쓰기" />
+        android:title="다음"
+        app:showAsAction="always" />
 </menu>

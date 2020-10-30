@@ -6,6 +6,7 @@ import android.net.Uri;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -140,6 +141,9 @@ public class RichWysiwyg extends LinearLayout {
 
     private void init(){
         inflate(getContext(), R.layout.activity_write, this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setNestedScrollingEnabled(false);
+        }
 
         // Html WebView
         headline = findViewById(R.id.write_headline);

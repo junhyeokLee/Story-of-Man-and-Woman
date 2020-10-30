@@ -37,7 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:fontFamily="@font/circularstd_bold"
+                android:fontFamily="@font/roboto_bold"
                 android:gravity="center|left"
                 android:text="julia"
                 android:textColor="@color/black"
@@ -63,11 +63,11 @@
                         android:id="@+id/tv_gender"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/ridi_batang"
+                        android:fontFamily="@font/roboto_regular"
                         android:gravity="center"
                         android:text="남"
                         android:textColor="@color/blue_gray_light"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -84,11 +84,11 @@
                         android:id="@+id/tv_age"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/ridi_batang"
+                        android:fontFamily="@font/roboto_regular"
                         android:gravity="center"
                         android:text="20대"
                         android:textColor="@color/blue_gray_light"
-                        android:textSize="14sp" />
+                        android:textSize="13sp" />
 
 
                 </LinearLayout>
@@ -99,18 +99,18 @@
 
         <CheckBox
             android:id="@+id/check_follow"
-            android:layout_width="64dp"
+            android:layout_width="52dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:layout_weight="1"
             android:background="@drawable/background_follow_rounded"
             android:button="@null"
-            android:fontFamily="@font/ridi_batang"
+            android:fontFamily="@font/roboto_regular"
             android:gravity="center"
             android:orientation="vertical"
             android:text="구독하기"
             android:textColor="@color/black"
-            android:textSize="14sp"></CheckBox>
+            android:textSize="11sp"></CheckBox>
 
     </LinearLayout>
 

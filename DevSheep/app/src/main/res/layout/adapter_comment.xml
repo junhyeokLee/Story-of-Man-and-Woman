@@ -45,6 +45,7 @@
                     android:layout_marginLeft="8dp"
                     android:maxLines="1"
                     android:text="null"
+                    android:fontFamily="@font/roboto_regular"
                     android:textColor="@color/black"
                     android:transitionName="@string/profile_name"
                     android:textSize="14sp" />
@@ -74,6 +75,7 @@
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
                     android:gravity="center"
+                    android:fontFamily="@font/roboto_regular"
                     android:layout_gravity="center"
                     android:textColor="@color/blue_gray_light"
                     android:textSize="13sp"
@@ -87,7 +89,7 @@
                     android:text="20대"
                     android:textSize="13sp"
                     android:textColor="@color/blue_gray_light"
-                    android:fontFamily="@font/ridi_batang"
+                    android:fontFamily="@font/roboto_regular"
                     />
 
             </LinearLayout>
@@ -106,7 +108,7 @@
                     android:layout_marginTop="6dp"
                     android:layout_marginBottom="6dp"
                     android:layout_weight="1"
-                    android:fontFamily="@font/ridi_batang"
+                    android:fontFamily="@font/roboto_regular"
                     android:textSize="14sp"
                     android:textColor="@color/black"
                     android:text="댓글" />
@@ -146,7 +148,7 @@
                     android:text="답글 달기"
                     android:textSize="14sp"
                     android:textColor="@color/gray2"
-                    android:fontFamily="@font/ridi_batang"
+                    android:fontFamily="@font/roboto_regular"
                     />
 
                 <LinearLayout

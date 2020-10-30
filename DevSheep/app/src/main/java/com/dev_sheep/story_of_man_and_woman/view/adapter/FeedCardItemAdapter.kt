@@ -70,7 +70,7 @@ class FeedCardItemAdapter(
     }
 
     override fun getItemCount(): Int {
-        return 5
+        return 3
     }
 
 
@@ -91,6 +91,10 @@ class FeedCardItemAdapter(
         private val bookmarkButton: CheckBox = itemView.findViewById(R.id.bookmark)
         private val layoutTitle : LinearLayout = itemView.findViewById(R.id.layout_title)
         private val layoutBottom: LinearLayout = itemView.findViewById(R.id.layout_bottom)
+        private val iv_profile : ImageView = itemView.findViewById(R.id.img_profile)
+        private val tv_m_nick : TextView = itemView.findViewById(R.id.tv_m_nick)
+        private val tv_gender : TextView = itemView.findViewById(R.id.tv_gender)
+        private val tv_age : TextView = itemView.findViewById(R.id.tv_age)
 
         @SuppressLint("Range")
         fun bindView(item: Feed, position: Int) {
@@ -111,13 +115,22 @@ class FeedCardItemAdapter(
             else if(position == 4){
                 itemView.tv_rank_num.text = "5."
             }
+            tv_m_nick.text = item.creater
+            tv_age.text = item.creater_age.toString()
+            tv_gender.text = item.creater_gender.toString()
+
+            Glide.with(itemView.context)
+                .load(item.creater_image_url)
+                .apply(RequestOptions().circleCrop())
+                .placeholder(android.R.color.transparent)
+                .into(iv_profile)
 
 
             with(iv_feed_card){
                 var requestOptions = com.bumptech.glide.request.RequestOptions()
                 requestOptions = requestOptions.transform(
                     com.bumptech.glide.load.resource.bitmap.CenterCrop(),
-                    com.bumptech.glide.load.resource.bitmap.RoundedCorners(6)
+                    com.bumptech.glide.load.resource.bitmap.RoundedCorners(16)
                 )
 
                 if(item.images.size != 0) {

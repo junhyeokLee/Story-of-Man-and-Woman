@@ -4,14 +4,8 @@
             android:title="@string/show_values_title"
             android:icon="@drawable/ic_show_values"
             android:summary="@string/show_values_desc"/>
-    <PreferenceScreen
-            android:title="@string/open_repo_title"
-            android:icon="@drawable/ic_repo"
-            android:summary="@string/open_repo_desc">
-        <intent android:action="android.intent.action.VIEW"
-                android:data="@string/repo_url"/>
-    </PreferenceScreen>
-    <PreferenceCategory android:title="Booleans">
+
+    <PreferenceCategory android:title="알림설정">
         <SwitchPreference
                 android:key="@string/pref_boolean1"
                 android:defaultValue="@bool/pref_boolean1_default"
