@@ -36,8 +36,8 @@ data class Feed(
     var view_no: Int? = null,
     @SerializedName("like_no")
     var like_no: Int? = null,
-    @SerializedName("comment_seq")
-    var comment_seq: Int? = null,
+    @SerializedName("comment_no")
+    var comment_no: Int? = null,
     @SerializedName("feed_date")
     var feed_date: String? = null,
     @SerializedName("feed_rank")

@@ -22,6 +22,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
+import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
 import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileFragment
 import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileUsersFragment
 import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedAdapterTag
@@ -76,15 +77,12 @@ class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshList
         // display loading indicator
         val handlerFeed: Handler = Handler(Looper.myLooper())
         // tag_search
-        val single = APIService.FEED_SERVICE.getTagSearch(Integer.parseInt(tag_seq))
+        val single = FEED_SERVICE.getTagSearch(Integer.parseInt(tag_seq))
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess { progressBar?.visibility = View.GONE }
             .subscribe({
-                if (it.size == 0) {
-
-                } else {
-                    Log.e("FeedList", "" + it.get(0).content)
+                if (it.size > 0) {
 
                     mFeedAdapterTag = FeedAdapterTag(it, this, object : FeedAdapterTag.OnClickViewListener {
                         override fun OnClickFeed(
@@ -170,6 +168,9 @@ class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshList
 
                         }
                     }, 1000)
+                } else{
+                    shimmer_view_container.stopShimmerAnimation()
+                    shimmer_view_container.visibility = View.GONE
                 }
 
             }, {

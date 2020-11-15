@@ -306,9 +306,11 @@
             >
 
             <LinearLayout
+                android:id="@+id/layout_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -337,13 +339,16 @@
 
 
             <LinearLayout
+                android:id="@+id/layout_comment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackground"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="horizontal">
 
                 <ImageView
+                    android:id="@+id/iv_comment"
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:layout_gravity="center"
@@ -354,7 +359,7 @@
                 </ImageView>
 
                 <TextView
-                    android:id="@+id/comment_count"
+                    android:id="@+id/tv_comment_count"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:fontFamily="@font/roboto_regular"
@@ -370,8 +375,10 @@
 
 
             <LinearLayout
+                android:id="@+id/layout_favorite"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackground"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="horizontal"
@@ -402,8 +409,10 @@
 
 
             <LinearLayout
+                android:id="@+id/layout_bookmark"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackground"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="horizontal">

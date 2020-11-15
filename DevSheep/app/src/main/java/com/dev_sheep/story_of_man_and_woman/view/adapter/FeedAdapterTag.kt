@@ -20,14 +20,8 @@ import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
-import com.dev_sheep.story_of_man_and_woman.utils.SpacesItemDecoration
-import com.dev_sheep.story_of_man_and_woman.view.Assymetric.AsymmetricRecyclerView
-import com.dev_sheep.story_of_man_and_woman.view.Assymetric.AsymmetricRecyclerViewAdapter
-import com.dev_sheep.story_of_man_and_woman.view.Assymetric.Utils
 import com.victor.loading.rotate.RotateLoading
-import kotlinx.android.synthetic.main.adapter_feed.view.*
 import kotlinx.android.synthetic.main.adapter_feed.view.bookmark
-import kotlinx.android.synthetic.main.adapter_feed.view.comment_count
 import kotlinx.android.synthetic.main.adapter_feed.view.favorite_btn
 import kotlinx.android.synthetic.main.adapter_feed.view.img_profile
 import kotlinx.android.synthetic.main.adapter_feed.view.like_count
@@ -180,7 +174,8 @@ class FeedAdapterTag(
         private val layout_iv_feed : FrameLayout = itemView.findViewById(R.id.layout_iv_feed)
         private val tv_age : TextView = itemView.findViewById(R.id.tv_age)
         private val tv_gender : TextView = itemView.findViewById(R.id.tv_gender)
-        private val tv_tag : TextView = itemView.findViewById(R.id.tag_id)
+        private val tv_content : TextView = itemView.findViewById(R.id.tv_content)
+
         private var sdf : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         private val onClickFeedView = onClickViewListener
         private val onClickFeedLike = onClickLikeListener
@@ -199,11 +194,12 @@ class FeedAdapterTag(
             itemView.tv_title.text = item.title
 //            content.text = Jsoup.parse(item.content).text()
             itemView.view_count.text = item.view_no.toString()
-            itemView.comment_count.text = item.comment_seq.toString()
+            itemView.comment_count.text = item.comment_no.toString()
             itemView.like_count.text = item.like_no.toString()
             tv_age.text = item.creater_age.toString()
             tv_gender.text = item.creater_gender.toString()
-            tv_tag.text = "#"+item.tag_name.toString()
+            tv_content.text = Jsoup.parse(item.content).text()
+//            tv_tag.text = "#"+item.tag_name.toString()
 
             Glide.with(itemView.context)
                 .load(item.creater_image_url)

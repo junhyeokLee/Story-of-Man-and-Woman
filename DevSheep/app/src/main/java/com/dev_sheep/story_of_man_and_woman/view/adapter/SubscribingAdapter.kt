@@ -58,6 +58,11 @@ class SubscribingAdapter(
                     .into(itemView.iv_profile)
             }
 
+            if(my_m_seq == item.m_seq){
+
+                itemView.check_follow.visibility = View.INVISIBLE
+            }
+
             itemView.check_follow.apply {
                 memberViewModel.memberSubscribeChecked(
                     item.m_seq,

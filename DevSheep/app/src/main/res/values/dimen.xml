@@ -9,6 +9,7 @@
     <dimen name="activity_padding">16dp</dimen>
     <dimen name="placeholder_image">50dp</dimen>
     <dimen name="placeholder_text_height">8dp</dimen>
+    <dimen name="placeholder_image_comment">42dp</dimen>
     <dimen name="activity_padding_horizontal">16dp</dimen>
     <dimen name="padding_10">10dp</dimen>
     <dimen name="name">15dp</dimen>

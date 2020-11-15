@@ -27,7 +27,6 @@ import com.dev_sheep.story_of_man_and_woman.view.Assymetric.Utils
 import com.victor.loading.rotate.RotateLoading
 import kotlinx.android.synthetic.main.adapter_feed.view.*
 import kotlinx.android.synthetic.main.adapter_feed.view.bookmark
-import kotlinx.android.synthetic.main.adapter_feed.view.comment_count
 import kotlinx.android.synthetic.main.adapter_feed.view.favorite_btn
 import kotlinx.android.synthetic.main.adapter_feed.view.img_profile
 import kotlinx.android.synthetic.main.adapter_feed.view.like_count
@@ -181,7 +180,8 @@ class FeedAdapterRank(
         private val tv_age : TextView = itemView.findViewById(R.id.tv_age)
         private val tv_gender : TextView = itemView.findViewById(R.id.tv_gender)
         private val tv_rank_num : TextView = itemView.findViewById(R.id.tv_rank_num)
-//        private val tv_tag : TextView = itemView.findViewById(R.id.tag_id)
+        //        private val tv_tag : TextView = itemView.findViewById(R.id.tag_id)
+        private val tv_content : TextView = itemView.findViewById(R.id.tv_content)
         private var sdf : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         private val onClickFeedView = onClickViewListener
         private val onClickFeedLike = onClickLikeListener
@@ -198,12 +198,13 @@ class FeedAdapterRank(
 
             itemView.tv_m_nick.text = item.creater
             itemView.tv_title.text = item.title
-//            content.text = Jsoup.parse(item.content).text()
             itemView.view_count.text = item.view_no.toString()
-            itemView.comment_count.text = item.comment_seq.toString()
+            itemView.comment_count.text = item.comment_no.toString()
             itemView.like_count.text = item.like_no.toString()
             tv_age.text = item.creater_age.toString()
             tv_gender.text = item.creater_gender.toString()
+            tv_content.text = Jsoup.parse(item.content).text()
+
 //            position + 1
             tv_rank_num.text = (position + 1).toString()+"."
 //            tv_tag.text = "#"+item.tag_name.toString()

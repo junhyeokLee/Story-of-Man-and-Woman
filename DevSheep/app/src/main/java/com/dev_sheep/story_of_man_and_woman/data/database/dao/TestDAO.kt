@@ -7,6 +7,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Search
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
 
 @Dao
@@ -38,6 +39,20 @@ interface TestDAO {
 
     @Query("SELECT * FROM Feed" )
     fun getallList(): LiveData<List<Feed>>
+
+    @Query("SELECT * FROM Search")
+    fun getSearchList(): LiveData<List<Search>>
+
+    @Query("DELETE FROM Search")
+    fun deleteAllSearch()
+
+    @Query("DELETE FROM Search WHERE id = :id")
+    fun deleteSearch(id : Int)
+
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun addSearch(search: Search)
+
 
 
 }

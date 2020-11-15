@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <eu.micer.circlesloadingindicator.CirclesLoadingIndicator
+        android:id="@+id/progressBarfeed"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:visibility="visible"
+        app:circlesColor="@color/sub_Accent"
+        app:circlesCount="8"
+        app:circlesRadius="4dp"
+        app:rotationDuration="3000"
+        app:showLeadingLine="false" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="6dp"
+        android:background="@color/white"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="7"
+        tools:listitem="@layout/adpater_tag"
+        tools:spanCount="4"></androidx.recyclerview.widget.RecyclerView>
+    />
+
+</FrameLayout>

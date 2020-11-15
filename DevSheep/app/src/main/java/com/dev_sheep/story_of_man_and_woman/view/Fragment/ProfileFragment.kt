@@ -234,7 +234,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             }
         })
 
-        initData()
+//        initData()
 
         profileImage?.setOnClickListener(this)
         profileAdd?.setOnClickListener(this)
@@ -254,6 +254,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             tv_profile_nick.transitionName = arguments?.getString("trId")
             id_Profile_Image.transitionName = arguments?.getString("trId1")
         }
+        initData()
 
     }
 

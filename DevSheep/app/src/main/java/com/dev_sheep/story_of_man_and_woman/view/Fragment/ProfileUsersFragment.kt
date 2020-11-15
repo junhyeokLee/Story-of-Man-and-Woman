@@ -167,9 +167,20 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
         if(m_seq == "null") {
             viewPagerAdapter =
                 ProfileUserViewpagerAdapter(childFragmentManager, tablayout!!.tabCount, feed_activity_m_seq)
+            followChecked.apply {
+                memberViewModel.memberSubscribeChecked(feed_activity_m_seq,my_m_seq,"checked",this,context);
+                memberViewModel.memberMySubscribeCount(feed_activity_m_seq,followCount)
+                memberViewModel.memberUserSubscribeCount(feed_activity_m_seq,followerCount)
+            }
         }else{
             viewPagerAdapter =
                 ProfileUserViewpagerAdapter(childFragmentManager, tablayout!!.tabCount, m_seq)
+            followChecked.apply {
+                memberViewModel.memberSubscribeChecked(m_seq,my_m_seq,"checked",this,context);
+                memberViewModel.memberMySubscribeCount(m_seq,followCount)
+                memberViewModel.memberUserSubscribeCount(m_seq,followerCount)
+
+            }
         }
         viewpager?.adapter = viewPagerAdapter
         viewpager?.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tablayout))
@@ -201,12 +212,7 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
         followChecked?.setOnClickListener(this)
         layout_subscribing?.setOnClickListener(this)
         layout_subscriber?.setOnClickListener(this)
-        followChecked.apply {
-            memberViewModel.memberSubscribeChecked(m_seq,my_m_seq,"checked",this,context);
 
-        }
-        memberViewModel.memberMySubscribeCount(m_seq,followCount)
-        memberViewModel.memberUserSubscribeCount(m_seq,followerCount)
 
         return view
     }
@@ -370,45 +376,97 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
             }
             R.id.check_follow -> {
 
-                if (followChecked.isChecked == true) {
-                    followChecked.setTextColor(resources.getColor(R.color.white))
-                    followChecked.text = "구독취소"
+                if(m_seq == "null") {
+                    if (followChecked.isChecked == true) {
+                        followChecked.setTextColor(resources.getColor(R.color.white))
+                        followChecked.text = "구독취소"
 //                    followerCount.setText("1")
-                    memberViewModel.memberSubscribe(m_seq,my_m_seq,"true",followerCount)
+                        memberViewModel.memberSubscribe(feed_activity_m_seq, my_m_seq, "true", followerCount)
 
-                } else {
-                    followChecked.setTextColor(resources.getColor(R.color.black))
-                    followChecked.text = "구독하기"
+                    } else {
+                        followChecked.setTextColor(resources.getColor(R.color.black))
+                        followChecked.text = "구독하기"
 //                    followerCount.setText("0")
-                    memberViewModel.memberSubscribe(m_seq,my_m_seq,"false",followerCount)
+                        memberViewModel.memberSubscribe(feed_activity_m_seq, my_m_seq, "false", followerCount)
+                    }
+                }else{
+                    if (followChecked.isChecked == true) {
+                        followChecked.setTextColor(resources.getColor(R.color.white))
+                        followChecked.text = "구독취소"
+//                    followerCount.setText("1")
+                        memberViewModel.memberSubscribe(m_seq, my_m_seq, "true", followerCount)
+
+                    } else {
+                        followChecked.setTextColor(resources.getColor(R.color.black))
+                        followChecked.text = "구독하기"
+//                    followerCount.setText("0")
+                        memberViewModel.memberSubscribe(m_seq, my_m_seq, "false", followerCount)
+                    }
                 }
             }
 
             R.id.layout_subscribing ->{
-                val subscribingFragment = SubscribingFragment(m_seq)//The fragment that u want to open for example
-                var SubscribeFragmnet = (context as AppCompatActivity).supportFragmentManager
-                var fragmentTransaction: FragmentTransaction = SubscribeFragmnet.beginTransaction()
-                fragmentTransaction.setReorderingAllowed(true)
-                fragmentTransaction.setCustomAnimations(
-                    R.anim.fragment_fade_in,
-                    R.anim.fragment_fade_out
-                )
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.replace(R.id.frameLayout, subscribingFragment);
-                fragmentTransaction.commit()
+                if(m_seq == "null") {
+                    val subscribingFragment =
+                        SubscribingFragment(feed_activity_m_seq)//The fragment that u want to open for example
+                    var SubscribeFragmnet = (context as AppCompatActivity).supportFragmentManager
+                    var fragmentTransaction: FragmentTransaction =
+                        SubscribeFragmnet.beginTransaction()
+                    fragmentTransaction.setReorderingAllowed(true)
+                    fragmentTransaction.setCustomAnimations(
+                        R.anim.fragment_fade_in,
+                        R.anim.fragment_fade_out
+                    )
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.replace(R.id.frameLayout, subscribingFragment);
+                    fragmentTransaction.commit()
+                } else{
+                    val subscribingFragment =
+                        SubscribingFragment(m_seq)//The fragment that u want to open for example
+                    var SubscribeFragmnet = (context as AppCompatActivity).supportFragmentManager
+                    var fragmentTransaction: FragmentTransaction =
+                        SubscribeFragmnet.beginTransaction()
+                    fragmentTransaction.setReorderingAllowed(true)
+                    fragmentTransaction.setCustomAnimations(
+                        R.anim.fragment_fade_in,
+                        R.anim.fragment_fade_out
+                    )
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.replace(R.id.frameLayout, subscribingFragment);
+                    fragmentTransaction.commit()
+                }
             }
             R.id.layout_subscriber ->{
-                val subscribersFragment = SubscribersFragment(m_seq)//The fragment that u want to open for example
-                var SubscribeFragmnet = (context as AppCompatActivity).supportFragmentManager
-                var fragmentTransaction: FragmentTransaction = SubscribeFragmnet.beginTransaction()
-                fragmentTransaction.setReorderingAllowed(true)
-                fragmentTransaction.setCustomAnimations(
-                    R.anim.fragment_fade_in,
-                    R.anim.fragment_fade_out
-                )
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.replace(R.id.frameLayout, subscribersFragment);
-                fragmentTransaction.commit()
+                if(m_seq == "null") {
+                    val subscribersFragment =
+                        SubscribersFragment(feed_activity_m_seq)//The fragment that u want to open for example
+                    var SubscribeFragmnet = (context as AppCompatActivity).supportFragmentManager
+                    var fragmentTransaction: FragmentTransaction =
+                        SubscribeFragmnet.beginTransaction()
+                    fragmentTransaction.setReorderingAllowed(true)
+                    fragmentTransaction.setCustomAnimations(
+                        R.anim.fragment_fade_in,
+                        R.anim.fragment_fade_out
+                    )
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.replace(R.id.frameLayout, subscribersFragment);
+                    fragmentTransaction.commit()
+
+                }else{
+                    val subscribersFragment =
+                        SubscribersFragment(m_seq)//The fragment that u want to open for example
+                    var SubscribeFragmnet = (context as AppCompatActivity).supportFragmentManager
+                    var fragmentTransaction: FragmentTransaction =
+                        SubscribeFragmnet.beginTransaction()
+                    fragmentTransaction.setReorderingAllowed(true)
+                    fragmentTransaction.setCustomAnimations(
+                        R.anim.fragment_fade_in,
+                        R.anim.fragment_fade_out
+                    )
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.replace(R.id.frameLayout, subscribersFragment);
+                    fragmentTransaction.commit()
+                }
             }
         }
 

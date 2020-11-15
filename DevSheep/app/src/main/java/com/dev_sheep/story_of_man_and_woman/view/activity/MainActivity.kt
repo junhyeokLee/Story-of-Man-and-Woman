@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     val searchFragment = SearchFragment()
     val notificationFragment = NotificationFragment()
     val commentFragment = CommentFragment()
+    val reCommentFragment = ReCommentFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,6 +81,20 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                     arguments.putString("feed_seq", feed_seq)
                     commentFragment.arguments = arguments
                     supportFragmentManager.beginTransaction().replace(R.id.frameLayout, commentFragment)
+                        .commit()
+                }
+            }
+        }
+
+        if(intent.hasExtra("ReCommentFragment")) {
+            var checked = intent.getBooleanExtra("ReCommentFragment" , false)
+            if(checked == true){
+                if(intent.hasExtra("comment_seq")){
+                    var comment_seq = intent.getStringExtra("comment_seq")
+                    val arguments = Bundle()
+                    arguments.putString("comment_seq", comment_seq)
+                    reCommentFragment.arguments = arguments
+                    supportFragmentManager.beginTransaction().replace(R.id.frameLayout, reCommentFragment)
                         .commit()
                 }
             }

@@ -2,6 +2,7 @@ package com.dev_sheep.story_of_man_and_woman.view.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
@@ -19,6 +20,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -31,6 +33,7 @@ import com.dev_sheep.story_of_man_and_woman.utils.SpacesItemDecoration
 import com.dev_sheep.story_of_man_and_woman.view.Assymetric.AsymmetricRecyclerView
 import com.dev_sheep.story_of_man_and_woman.view.Assymetric.AsymmetricRecyclerViewAdapter
 import com.dev_sheep.story_of_man_and_woman.view.Assymetric.Utils
+import com.dev_sheep.story_of_man_and_woman.view.activity.MainActivity
 import com.github.florent37.fiftyshadesof.FiftyShadesOf
 import com.victor.loading.rotate.RotateLoading
 import kotlinx.android.synthetic.main.adapter_feed.view.*
@@ -166,6 +169,12 @@ class FeedAdapter(
         private var favoriteButton: CheckBox = itemView.findViewById(R.id.favorite_btn)
         private val favoriteValue: TextView = itemView.findViewById(R.id.like_count)
         private val bookmarkButton: CheckBox = itemView.findViewById(R.id.bookmark)
+        private val iv_comment : ImageView = itemView.findViewById(R.id.iv_comment)
+        private val layout_comment : LinearLayout = itemView.findViewById(R.id.layout_comment)
+        private val layout_view : LinearLayout = itemView.findViewById(R.id.layout_view)
+        private val layout_favorite : LinearLayout = itemView.findViewById(R.id.layout_favorite)
+        private val layout_bookmark : LinearLayout = itemView.findViewById(R.id.layout_bookmark)
+        private val tv_comment_count : TextView = itemView.findViewById(R.id.tv_comment_count)
         private val img_profile : ImageView = itemView.findViewById(R.id.img_profile)
         private val m_nick : TextView = itemView.findViewById(R.id.tv_m_nick)
         private val profile_layout : RelativeLayout = itemView.findViewById(R.id.profile_layout)
@@ -211,7 +220,7 @@ class FeedAdapter(
             itemView.tag_id.text = "# "+item.tag_name
             itemView.tv_feed_date.text = calculateTime(sdf.parse(item.feed_date))
             itemView.view_count.text = item.view_no.toString()
-            itemView.comment_count.text = item.comment_seq.toString()
+            itemView.tv_comment_count.text = item.comment_no.toString()
             itemView.like_count.text = item.like_no.toString()
             itemView.tv_gender.text = item.creater_gender
 
@@ -336,6 +345,16 @@ class FeedAdapter(
                 }
             }
 
+            with(layout_comment){
+                setOnClickListener {
+                    val intent = Intent(context, MainActivity::class.java)
+                    intent.putExtra("feed_seq",item.feed_seq.toString())
+                    intent.putExtra("CommentFragment", true)
+                    context.startActivity(intent)
+                }
+            }
+
+
             with(favoriteButton){
                 val feed = item
                 var favCount : String
@@ -384,7 +403,6 @@ class FeedAdapter(
                     }
                 }
             }
-
             with(bookmarkButton){
                 val feed = item
                 val preferences = PreferenceManager.getDefaultSharedPreferences(itemView.context)
@@ -427,6 +445,18 @@ class FeedAdapter(
                 }
             }
 
+            with(layout_view){
+                setOnClickListener {
+                    onClickFeedView.OnClickFeed(
+                        item,
+                        itemView.tv_m_nick,
+                        itemView.img_profile,
+                        itemView.favorite_btn,
+                        itemView.bookmark,
+                        position
+                    )
+                }
+            }
             with(recycler_layout){
                 setOnClickListener {
                     onClickFeedView.OnClickFeed(

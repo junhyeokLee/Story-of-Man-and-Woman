@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:shimmer="http://schemas.android.com/apk/res-auto"
     android:id="@+id/write_coordinatorLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -40,7 +39,7 @@
                 android:text="댓글"
                 android:textSize="18sp"
                 android:textColor="@color/black"
-                android:fontFamily="@font/circularstd"
+                android:fontFamily="@font/roboto_regular"
                 android:layout_marginLeft="16dp"
                 />
 
@@ -56,42 +55,59 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         >
-        <LinearLayout
-            android:id="@+id/progressbar_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            android:gravity="center">
-            <eu.micer.circlesloadingindicator.CirclesLoadingIndicator
-                android:id="@+id/progressBar"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center"
-                android:visibility="visible"
-                app:circlesColor="@color/sub_Accent"
-                app:circlesCount="8"
-                app:circlesRadius="4dp"
-                app:rotationDuration="3000"
-                app:showLeadingLine="false" />
-        </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="?attr/actionBarSize"
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmer_view_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:orientation="vertical"
-            >
+            shimmer:duration="800">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerview_comments"
+            <!-- Adding 3 rows of placeholders -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:orientation="vertical">
+
+
+                <include layout="@layout/comment_placeholder_item" />
+                <include layout="@layout/comment_placeholder_item" />
+                <include layout="@layout/comment_placeholder_item" />
+                <include layout="@layout/comment_placeholder_item" />
+                <include layout="@layout/comment_placeholder_item" />
+
+
+            </LinearLayout>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/sr_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
                 >
 
-            </androidx.recyclerview.widget.RecyclerView>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerview_comments"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="100dp"
 
-        </LinearLayout>
+
+                    >
+
+                </androidx.recyclerview.widget.RecyclerView>
+
+            </LinearLayout>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
     </LinearLayout>
@@ -146,7 +162,7 @@
                         android:textColor="@color/black"
                         android:textColorHint="@color/gray"
                         android:inputType="textMultiLine"
-                        android:drawableRight="@drawable/send"
+                        android:drawableRight="@drawable/background_message"
                         android:drawableTint="@color/main_Accent"
                         android:paddingRight="12dp"
                         android:layout_marginLeft="12dp"

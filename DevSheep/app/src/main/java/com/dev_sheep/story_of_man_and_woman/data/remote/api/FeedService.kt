@@ -60,11 +60,20 @@ interface FeedService {
     @GET("feed_get_mystory.php")
     fun getListMystory(@Query("m_seq") m_seq: String): Single<List<Feed>>
 
+    @GET("feed_get_search.php")
+    fun getFeedSearch(@Query("title") title: String): Single<List<Feed>>
+
     @GET("feed_get_secret.php")
     fun getListSecert(@Query("m_seq") m_seq: String): Single<List<Feed>>
 
     @GET("feed_get_subscribe.php")
     fun getListSubscribe(@Query("m_seq") m_seq: String): Single<List<Feed>>
+
+    @GET("feed_get_notification_subscribe.php")
+    fun getListNotificationSubscribe(@Query("m_seq") m_seq: String): Single<List<Feed>>
+
+    @GET("feed_get_user_subscribe.php")
+    fun getListUserSubscribe(@Query("m_seq") m_seq: String,@Query("my_seq") my_seq: String): Single<List<Feed>>
 
     @FormUrlEncoded
     @POST("feed_edit_view_count.php")
@@ -73,6 +82,10 @@ interface FeedService {
     @FormUrlEncoded
     @POST("feed_edit_like_count.php")
     fun edit_feed_like_count(@Field("feed_seq") feed_seq: Int,@Field("boolean_value") boolean_value : String): Single<Feed>
+
+    @FormUrlEncoded
+    @POST("comment_edit_like_count.php")
+    fun edit_comment_like_count(@Field("comment_seq") comment_seq: Int,@Field("boolean_value") boolean_value : String): Single<Comment>
 
     @FormUrlEncoded
     @POST("feed_item_get.php")
@@ -97,8 +110,22 @@ interface FeedService {
     //comment 등록
     @FormUrlEncoded
     @POST("comment_add.php")
-    fun addComment(@Field("m_seq") m_seq: String, @Field("feed_seq") feed_seq: Int,@Field("comment") comment: String): Single<BookMark>
+    fun addComment(@Field("writer") writer: String, @Field("feed_seq") feed_seq: Int,@Field("comment") comment: String): Single<Void>
 
+    @FormUrlEncoded
+    @POST("recomment_add.php")
+    fun addReComment(@Field("comment_seq") TaskEntrycomment_seq: Int, @Field("feed_seq") feed_seq: Int,@Field("writer_seq") writer_seq: String, @Field("group_seq") group_seq: Int,
+                     @Field("depth") depth: Int,@Field("comment") comment: String): Single<Void>
+
+    @GET("recomment_get.php")
+    fun getReComment(@Query("feed_seq") feed_seq: Int,@Query("group_seq") group_seq: Int): Single<List<Comment>>
+
+
+    @GET("comment_get.php")
+    fun getComment(@Query("feed_seq") feed_seq: Int): Single<List<Comment>>
+
+    @GET("comment_item_get.php")
+    fun getCommentItem(@Query("comment_seq") comment_seq: Int): Single<Comment>
 
 //    @FormUrlEncoded
 //    @POST("update_feed.php")

@@ -9,14 +9,12 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
+import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
-import com.dev_sheep.story_of_man_and_woman.view.Fragment.HomeFragment
+import com.dev_sheep.story_of_man_and_woman.view.adapter.CommentAdapter
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -37,6 +35,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
     private val memberViewModel: MemberViewModel by viewModel()
     lateinit var m_seq : String
     lateinit var my_m_seq: String
+    lateinit var mCommentAdapter : CommentAdapter
     var position : Int? = null
     var checked : Boolean? = false
     var checked_bookmark: Boolean? = false
@@ -76,6 +75,12 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
 
         getIntents()
         getFeed()
+
+        check_follow.setOnClickListener(this)
+        check_edit.setOnClickListener(this)
+        img_profile.setOnClickListener(this)
+        layout_bottom_comments.setOnClickListener(this)
+        layout_comments.setOnClickListener(this)
     }
 
     fun getIntents(){
@@ -144,12 +149,10 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                 tv_feed_date.text = it.feed_date!!.substring(0, 10);
                 view_count.text = it.view_no.toString()
                 like_count.text = it.like_no.toString()
+                comment_count.text = it.comment_no.toString()
+                tv_comment_count.text = it.comment_no.toString() + " 개"
 
                 type = it.type.toString()
-
-                check_follow.setOnClickListener(this)
-                check_edit.setOnClickListener(this)
-                img_profile.setOnClickListener(this)
 
                 img_profile.transitionName = position.toString()
                 Glide.with(this)
@@ -230,6 +233,31 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                     Log.e("errors", it.message)
                 })
 
+
+        val single_comment = FEED_SERVICE.getComment(feed_seq!!)
+        single_comment.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                val layoutManager = GridLayoutManager(this, 1)
+                recyclerview_comments?.layoutManager = layoutManager
+
+                if(it.size > 0) {
+                    mCommentAdapter = CommentAdapter(it, this,feedViewModel)
+//                Log.e("get comment feed_seq = ",it.get(1).comment)
+
+                    recyclerview_comments.apply {
+                        this.adapter = mCommentAdapter
+                    }
+                }
+
+            },{
+                Log.e("get comment 실패 = ",it.message.toString())
+
+            })
+
+
+
+
         et_comment.setOnTouchListener(object: View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 if(event!!.getAction() == MotionEvent.ACTION_DOWN){
@@ -244,6 +272,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                 return false;
             }
         })
+
 
     }
 
@@ -298,11 +327,28 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
 
             }
 
+            R.id.layout_bottom_comments -> {
+                val intent = Intent(applicationContext, MainActivity::class.java)
+                intent.putExtra("feed_seq",feed_seq.toString())
+                intent.putExtra("CommentFragment", true)
+                startActivity(intent)
+                overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+            }
+
+            R.id.layout_comments -> {
+                val intent = Intent(applicationContext, MainActivity::class.java)
+                intent.putExtra("feed_seq",feed_seq.toString())
+                intent.putExtra("CommentFragment", true)
+                startActivity(intent)
+                overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+            }
+
         }
     }
 
     override fun onResume() {
         super.onResume()
+        getFeed()
     }
 
     private fun closeOnError() {

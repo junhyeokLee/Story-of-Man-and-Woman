@@ -41,6 +41,7 @@ class ProfileUserSubscriberFragment(m_seq : String): Fragment() {
     private val feedViewModel: FeedViewModel by viewModel()
     private var recyclerView: RecyclerView? = null
     lateinit var mFeedAdapter: FeedAdapter
+    private val get_m_seq = m_seq
     private var limit: Int = 10
     private var offset: Int = 0
     lateinit var contexts: Context
@@ -63,7 +64,7 @@ class ProfileUserSubscriberFragment(m_seq : String): Fragment() {
         val m_seq = preferences.getString("inputMseq", "")
 
         // 전체보기
-        val single = FEED_SERVICE.getListSubscribe(m_seq)
+        val single = FEED_SERVICE.getListUserSubscribe(get_m_seq,m_seq)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess { progressBarsubcribe?.visibility = View.GONE }

@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.dev_sheep.story_of_man_and_woman.data.database.dao.TestDAO
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Search
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
 import com.dev_sheep.story_of_man_and_woman.data.remote.api.FeedService
 import com.lumyjuwon.richwysiwygeditor.RichEditor.RichEditor
@@ -42,6 +43,21 @@ class FeedViewModel(private val testDAO: TestDAO, private val feedService: FeedS
 //
 //
 //    }
+
+    fun addSearch(search_title: Search){
+        return testDAO.addSearch(search_title)
+    }
+
+    fun getSearchList(): LiveData<List<Search>> {
+        return testDAO.getSearchList()
+    }
+
+    fun deleteSearchAll() {
+        return testDAO.deleteAllSearch()
+    }
+    fun deleteSearch(id: Int) {
+        return testDAO.deleteSearch(id)
+    }
 
 
     private val disposable = CompositeDisposable()
@@ -113,6 +129,17 @@ class FeedViewModel(private val testDAO: TestDAO, private val feedService: FeedS
             })
     }
 
+    fun increaseLikeCommentCount(comment_seq: Int,boolean_value: String){
+        val single = feedService.edit_comment_like_count(comment_seq,boolean_value)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+
+            },{
+
+            })
+    }
+
     fun getTag(){
         val single = feedService.getList()
         single.subscribeOn(Schedulers.io())
@@ -147,14 +174,27 @@ class FeedViewModel(private val testDAO: TestDAO, private val feedService: FeedS
             })
     }
 
-    fun addComment(m_seq: String,feed_seq: Int){
-        val single = feedService.addComment(m_seq,feed_seq,"")
+    fun addComment(writer: String,feed_seq: Int,comment:String){
+        val single = feedService.addComment(writer,feed_seq,comment)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.e("BookMark m_seq = ",m_seq)
+                Log.e("add comment m_seq = ",writer)
 
             },{
+                Log.e("add comment 실패 = ",it.message.toString())
+
+            })
+    }
+    fun addReComment(comment_seq: Int,feed_seq: Int,writer_seq: String,group_seq:Int,depth:Int,comment:String){
+        val single = feedService.addReComment(comment_seq,feed_seq,writer_seq,group_seq,depth,comment)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.e("add Recomment m_seq = ",writer_seq)
+
+            },{
+                Log.e("add Recomment 실패 = ",it.message.toString())
 
             })
     }
