@@ -65,7 +65,7 @@ class SubscribingAdapter(
 
             itemView.check_follow.apply {
                 memberViewModel.memberSubscribeChecked(
-                    item.m_seq,
+                    item.m_seq!!,
                     my_m_seq,
                     "checked",
                     this,
@@ -78,14 +78,14 @@ class SubscribingAdapter(
                     it.check_follow.setTextColor(itemView.resources.getColor(R.color.white))
                     it.check_follow.text = "구독취소"
 //                    followerCount.setText("1")
-                    memberViewModel.memberSubscribe2(item.m_seq, m_seq, "true")
+                    memberViewModel.memberSubscribe2(item.m_seq!!, m_seq, "true")
 
 
                 } else {
                     it.check_follow.setTextColor(itemView.resources.getColor(R.color.black))
                     it.check_follow.text = "구독하기"
 //                    followerCount.setText("0")
-                    memberViewModel.memberSubscribe2(item.m_seq, m_seq, "false")
+                    memberViewModel.memberSubscribe2(item.m_seq!!, m_seq, "false")
 
                 }
             }

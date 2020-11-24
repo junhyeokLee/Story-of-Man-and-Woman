@@ -98,7 +98,7 @@
                 android:backgroundTint="@color/gray"
                 android:drawablePadding="16dp"
                 android:fontFamily="@font/ridi_batang"
-                android:hint="비밀번호 ( 4 ~ 16자 이내 영문/숫자/기호 가능 )"
+                android:hint="비밀번호 ( 7 ~ 24자 이내 영문/숫자/기호 가능 )"
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:textColor="@color/black"

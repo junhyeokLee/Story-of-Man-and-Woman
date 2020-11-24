@@ -3,6 +3,7 @@ package com.dev_sheep.story_of_man_and_woman.view.activity
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -11,6 +12,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_sign_up.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.regex.Matcher
@@ -35,26 +38,26 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
         )
         setContentView(R.layout.activity_sign_up)
 
-        val auto = getSharedPreferences("autoLogin", AppCompatActivity.MODE_PRIVATE)
-        //처음에는 SharedPreferences에 아무런 정보도 없으므로 값을 저장할 키들을 생성한다.
-        // getString의 첫 번째 인자는 저장될 키, 두 번쨰 인자는 값입니다.
-        // 첨엔 값이 없으므로 키값은 원하는 것으로 하시고 값을 null을 줍니다.
-        //처음에는 SharedPreferences에 아무런 정보도 없으므로 값을 저장할 키들을 생성한다.
-        // getString의 첫 번째 인자는 저장될 키, 두 번쨰 인자는 값입니다.
-        // 첨엔 값이 없으므로 키값은 원하는 것으로 하시고 값을 null을 줍니다.
-        var loginEmail = auto.getString("inputEmail", null)
-        var loginPassword = auto.getString("inputPassword", null)
-
-        if (loginEmail != null && loginPassword != null) {
-
-            Toast.makeText(this, loginEmail + "님 반갑습니다.", Toast.LENGTH_SHORT)
-                .show()
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("email",loginEmail)
-            startActivity(intent)
-            finish()
-
-        }
+//        val auto = getSharedPreferences("autoLogin", AppCompatActivity.MODE_PRIVATE)
+//        //처음에는 SharedPreferences에 아무런 정보도 없으므로 값을 저장할 키들을 생성한다.
+//        // getString의 첫 번째 인자는 저장될 키, 두 번쨰 인자는 값입니다.
+//        // 첨엔 값이 없으므로 키값은 원하는 것으로 하시고 값을 null을 줍니다.
+//        //처음에는 SharedPreferences에 아무런 정보도 없으므로 값을 저장할 키들을 생성한다.
+//        // getString의 첫 번째 인자는 저장될 키, 두 번쨰 인자는 값입니다.
+//        // 첨엔 값이 없으므로 키값은 원하는 것으로 하시고 값을 null을 줍니다.
+//        var loginEmail = auto.getString("inputEmail", null)
+//        var loginPassword = auto.getString("inputPassword", null)
+//
+//        if (loginEmail != null && loginPassword != null) {
+//
+//            Toast.makeText(this, loginEmail + "님 반갑습니다.", Toast.LENGTH_SHORT)
+//                .show()
+//            val intent = Intent(this, MainActivity::class.java)
+//            intent.putExtra("email",loginEmail)
+//            startActivity(intent)
+//            finish()
+//
+//        }
 
         checkedListener()
         btn_signup.setOnClickListener(this)
@@ -291,7 +294,7 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     // 비밀번호 정규식 영어/숫자/특수문자
-    val VALID_PASSWOLD_REGEX_ALPHA_NUM: Pattern  = Pattern.compile("^[a-zA-Z0-9!@.#$%^&*?_~]{4,16}$"); // 4자리~16자리까지
+    val VALID_PASSWOLD_REGEX_ALPHA_NUM: Pattern  = Pattern.compile("^[a-zA-Z0-9!@.#$%^&*?_~]{7,24}$"); // 7자리~16자리까지
 
     // 닉네임 정규식 한글/영어/숫자
     val VALID_NICKNAME_REGEX_ALPHA_NUM: Pattern = Pattern.compile("^[가-힣a-zA-Z0-9]{2,24}\$"); // 4자리~24자리
@@ -308,6 +311,7 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
 
         return matcher.matches();
     }
+
 
 
 

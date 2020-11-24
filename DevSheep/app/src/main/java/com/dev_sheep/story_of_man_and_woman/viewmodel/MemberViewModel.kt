@@ -1,20 +1,25 @@
 package com.dev_sheep.story_of_man_and_woman.viewmodel
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.SharedPreferences
 import android.util.Log
 import android.widget.CheckBox
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
-import com.dev_sheep.story_of_man_and_woman.data.remote.api.FeedService
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.FB_User
 import com.dev_sheep.story_of_man_and_woman.data.remote.api.MemberService
+import com.dev_sheep.story_of_man_and_woman.view.Fragment.SearchTitleFragment.Companion.TAG
 import com.dev_sheep.story_of_man_and_woman.view.activity.MainActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -35,7 +40,12 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
             .subscribe({
                 Log.e("Insert Member", "" + it.toString())
 
-                if (it.toString() == "true") { // email 중복되면 false 반환
+                if (it.toString() == "true") { // email 중복되면 false 반환 nick_name 중복일땐 false_nick_name
+
+                    // 회원가입시 파이어베이스 DB에도 저장
+                    performRegister(email,password,nick_name,context) // firebase 저장
+
+//                    saveUserToFirebaseDatabase(nick_name) //firebase 저장
 
                     // 회원가입시 자동로그인 하기위해 email,password 저장
                     val auto = context.getSharedPreferences("autoLogin", AppCompatActivity.MODE_PRIVATE)
@@ -126,17 +136,20 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
             .subscribe({
                 Log.e("성공함 Login", "" + it.toString())
 
+                performLogin(email,password,context) // 파이어베이스 로그인
+
                 if (it.toString() == "true") { // email 중복되면 false 반환
 
                     // 회원가입시 자동로그인 하기위해 email,password 저장
                     val auto = context.getSharedPreferences("autoLogin", AppCompatActivity.MODE_PRIVATE)
-
                     // auto의 loginEmail , loginPassword에 값을 저장해 줍니다.
                     val autoLogin : SharedPreferences.Editor = auto.edit()
                     autoLogin.putString("inputEmail", email);
                     autoLogin.putString("inputPassword",password);
                     //꼭 commit()을 해줘야 값이 저장됩니다 ㅎㅎ
                     autoLogin.commit();
+
+
                     val intent = Intent(context, MainActivity::class.java)
                     context.applicationContext.startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK))
                 } else {
@@ -250,4 +263,93 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
 
             })
     }
+
+    fun getMemberProfileImgFromNickName(nick_name: String,profile: ImageView,context: Context) {
+
+        val single = memberService.getMemberProfileImgFromNickName(nick_name)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                if(it.toString() == ""){
+                    Glide.with(context)
+                        .load("http://www.storymaw.com/data/member/empty_user.png")
+                        .apply(RequestOptions().circleCrop())
+                        .placeholder(android.R.color.transparent)
+                        .into(profile)
+                }else{
+                    Log.e("이미지가져옴 ", "" + it.toString())
+                    Glide.with(context)
+                        .load(it.toString())
+                        .apply(RequestOptions().circleCrop())
+                        .placeholder(android.R.color.transparent)
+                        .into(profile)
+                }
+
+
+            }, {
+                Log.e("실패함", "" + it.message)
+
+            })
+
+
+    }
+
+    private fun performRegister(email: String,password: String,nick_name: String,context: Context) {
+
+        Log.d(TAG, "Attempting to create user with email: $email")
+
+        val user_email = email
+        val user_password = password
+        val nickname = nick_name
+
+        // Firebase Authentication to create a user with email and password
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(user_email, user_password)
+            .addOnCompleteListener {
+                if (!it.isSuccessful) return@addOnCompleteListener
+
+                Log.e("가입성공", "가입성공?: ${it.result!!.user!!.uid}")
+                saveUserToFirebaseDatabase(nickname)
+
+
+            }
+            .addOnFailureListener{
+                Log.e(TAG, "가입실패?: ${it.message}")
+            }
+    }
+
+
+    private fun performLogin(email: String,password: String,context: Context) {
+
+        val user_email = email
+        val user_password = password
+
+        if (user_email.isEmpty() || user_password.isEmpty()) {
+            Toast.makeText(context, "Please fill out email/pw.", Toast.LENGTH_SHORT).show()
+        }
+
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener {
+                if (!it.isSuccessful) return@addOnCompleteListener
+                Log.e("Login", "Successfully logged in: ${it.result?.user?.uid}")
+            }
+            .addOnFailureListener {
+                Log.e(TAG, "파이어베이스 실패: ${it.message}")
+            }
+    }
+    private fun saveUserToFirebaseDatabase(username: String) {
+        val uid = FirebaseAuth.getInstance().uid ?: ""
+        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+
+        val user = FB_User(uid, username)
+
+        ref.setValue(user)
+            .addOnSuccessListener {
+                Log.e(TAG, "파이어베이스 유저 저장")
+
+            }
+            .addOnFailureListener {
+                Log.e(TAG, "파이어베이스 유저 저장실패: ${it.message}")
+            }
+    }
+
 }

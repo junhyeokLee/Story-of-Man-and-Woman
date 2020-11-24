@@ -45,6 +45,8 @@ class ProfileUserSubscriberFragment(m_seq : String): Fragment() {
     private var limit: Int = 10
     private var offset: Int = 0
     lateinit var contexts: Context
+    private var empty : View? = null
+    lateinit var tv_empty: TextView
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -53,6 +55,9 @@ class ProfileUserSubscriberFragment(m_seq : String): Fragment() {
         val view = inflater.inflate(R.layout.fragment_profile_subscribe, container, false)
         contexts = view.context
         recyclerView = view.findViewById<View>(R.id.recyclerView) as RecyclerView?
+        empty = view.findViewById(R.id.empty)
+        tv_empty = view.findViewById(R.id.emptyText) as TextView
+        tv_empty.setText(R.string.empty)
         initData()
         return view
     }
@@ -69,77 +74,91 @@ class ProfileUserSubscriberFragment(m_seq : String): Fragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess { progressBarsubcribe?.visibility = View.GONE }
             .subscribe({
-                mFeedAdapter = FeedAdapter(
-                    it,
-                    contexts,
-                    object : FeedAdapter.OnClickViewListener {
-                        override fun OnClickFeed(feed: Feed,tv:TextView,iv: ImageView,cb:CheckBox,cb2:CheckBox,position:Int) {
-                            feedViewModel.increaseViewCount(feed.feed_seq)
+                if (it.size > 0) {
+                    empty!!.visibility = View.GONE
+                    mFeedAdapter = FeedAdapter(
+                        it,
+                        contexts,
+                        object : FeedAdapter.OnClickViewListener {
+                            override fun OnClickFeed(
+                                feed: Feed,
+                                tv: TextView,
+                                iv: ImageView,
+                                cb: CheckBox,
+                                cb2: CheckBox,
+                                position: Int
+                            ) {
+                                feedViewModel.increaseViewCount(feed.feed_seq)
 
-                            val lintent = Intent(context, FeedActivity::class.java)
-                            lintent.putExtra("feed_seq", feed.feed_seq)
-                            lintent.putExtra("checked" + feed.feed_seq, cb.isChecked)
-                            lintent.putExtra("creater_seq", feed.creater_seq)
-                            lintent.putExtra("bookmark_checked" + feed.feed_seq, cb2.isChecked)
-                            lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
+                                val lintent = Intent(context, FeedActivity::class.java)
+                                lintent.putExtra("feed_seq", feed.feed_seq)
+                                lintent.putExtra("checked" + feed.feed_seq, cb.isChecked)
+                                lintent.putExtra("creater_seq", feed.creater_seq)
+                                lintent.putExtra("bookmark_checked" + feed.feed_seq, cb2.isChecked)
+                                lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
 
 //                        context.transitionName = position.toString()
-                            context!!.startActivity(lintent)
-                            (context as Activity).overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+                                context!!.startActivity(lintent)
+                                (context as Activity).overridePendingTransition(
+                                    R.anim.fragment_fade_in,
+                                    R.anim.fragment_fade_out
+                                )
 
-                        }
-                    },
-                    object : FeedAdapter.OnClickLikeListener {
-                        override fun OnClickFeed(feed_seq: Int, boolean_value: String) {
-                            feedViewModel.increaseLikeCount(feed_seq, boolean_value)
-                        }
-
-                    },object : FeedAdapter.OnClickBookMarkListener{
-                        override fun OnClickBookMark(m_seq: String, feed_seq: Int, boolean_value: String) {
-                            feedViewModel.onClickBookMark(m_seq,feed_seq,boolean_value)
-                        }
-
-                    }, object : FeedAdapter.OnClickProfileListener{
-                        override fun OnClickProfile(feed: Feed, tv: TextView, iv: ImageView) {
-                            val trId = ViewCompat.getTransitionName(tv).toString()
-                            val trId1 = ViewCompat.getTransitionName(iv).toString()
-                            if (feed.creater_seq == m_seq) {
-                                activity?.supportFragmentManager
-                                    ?.beginTransaction()
-                                    ?.addSharedElement(tv, trId)
-                                    ?.addSharedElement(iv, trId1)
-                                    ?.addToBackStack("ProfileImg")
-                                    ?.replace(
-                                        R.id.frameLayout,
-                                        ProfileFragment.newInstance(feed, trId, trId1)
-                                    )
-                                    ?.commit()
-                            } else {
-                                activity?.supportFragmentManager
-                                    ?.beginTransaction()
-                                    ?.addSharedElement(tv, trId)
-                                    ?.addSharedElement(iv, trId1)
-                                    ?.addToBackStack("ProfileImg")
-                                    ?.replace(
-                                        R.id.frameLayout,
-                                        ProfileUsersFragment.newInstance(feed, trId, trId1)
-                                    )
-                                    ?.commit()
                             }
-                        }
+                        },
+                        object : FeedAdapter.OnClickLikeListener {
+                            override fun OnClickFeed(feed_seq: Int, boolean_value: String) {
+                                feedViewModel.increaseLikeCount(feed_seq, boolean_value)
+                            }
 
-                    })
-                recyclerView?.apply {
-                    var linearLayoutMnager = LinearLayoutManager(this.context)
-                    this.layoutManager = linearLayoutMnager
-                    this.itemAnimator = DefaultItemAnimator()
-                    this.adapter = mFeedAdapter
+                        }, object : FeedAdapter.OnClickBookMarkListener {
+                            override fun OnClickBookMark(
+                                m_seq: String,
+                                feed_seq: Int,
+                                boolean_value: String
+                            ) {
+                                feedViewModel.onClickBookMark(m_seq, feed_seq, boolean_value)
+                            }
+
+                        }, object : FeedAdapter.OnClickProfileListener {
+                            override fun OnClickProfile(feed: Feed, tv: TextView, iv: ImageView) {
+                                val trId = ViewCompat.getTransitionName(tv).toString()
+                                val trId1 = ViewCompat.getTransitionName(iv).toString()
+                                if (feed.creater_seq == m_seq) {
+                                    activity?.supportFragmentManager
+                                        ?.beginTransaction()
+                                        ?.addSharedElement(tv, trId)
+                                        ?.addSharedElement(iv, trId1)
+                                        ?.addToBackStack("ProfileImg")
+                                        ?.replace(
+                                            R.id.frameLayout,
+                                            ProfileFragment.newInstance(feed, trId, trId1)
+                                        )
+                                        ?.commit()
+                                } else {
+                                    activity?.supportFragmentManager
+                                        ?.beginTransaction()
+                                        ?.addSharedElement(tv, trId)
+                                        ?.addSharedElement(iv, trId1)
+                                        ?.addToBackStack("ProfileImg")
+                                        ?.replace(
+                                            R.id.frameLayout,
+                                            ProfileUsersFragment.newInstance(feed, trId, trId1)
+                                        )
+                                        ?.commit()
+                                }
+                            }
+
+                        })
+                    recyclerView?.apply {
+                        var linearLayoutMnager = LinearLayoutManager(this.context)
+                        this.layoutManager = linearLayoutMnager
+                        this.itemAnimator = DefaultItemAnimator()
+                        this.adapter = mFeedAdapter
+                    }
+                }else{
+                    empty!!.visibility = View.VISIBLE
                 }
-//                if (it.isNotEmpty()) {
-//                    progressBar?.visibility = View.GONE
-//                } else {
-//                    progressBar?.visibility = View.VISIBLE
-//                }
 
             }, {
                 Log.e("feed 보기 실패함", "" + it.message)

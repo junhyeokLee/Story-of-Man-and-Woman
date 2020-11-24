@@ -9,22 +9,22 @@ import com.google.gson.annotations.SerializedName
 data class Member( @PrimaryKey
                    @NonNull
                    @SerializedName("m_seq")
-                   var m_seq: String,
+                   var m_seq: String?=null,
                    @SerializedName("email")
                    var email: String? = null,
                    @SerializedName("password")
-                   var password: String,
+                   var password: String?=null,
                    @SerializedName("nick_name")
-                   var nick_name: String,
+                   var nick_name: String?=null,
                    @SerializedName("profile_img")
-                   var profile_img: String,
+                   var profile_img: String?=null,
                    @SerializedName("background_img")
-                   var background_img: String ,
+                   var background_img: String?=null ,
                    @SerializedName("gender")
-                   var gender : String,
+                   var gender : String?=null,
                    @SerializedName("age")
-                   var age: String,
+                   var age: String?=null,
                    @SerializedName("wdate")
-                   var wdate: String,
+                   var wdate: String?=null,
                    @SerializedName("memo")
-                   var memo: String)
+                   var memo: String?=null)

@@ -71,4 +71,10 @@ interface MemberService {
     @POST("subscribing_get.php")
     fun getSubscribing(@Field("m_seq") m_seq: String): Single<List<Member>>
 
+
+    @FormUrlEncoded
+    @POST("get_member_profile_img_from_nickname.php")
+    fun getMemberProfileImgFromNickName(@Field("nick_name") nick_name: String): Single<String>
+
+
 }

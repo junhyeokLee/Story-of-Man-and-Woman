@@ -83,7 +83,7 @@ public class ItemPosition implements AsymmetricItem {
   }
 
   /* Parcelable interface implementation */
-  public static final Parcelable.Creator<ItemPosition> CREATOR = new Parcelable.Creator<ItemPosition>() {
+  public static final Creator<ItemPosition> CREATOR = new Creator<ItemPosition>() {
 
     @Override
     public ItemPosition createFromParcel(@NonNull Parcel in) {

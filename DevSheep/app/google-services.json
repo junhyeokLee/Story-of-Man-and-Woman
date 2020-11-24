@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "654616434397",
+    "firebase_url": "https://storyapp-7b83a.firebaseio.com",
+    "project_id": "storyapp-7b83a",
+    "storage_bucket": "storyapp-7b83a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:654616434397:android:2dbb52367c6f9e54d5ed34",
+        "android_client_info": {
+          "package_name": "com.dev_sheep.story_of_man_and_woman"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "654616434397-9eihjbncm1dspqtqbhr8f20indf69leq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUS7v3by3uN3IOchENm4uJ8O55cOySzbE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "654616434397-9eihjbncm1dspqtqbhr8f20indf69leq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

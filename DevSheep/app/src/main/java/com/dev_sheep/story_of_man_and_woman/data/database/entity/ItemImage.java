@@ -80,7 +80,7 @@ public class ItemImage extends ItemPosition {
 
 
 
-	public static final Parcelable.Creator<ItemImage> CREATOR = new Parcelable.Creator<ItemImage>() {
+	public static final Creator<ItemImage> CREATOR = new Creator<ItemImage>() {
 		@Override
 		public ItemImage createFromParcel(Parcel in) {
 			return new ItemImage(in);

@@ -315,7 +315,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                             .into(profileImage)
                     }else {
                         if(context != null) {
-                            profile_img = it.profile_img
+                            profile_img = it.profile_img!!
                             Glide.with(context!!)
                                 .load(profile_img)
                                 .apply(RequestOptions().circleCrop())

@@ -1,10 +1,11 @@
 package com.dev_sheep.story_of_man_and_woman.view.Fragment
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
-import android.transition.TransitionInflater
 import android.util.Log
 import android.view.*
 import android.widget.*
@@ -21,8 +22,10 @@ import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Member
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.FB_User
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
-import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.MEMBER_SERVICE
+import com.dev_sheep.story_of_man_and_woman.view.Fragment.SearchTitleFragment.Companion.TAG
+import com.dev_sheep.story_of_man_and_woman.view.activity.MessageActivity
 import com.dev_sheep.story_of_man_and_woman.view.adapter.ProfileUserViewpagerAdapter
 import com.dev_sheep.story_of_man_and_woman.view.dialog.ImageDialog
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
@@ -30,10 +33,10 @@ import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.tabs.TabLayout
-import de.hdodenhof.circleimageview.CircleImageView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.adapter_feed.*
 import kotlinx.android.synthetic.main.fragment_profile.id_ProfileBackground_Image
 import kotlinx.android.synthetic.main.fragment_profile_users.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -41,6 +44,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class ProfileUsersFragment: Fragment(),View.OnClickListener {
 
     companion object {
+
+        val USER_ID = "UID"
+
         fun newInstance(feed: Feed, transitionId : String, transitionId1 : String): ProfileUsersFragment {
             val args = Bundle()
             args.putString("m_seq",feed.creater_seq)
@@ -99,6 +105,9 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
     lateinit var profile_img: String
     lateinit var layout_subscriber: LinearLayout
     lateinit var layout_subscribing: LinearLayout
+    lateinit var preferecnes_message : ImageView
+
+    val users = FB_User()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -145,6 +154,7 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
         followCount = view.findViewById(R.id.count_follow) as TextView
         layout_subscriber = view.findViewById(R.id.layout_subscriber) as LinearLayout
         layout_subscribing = view.findViewById(R.id.layout_subscribing) as LinearLayout
+        preferecnes_message = view.findViewById(R.id.preferecnes_message) as ImageView
         gender = view.findViewById(R.id.tv_gender) as TextView
         age = view.findViewById(R.id.tv_age) as TextView
         recyclerView?.layoutManager = layoutManager
@@ -212,6 +222,7 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
         followChecked?.setOnClickListener(this)
         layout_subscribing?.setOnClickListener(this)
         layout_subscriber?.setOnClickListener(this)
+        preferecnes_message?.setOnClickListener(this)
 
 
         return view
@@ -467,6 +478,47 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
                     fragmentTransaction.replace(R.id.frameLayout, subscribersFragment);
                     fragmentTransaction.commit()
                 }
+            }
+
+            R.id.preferecnes_message ->{
+                val fromId = FirebaseAuth.getInstance().uid
+                val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId")
+
+            val database:FirebaseDatabase = FirebaseDatabase.getInstance();
+             val myRef: DatabaseReference = database.getReference("users");
+
+                myRef.orderByChild("username").equalTo(nickname).addListenerForSingleValueEvent(object :
+                    ValueEventListener {
+                    override fun onCancelled(error: DatabaseError) {
+                        Log.e("메세지창 에러",error.message.toString())
+                    }
+
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        for (childDataSnapshot in snapshot.getChildren()) {
+                            Log.e(TAG, "PARENT: " + childDataSnapshot.key)
+                            Log.e(TAG, "유저네임" + childDataSnapshot.child("username").value)
+                            val user: FB_User? = childDataSnapshot.getValue(FB_User::class.java)
+
+                 // 파이어베이스 username과 유저프로필의 닉네임이 같으면 메세지보내기로 이동( 파이어베이스 유저아이디값 제공 )
+                if(childDataSnapshot.child("username").value == nickname) {
+                    val lintent = Intent(context, MessageActivity::class.java)
+                    lintent.putExtra(USER_ID, user)
+                    context!!.startActivity(lintent)
+                    (context as Activity).overridePendingTransition(
+                        R.anim.fragment_fade_in,
+                        R.anim.fragment_fade_out
+                    )
+                }
+
+                        }
+                    }
+
+                })
+
+
+
+
+
             }
         }
 

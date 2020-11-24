@@ -3,6 +3,7 @@ package com.dev_sheep.story_of_man_and_woman.view.activity
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_login.btn_signup
 import kotlinx.android.synthetic.main.activity_login.etv_email
@@ -46,6 +48,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun loginChecked(Email: String,Password: String){
+
+
         if(Email != "" && Password != ""){
             memberViewModel.getMemberCheck(
                 Email,
@@ -83,4 +87,6 @@ class LoginActivity : AppCompatActivity() {
         // disable going back to the MainActivity
         moveTaskToBack(true)
     }
+
+
 }

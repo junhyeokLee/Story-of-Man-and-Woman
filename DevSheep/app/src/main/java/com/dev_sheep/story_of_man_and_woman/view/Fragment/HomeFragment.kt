@@ -141,92 +141,96 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                mFeedAdapter = FeedAdapter(it, contexts, object : FeedAdapter.OnClickViewListener {
-                    override fun OnClickFeed(
-                        feed: Feed,
-                        tv: TextView,
-                        iv: ImageView,
-                        cb: CheckBox,
-                        cb2: CheckBox,
-                        position: Int
-                    ) {
-                        feedViewModel.increaseViewCount(feed.feed_seq)
 
-                        val lintent = Intent(context, FeedActivity::class.java)
-                        lintent.putExtra("feed_seq", feed.feed_seq)
-                        lintent.putExtra("checked" + feed.feed_seq, cb.isChecked)
-                        lintent.putExtra("creater_seq", feed.creater_seq)
-                        lintent.putExtra("bookmark_checked" + feed.feed_seq, cb2.isChecked)
-                        lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
+                if(it.size > 0) {
+
+                    mFeedAdapter =
+                        FeedAdapter(it, contexts, object : FeedAdapter.OnClickViewListener {
+                            override fun OnClickFeed(
+                                feed: Feed,
+                                tv: TextView,
+                                iv: ImageView,
+                                cb: CheckBox,
+                                cb2: CheckBox,
+                                position: Int
+                            ) {
+                                feedViewModel.increaseViewCount(feed.feed_seq)
+
+                                val lintent = Intent(context, FeedActivity::class.java)
+                                lintent.putExtra("feed_seq", feed.feed_seq)
+                                lintent.putExtra("checked" + feed.feed_seq, cb.isChecked)
+                                lintent.putExtra("creater_seq", feed.creater_seq)
+                                lintent.putExtra("bookmark_checked" + feed.feed_seq, cb2.isChecked)
+                                lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
 //                        context.transitionName = position.toString()
-                        (context as Activity).startActivity(lintent)
-                        (context as Activity).overridePendingTransition(
-                            R.anim.fragment_fade_in,
-                            R.anim.fragment_fade_out
-                        )
-
-                    }
-                }, object : FeedAdapter.OnClickLikeListener {
-                    override fun OnClickFeed(feed_seq: Int, boolean_value: String) {
-                        feedViewModel.increaseLikeCount(feed_seq, boolean_value)
-                    }
-
-                }, object : FeedAdapter.OnClickBookMarkListener {
-                    override fun OnClickBookMark(
-                        m_seq: String,
-                        feed_seq: Int,
-                        boolean_value: String
-                    ) {
-                        feedViewModel.onClickBookMark(m_seq, feed_seq, boolean_value)
-                    }
-
-                }, object : FeedAdapter.OnClickProfileListener {
-                    override fun OnClickProfile(feed: Feed, tv: TextView, iv: ImageView) {
-
-                        val trId = ViewCompat.getTransitionName(tv).toString()
-                        val trId1 = ViewCompat.getTransitionName(iv).toString()
-
-                        if (feed.creater_seq == m_seq) {
-                            activity?.supportFragmentManager
-                                ?.beginTransaction()
-                                ?.addSharedElement(tv, trId)
-                                ?.addSharedElement(iv, trId1)
-                                ?.addToBackStack("ProfileImg")
-                                ?.replace(
-                                    R.id.frameLayout,
-                                    ProfileFragment.newInstance(feed, trId, trId1)
+                                (context as Activity).startActivity(lintent)
+                                (context as Activity).overridePendingTransition(
+                                    R.anim.fragment_fade_in,
+                                    R.anim.fragment_fade_out
                                 )
-                                ?.commit()
-                        } else {
-                            activity?.supportFragmentManager
-                                ?.beginTransaction()
-                                ?.addSharedElement(tv, trId)
-                                ?.addSharedElement(iv, trId1)
-                                ?.addToBackStack("ProfileImg")
-                                ?.replace(
-                                    R.id.frameLayout,
-                                    ProfileUsersFragment.newInstance(feed, trId, trId1)
-                                )
-                                ?.commit()
-                        }
-                    }
-                })
-                handlerFeed.postDelayed({
-                    // stop animating Shimmer and hide the layout
-                    mShimmerViewContainer.stopShimmerAnimation()
-                    mShimmerViewContainer.visibility = View.GONE
+
+                            }
+                        }, object : FeedAdapter.OnClickLikeListener {
+                            override fun OnClickFeed(feed_seq: Int, boolean_value: String) {
+                                feedViewModel.increaseLikeCount(feed_seq, boolean_value)
+                            }
+
+                        }, object : FeedAdapter.OnClickBookMarkListener {
+                            override fun OnClickBookMark(
+                                m_seq: String,
+                                feed_seq: Int,
+                                boolean_value: String
+                            ) {
+                                feedViewModel.onClickBookMark(m_seq, feed_seq, boolean_value)
+                            }
+
+                        }, object : FeedAdapter.OnClickProfileListener {
+                            override fun OnClickProfile(feed: Feed, tv: TextView, iv: ImageView) {
+
+                                val trId = ViewCompat.getTransitionName(tv).toString()
+                                val trId1 = ViewCompat.getTransitionName(iv).toString()
+
+                                if (feed.creater_seq == m_seq) {
+                                    activity?.supportFragmentManager
+                                        ?.beginTransaction()
+                                        ?.addSharedElement(tv, trId)
+                                        ?.addSharedElement(iv, trId1)
+                                        ?.addToBackStack("ProfileImg")
+                                        ?.replace(
+                                            R.id.frameLayout,
+                                            ProfileFragment.newInstance(feed, trId, trId1)
+                                        )
+                                        ?.commit()
+                                } else {
+                                    activity?.supportFragmentManager
+                                        ?.beginTransaction()
+                                        ?.addSharedElement(tv, trId)
+                                        ?.addSharedElement(iv, trId1)
+                                        ?.addToBackStack("ProfileImg")
+                                        ?.replace(
+                                            R.id.frameLayout,
+                                            ProfileUsersFragment.newInstance(feed, trId, trId1)
+                                        )
+                                        ?.commit()
+                                }
+                            }
+                        })
+                    handlerFeed.postDelayed({
+                        // stop animating Shimmer and hide the layout
+                        mShimmerViewContainer.stopShimmerAnimation()
+                        mShimmerViewContainer.visibility = View.GONE
 //                    progressBar?.visibility = View.GONE
-                    recyclerView?.apply {
-                        var linearLayoutMnager = LinearLayoutManager(this.context)
-                        this.layoutManager = linearLayoutMnager
-                        this.itemAnimator = DefaultItemAnimator()
-                        this.adapter = mFeedAdapter
+                        recyclerView?.apply {
+                            var linearLayoutMnager = LinearLayoutManager(this.context)
+                            this.layoutManager = linearLayoutMnager
+                            this.itemAnimator = DefaultItemAnimator()
+                            this.adapter = mFeedAdapter
 
-                        setViewPager(it)
+                            setViewPager(it)
 
-                    }
-                }, 1000)
-
+                        }
+                    }, 1000)
+                }
             }, {
                 Log.e("feed 보기 실패함", "" + it.message)
             })
@@ -235,39 +239,43 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         single_tag.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                recyclerViewTag?.apply {
-                    var recycler_this = this
-                    layoutManagers = object : LinearLayoutManager(context) {
-                        override fun smoothScrollToPosition(
-                            recyclerView: RecyclerView,
-                            state: RecyclerView.State?,
-                            position: Int
-                        ) {
-                            val smoothScroller = object : LinearSmoothScroller(context) {
-                                override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics?): Float {
-                                    return 10.0f;
+
+                if(it.size > 0) {
+
+                    recyclerViewTag?.apply {
+                        var recycler_this = this
+                        layoutManagers = object : LinearLayoutManager(context) {
+                            override fun smoothScrollToPosition(
+                                recyclerView: RecyclerView,
+                                state: RecyclerView.State?,
+                                position: Int
+                            ) {
+                                val smoothScroller = object : LinearSmoothScroller(context) {
+                                    override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics?): Float {
+                                        return 10.0f;
+                                    }
+                                }
+                                smoothScroller.targetPosition = position
+                                startSmoothScroll(smoothScroller)
+                            }
+                        }
+                        mTagAdapter = object : Test_tag_Adapter(it, contexts) {
+                            override fun load() {
+                                if (layoutManagers.findFirstVisibleItemPosition() > 1) {
+                                    mTagAdapter?.notifyItemMoved(0, it.size - 1)
                                 }
                             }
-                            smoothScroller.targetPosition = position
-                            startSmoothScroll(smoothScroller)
                         }
-                    }
-                    mTagAdapter = object : Test_tag_Adapter(it, contexts) {
-                        override fun load() {
-                            if (layoutManagers.findFirstVisibleItemPosition() > 1) {
-                                mTagAdapter?.notifyItemMoved(0, it.size - 1)
-                            }
-                        }
-                    }
-                    layoutManagers.orientation = LinearLayoutManager.HORIZONTAL
-                    recycler_this.layoutManager = layoutManagers
-                    recycler_this.setHasFixedSize(true)
-                    recycler_this.setItemViewCacheSize(10)
-                    recycler_this.isDrawingCacheEnabled = true
-                    recycler_this.drawingCacheQuality = View.DRAWING_CACHE_QUALITY_LOW
-                    recycler_this.adapter = mTagAdapter
-                    autoScroll(it, mTagAdapter)
+                        layoutManagers.orientation = LinearLayoutManager.HORIZONTAL
+                        recycler_this.layoutManager = layoutManagers
+                        recycler_this.setHasFixedSize(true)
+                        recycler_this.setItemViewCacheSize(10)
+                        recycler_this.isDrawingCacheEnabled = true
+                        recycler_this.drawingCacheQuality = View.DRAWING_CACHE_QUALITY_LOW
+                        recycler_this.adapter = mTagAdapter
+                        autoScroll(it, mTagAdapter)
 
+                    }
                 }
             }, {
                 Log.e("feed 보기2 실패함", "" + it.message)
