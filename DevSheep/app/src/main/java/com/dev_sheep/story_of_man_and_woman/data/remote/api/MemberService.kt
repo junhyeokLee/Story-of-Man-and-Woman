@@ -76,5 +76,8 @@ interface MemberService {
     @POST("get_member_profile_img_from_nickname.php")
     fun getMemberProfileImgFromNickName(@Field("nick_name") nick_name: String): Single<String>
 
+    @FormUrlEncoded
+    @POST("update_profile.php")
+    fun updateProfile(@Field("m_seq") m_seq: String, @Field("memo") memo: String, @Field("gender") gender:String, @Field("age") age: String): Single<Void>
 
 }

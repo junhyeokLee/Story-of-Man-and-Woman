@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto_regular"
-                android:text="message"
+                android:text="쪽지함"
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:layout_marginLeft="16dp" />
@@ -53,6 +53,14 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         >
+
+        <ProgressBar
+            android:id="@+id/pb_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            ></ProgressBar>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview_latest_messages"

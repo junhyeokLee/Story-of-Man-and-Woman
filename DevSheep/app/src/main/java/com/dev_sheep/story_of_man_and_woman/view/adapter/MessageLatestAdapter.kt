@@ -1,8 +1,16 @@
 package com.dev_sheep.story_of_man_and_woman.view.adapter
 
 import android.app.Activity
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.FB_ChatMessage
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.FB_User
@@ -10,6 +18,7 @@ import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileUsersFragment
 import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileUsersFragment.Companion.USER_ID
 import com.dev_sheep.story_of_man_and_woman.view.activity.FeedRankActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.MessageActivity
+import com.dev_sheep.story_of_man_and_woman.view.activity.MyMessageActivity
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -21,18 +30,14 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.adapter_latest_message_row.view.*
 
 
-class MessageLatestAdapter(val FBChatMessage: FB_ChatMessage, val memberViewModel:MemberViewModel): Item<ViewHolder>() {
+class MessageLatestAdapter(val FBChatMessage: FB_ChatMessage, val memberViewModel:MemberViewModel,val context: Context): Item<ViewHolder>() {
   var chatPartnerUser: FB_User? = null
+  var fromId : String? = null
+  var toId : String? = null
 
   override fun bind(viewHolder: ViewHolder, position: Int) {
-    viewHolder.itemView.message_textview_latest_message.text = FBChatMessage.text
 
-    Log.e("읽음안읽음",FBChatMessage.readUsers.toString())
-    if(FBChatMessage.readUsers == false) {
-      viewHolder.itemView.state_message.text = "안읽음"
-    }else{
-      viewHolder.itemView.state_message.text = "읽음"
-    }
+
     viewHolder.itemView.layout_item.setOnClickListener {
       val intent = Intent(viewHolder.itemView.context, MessageActivity::class.java)
       intent.putExtra(ProfileUsersFragment.USER_ID, chatPartnerUser)
@@ -45,12 +50,36 @@ class MessageLatestAdapter(val FBChatMessage: FB_ChatMessage, val memberViewMode
 
     }
 
-
     val chatPartnerId: String
     if (FBChatMessage.fromId == FirebaseAuth.getInstance().uid) {
       chatPartnerId = FBChatMessage.toId
+      Log.e("MessageLatestAdapter toId = ",""+chatPartnerId)
     } else {
       chatPartnerId = FBChatMessage.fromId
+      Log.e("MessageLatestAdapter fromId = ",""+chatPartnerId)
+    }
+
+    fromId = FirebaseAuth.getInstance().uid
+
+    viewHolder.itemView.tv_chat_id.text = chatPartnerId
+    viewHolder.itemView.message_textview_latest_message.text = FBChatMessage.text
+    viewHolder.itemView.layout_item.setOnLongClickListener(object : View.OnLongClickListener{
+      override fun onLongClick(v: View?): Boolean {
+
+        showDeletePopup(position,fromId!!,chatPartnerId)
+
+        return true
+      }
+
+    })
+
+
+    // 읽음 안읽음 표시
+    if(FBChatMessage.readUsers == false) {
+      viewHolder.itemView.state_view.visibility = View.VISIBLE
+    }else{
+      viewHolder.itemView.state_view.visibility = View.GONE
+
     }
 
     val ref = FirebaseDatabase.getInstance().getReference("/users/$chatPartnerId")
@@ -58,20 +87,68 @@ class MessageLatestAdapter(val FBChatMessage: FB_ChatMessage, val memberViewMode
       override fun onDataChange(p0: DataSnapshot) {
         chatPartnerUser = p0.getValue(FB_User::class.java)
         viewHolder.itemView.username_textview_latest_message.text = chatPartnerUser?.username
-
         memberViewModel.getMemberProfileImgFromNickName(chatPartnerUser?.username!!,viewHolder.itemView.imageview_latest_message,viewHolder.itemView.context)
 
-        val targetImageView = viewHolder.itemView.imageview_latest_message
-//        Picasso.get().load(chatPartnerUser?.profile_img).into(targetImageView)
       }
-
       override fun onCancelled(p0: DatabaseError) {
 
       }
     })
   }
 
+  // 롱클릭시에 내메세지 없으면 안지워짐
+
   override fun getLayout(): Int {
     return R.layout.adapter_latest_message_row
+  }
+
+  private fun showDeletePopup(
+    position: Int,
+    fromId: String,
+    toId: String
+  ){
+    val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    val view = inflater.inflate(R.layout.alert_popup,null)
+    val textView: TextView = view.findViewById(R.id.textView)
+    val latestMessageRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId/$toId")
+    val reference = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId")
+
+    textView.text = "대화방에서 나가시겠습니까?"
+
+    val alertDialog = AlertDialog.Builder(context)
+      .setTitle("대화방 삭제")
+      .setPositiveButton("네"){
+          dialog,which -> Toast.makeText(context,"삭제하기", Toast.LENGTH_SHORT).show()
+        latestMessageRef.removeValue()
+        reference.removeValue()
+        MyMessageActivity.adapter.removeGroup(position) // group library 스와이프 아이템 삭제
+        MyMessageActivity.adapter.notifyDataSetChanged()
+
+
+      }
+      .setNegativeButton("아니요", DialogInterface.OnClickListener { dialog, which ->
+        MyMessageActivity.adapter.notifyDataSetChanged()
+      })
+      .create()
+
+    // remaining_time - 00:00~~10:00 ,  elapsed - 10:00 ~~ 00:00
+    // p1PlayTime = 00:00~ 시작, elapsed
+
+    alertDialog.setView(view)
+    alertDialog.show()
+
+
+
+    val btn_color : Button = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+    val btn_color_cancel : Button = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+
+    if(btn_color != null){
+      btn_color.setTextColor(context.resources.getColor(R.color.main_Accent))
+    }
+    if(btn_color_cancel != null){
+      btn_color_cancel.setTextColor(context.resources.getColor(R.color.main_Accent))
+
+    }
+
   }
 }

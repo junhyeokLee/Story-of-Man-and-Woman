@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/alert_white_border"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="32dp"
+        android:layout_height="2dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:background="@color/main_Accent" />
+
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:orientation="vertical"
+        android:padding="6dp">
+
+
+        <LinearLayout
+            android:id="@+id/layout_intro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            >
+            <EditText
+                android:id="@+id/et_intro"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:hint="소개 - 글자 수 제한(30)"
+                android:ems="30"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:fontFamily="@font/roboto_regular"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_gender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:visibility="gone"
+            >
+            <CheckBox
+                android:id="@+id/checked_man"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/background_age_category"
+                android:button="@null"
+                android:text="남"
+                android:textColor="@color/black"
+                android:fontFamily="@font/roboto_regular"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:layout_margin="4dp"
+                android:orientation="vertical">
+
+
+            </CheckBox>
+            <CheckBox
+                android:id="@+id/checked_woman"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/background_age_category"
+                android:button="@null"
+                android:text="여"
+                android:fontFamily="@font/roboto_regular"
+                android:layout_margin="4dp"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:orientation="vertical">
+            </CheckBox>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_age"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:visibility="gone"
+            android:orientation="horizontal">
+            <CheckBox
+                android:id="@+id/checked_10"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_age_category"
+                android:button="@null"
+                android:text="10 대"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="center"
+                android:orientation="vertical">
+
+
+            </CheckBox>
+
+            <CheckBox
+                android:id="@+id/checked_20"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_age_category"
+                android:button="@null"
+                android:text="20 대"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="center"
+                android:orientation="vertical" />
+
+            <CheckBox
+                android:id="@+id/checked_30"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_age_category"
+                android:button="@null"
+                android:fontFamily="@font/roboto_regular"
+                android:text="30 대"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:orientation="vertical" />
+
+            <CheckBox
+                android:id="@+id/checked_40"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_age_category"
+                android:button="@null"
+                android:text="40 대"
+                android:textColor="@color/black"
+                android:fontFamily="@font/roboto_regular"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:orientation="vertical" />
+
+            <CheckBox
+                android:id="@+id/checked_50"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_age_category"
+                android:button="@null"
+                android:text="50 대"
+                android:fontFamily="@font/roboto_regular"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:orientation="vertical"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            >
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_ok"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="적용"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:fontFamily="@font/roboto_bold"
+                android:backgroundTint="@color/gray"
+                android:layout_gravity="bottom"
+                >
+
+            </com.google.android.material.button.MaterialButton>
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

@@ -6,6 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="90dp">
 
+    <TextView
+        android:id="@+id/tv_chat_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:ignore="MissingConstraints" />
+
     <ImageView
         android:id="@+id/imageview_latest_message"
         android:layout_width="52dp"
@@ -42,9 +49,9 @@
         android:layout_marginStart="12dp"
         android:layout_marginLeft="12dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginEnd="46dp"
         android:fontFamily="@font/roboto_regular"
+        android:maxLines="1"
         android:text="Latest Message"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -53,21 +60,17 @@
         app:layout_constraintStart_toEndOf="@+id/imageview_latest_message"
         app:layout_constraintTop_toBottomOf="@+id/username_textview_latest_message" />
 
-    <TextView
-        android:id="@+id/state_message"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="8dp"
+    <ImageView
+        android:id="@+id/state_view"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginRight="24dp"
         android:fontFamily="@font/roboto_regular"
-        android:text="상태메세지"
-        android:textSize="11sp"
+        android:background="@drawable/ic_message2"
+        android:backgroundTint="@color/main_Accent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintTop_toBottomOf="@+id/message_textview_latest_message" />
+        app:layout_constraintTop_toBottomOf="@+id/username_textview_latest_message" />
 </androidx.constraintlayout.widget.ConstraintLayout>

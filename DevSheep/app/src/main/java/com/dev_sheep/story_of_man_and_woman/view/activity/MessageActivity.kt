@@ -23,10 +23,10 @@ import kotlinx.android.synthetic.main.activity_message.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MessageActivity : AppCompatActivity(){
-
     companion object {
         val TAG = "ChatLog"
         var currentUser: FB_User? = null
+        var readValue: String? = null
     }
 
     val adapter = GroupAdapter<ViewHolder>()
@@ -48,7 +48,7 @@ class MessageActivity : AppCompatActivity(){
 
         fetchCurrentUser()
         listenForMessages()
-
+        message_ReadUpdate()
         with(chat) {
             hasFixedSize()
             layoutManager = LinearLayoutManager(context).apply { stackFromEnd = true }
@@ -64,11 +64,11 @@ class MessageActivity : AppCompatActivity(){
 
     }
 
+
     private fun listenForMessages() {
         val fromId = FirebaseAuth.getInstance().uid
         val toId = toUser.uid
         val ref = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId")
-
 
         ref.addChildEventListener(object: ChildEventListener {
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
@@ -80,21 +80,11 @@ class MessageActivity : AppCompatActivity(){
 
                     if (chatMessage.fromId == FirebaseAuth.getInstance().uid) {
 
-                        var readValue = ""
-//                        chatMessage.readUsers.put(toId,true)
-//여기까지함
+//                        // 메세지 들어왔을때 최신 메세지 읽음 처리해주기
 //                        var map= mutableMapOf<String,Any>()
-//                        map.put(key!!, chatMessage);
 //                        map[key+"/readUsers"] = true
-//                        FirebaseDatabase.getInstance()
-//                            .getReference("/user-messages/$fromId/$toId")
-//                            .updateChildren(map)
-//                            .addOnCompleteListener {
-//                                adapter.notifyDataSetChanged()
-//                                chat.scrollToPosition(adapter.itemCount - 1)
-//                                readValue = "true"
-//                            }
-
+//                        ref_latest.updateChildren(map)
+//                        //
 
 
                         val currentUser = currentUser ?: return
@@ -102,7 +92,6 @@ class MessageActivity : AppCompatActivity(){
                             MessageFromItem(
                                 chatMessage.text,
                                 currentUser,
-                                readValue,
                                 memberViewModel
                             )
                         )
@@ -149,6 +138,7 @@ class MessageActivity : AppCompatActivity(){
         val fromId = FirebaseAuth.getInstance().uid
         val user = intent.getParcelableExtra<FB_User>(ProfileUsersFragment.USER_ID) // userID 유저프로필에서 가져오기
         val toId = user.uid
+        val username = tv_user_nickname.text.toString()
 
         if (fromId == null) return
 
@@ -159,7 +149,8 @@ class MessageActivity : AppCompatActivity(){
 
         val toReference = FirebaseDatabase.getInstance().getReference("/user-messages/$toId/$fromId").push()
 
-        val chatMessage = FB_ChatMessage(reference.key!!, text, fromId, toId, System.currentTimeMillis() / 1000,false)
+        val chatMessage = FB_ChatMessage(reference.key!!, text, fromId, toId, System.currentTimeMillis() / 1000,false,username)
+
 
 
 
@@ -168,6 +159,8 @@ class MessageActivity : AppCompatActivity(){
                 Log.d(TAG, "Saved our chat message: ${reference.key}")
                 etMessage.text.clear()
                 chat.scrollToPosition(adapter.itemCount - 1)
+
+
             }
 
         toReference.setValue(chatMessage)
@@ -177,6 +170,9 @@ class MessageActivity : AppCompatActivity(){
 
         val latestMessageToRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$toId/$fromId")
         latestMessageToRef.setValue(chatMessage)
+
+        message_ReadUpdate()
+
     }
 
 
@@ -204,6 +200,40 @@ class MessageActivity : AppCompatActivity(){
 
             }
         })
+    }
+
+    //  나의 메세지 읽음처리
+    private fun message_ReadUpdate(){
+        val fromId = FirebaseAuth.getInstance().uid
+        val toId = toUser.uid
+        val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId")
+        val ref_to = FirebaseDatabase.getInstance().getReference("/latest-messages/$toId")
+        ref.addChildEventListener(object: ChildEventListener {
+            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+                val chatMessage = p0.getValue(FB_ChatMessage::class.java) ?: return
+
+                Log.e("from Id = ",""+fromId)
+                Log.e("to Id = ",""+toId)
+                if(chatMessage.readUsers == false && chatMessage.toId.equals(toId) || chatMessage.readUsers == false && chatMessage.toId.equals(fromId) ) {
+                    var map = mutableMapOf<String, Any>()
+                    map[p0.key + "/readUsers"] = true
+                    ref.updateChildren(map)
+                }
+            }
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+            }
+
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+
+            }
+            override fun onChildRemoved(p0: DataSnapshot) {
+
+            }
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+        })
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

@@ -528,10 +528,12 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     // autoscroll Viewpager
     var runnable: Runnable = object : Runnable {
         override fun run() {
-            if (mRankAdapter!!.getCount() === page) {
-                page = 0
-            } else {
-                page++
+            if(mRankAdapter != null){
+                if (mRankAdapter!!.getCount() === page) {
+                    page = 0
+                } else {
+                    page++
+                }
             }
             viewpager!!.setCurrentItem(page, true)
             handler.postDelayed(this, delay.toLong())

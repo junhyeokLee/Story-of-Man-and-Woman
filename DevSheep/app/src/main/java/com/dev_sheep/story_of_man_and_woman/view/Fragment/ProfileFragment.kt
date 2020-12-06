@@ -108,6 +108,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     lateinit var profileImage: ImageView
     lateinit var profileBackground: ImageView
     lateinit var profileNickname: TextView
+    lateinit var profileEdit: TextView
     var profileAdd : ImageView? = null
     var backgroundAdd: ImageView? = null
     var viewpager : ViewPager? = null
@@ -121,6 +122,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     lateinit var followCount : TextView
     lateinit var gender : TextView
     lateinit var age : TextView
+    lateinit var intro: TextView
     lateinit var get_creater_nick_name: String
     lateinit var get_creater_img: String
     lateinit var my_m_seq : String
@@ -167,6 +169,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         profileAdd = view.findViewById<ImageView>(R.id.id_Profile_add)
         backgroundAdd = view.findViewById<ImageView>(R.id.id_ProfileBackgorund_add)
         profileNickname = view.findViewById<TextView>(R.id.tv_profile_nick)
+        profileEdit = view.findViewById(R.id.tv_edit)
         viewpager = view.findViewById(R.id.viewPager) as ViewPager
         tablayout = view.findViewById(R.id.tabLayout) as TabLayout
         followCount = view.findViewById(R.id.count_follow) as TextView
@@ -175,6 +178,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         layout_subscribing = view.findViewById(R.id.layout_subscribing) as LinearLayout
         gender = view.findViewById(R.id.tv_gender) as TextView
         age = view.findViewById(R.id.tv_age) as TextView
+        intro = view.findViewById(R.id.tv_intro) as TextView
         preferecnes_img = view.findViewById(R.id.preferecnes_img) as ImageView
         preferecnes_message = view.findViewById(R.id.preferecnes_message) as ImageView
         recyclerView?.layoutManager = layoutManager
@@ -243,6 +247,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         layout_subscribing?.setOnClickListener(this)
         layout_subscriber?.setOnClickListener(this)
         preferecnes_message?.setOnClickListener(this)
+        profileEdit.setOnClickListener(this)
         memberViewModel.memberMySubscribeCount(my_m_seq, followCount)
         memberViewModel.memberUserSubscribeCount(my_m_seq, followerCount)
         return view
@@ -288,6 +293,11 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                     m_nick_name = it.nick_name.toString()
                     gender.text = it.gender.toString()
                     age.text = it.age.toString()
+                   if(it.memo.toString().equals("null")){
+                    intro.text = ""
+                }else{
+                    intro.text = it.memo.toString()
+                }
                     if (it.background_img != null) {
                         Glide.with(this)
                             .load(it.background_img)
@@ -329,6 +339,11 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                     m_nick_name = it.nick_name.toString()
                     gender.text = it.gender.toString()
                     age.text = it.age.toString()
+                if(it.memo.toString().equals("null")){
+                    intro.text = ""
+                }else{
+                    intro.text = it.memo.toString()
+                }
 
                     if (it.background_img != null && context != null) {
                         Glide.with(context!!)
@@ -418,14 +433,23 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         this.menu = menu
         inflater.inflate(R.menu.menu_scrolling, menu)
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         var id = item.itemId
+        when(item.itemId){
+            R.id.action_info ->{
+                startActivity(Intent(context, MyMessageActivity::class.java))
+                return true
 
-        if(id == R.id.action_info){
-            return true
+            }
         }
+//        if(id == R.id.action_info){
+//
+//
+//            return true
+//        }
         return super.onOptionsItemSelected(item)
     }
 
@@ -701,16 +725,13 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                 ImageDialog(context!!,profile_img).start("")
             }
             R.id.preferecnes_img -> {
-                val preference = PrefsFragment()//The fragment that u want to open for example
+                val preference = PreferenceFragment()//The fragment that u want to open for example
                 var PrefsFragmnet = (context as AppCompatActivity).supportFragmentManager
                 var fragmentTransaction: FragmentTransaction = PrefsFragmnet.beginTransaction()
                 fragmentTransaction.setReorderingAllowed(true)
-                fragmentTransaction.setCustomAnimations(
-                    R.anim.fragment_fade_in,
-                    R.anim.fragment_fade_out
-                )
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.replace(R.id.frameLayout, preference);
+                fragmentTransaction.setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+                fragmentTransaction.addToBackStack(null)
+                fragmentTransaction.replace(R.id.frameLayout, preference)
                 fragmentTransaction.commit()
             }
             R.id.layout_subscribing ->{
@@ -741,6 +762,19 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             }
             R.id.preferecnes_message -> {
                 startActivity(Intent(context, MyMessageActivity::class.java))
+            }
+            R.id.tv_edit ->{
+                val profileEdit = ProfileFragmentEdit(my_m_seq)//The fragment that u want to open for example
+                var EditFragmnet = (context as AppCompatActivity).supportFragmentManager
+                var fragmentTransaction: FragmentTransaction = EditFragmnet.beginTransaction()
+                fragmentTransaction.setReorderingAllowed(true)
+                fragmentTransaction.setCustomAnimations(
+                    R.anim.fragment_fade_in,
+                    R.anim.fragment_fade_out
+                )
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.replace(R.id.frameLayout, profileEdit);
+                fragmentTransaction.commit()
             }
         }
 //            val dialog = CameraDialog()

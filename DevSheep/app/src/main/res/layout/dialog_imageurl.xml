@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="ImageUrl"
+            android:text=""
             android:fontFamily="@font/roundwindregular"
             android:textColor="@color/white"
             android:textSize="16sp" />

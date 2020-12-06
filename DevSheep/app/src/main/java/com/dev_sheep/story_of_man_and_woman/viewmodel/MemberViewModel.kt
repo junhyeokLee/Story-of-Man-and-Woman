@@ -290,8 +290,19 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
                 Log.e("실패함", "" + it.message)
 
             })
+    }
 
+    fun updateProfile(m_seq: String,memo:String,gender:String,age:String){
+        val single = memberService.updateProfile(m_seq,memo,gender,age)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.d("업데이트 프로필","memo = "+memo+"  age = "+age+"  gender = "+gender)
 
+            }, {
+                Log.e("실패함", "" + it.message)
+
+            })
     }
 
     private fun performRegister(email: String,password: String,nick_name: String,context: Context) {

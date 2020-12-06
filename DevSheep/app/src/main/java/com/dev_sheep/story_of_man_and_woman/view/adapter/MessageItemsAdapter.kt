@@ -11,16 +11,11 @@ import kotlinx.android.synthetic.main.adapter_latest_message_row.view.*
 import kotlinx.android.synthetic.main.adapter_to_message.view.*
 
 
-class MessageFromItem(val text: String, val user: FB_User,val read:String,val memberViewModel: MemberViewModel): Item<ViewHolder>() {
+class MessageFromItem(val text: String, val user: FB_User,val memberViewModel: MemberViewModel): Item<ViewHolder>() {
   override fun bind(viewHolder: ViewHolder, position: Int) {
     viewHolder.itemView.toMessage.text = text
     viewHolder.itemView.toUsername.text = user.username
 
-    if(read.equals("false")) {
-      viewHolder.itemView.tv_toRead.text = "안읽음"
-    }else{
-      viewHolder.itemView.tv_toRead.text = "읽음"
-    }
     memberViewModel.getMemberProfileImgFromNickName(user.username,viewHolder.itemView.profile_img_to,viewHolder.itemView.context)
   }
 

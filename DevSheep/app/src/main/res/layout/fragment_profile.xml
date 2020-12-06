@@ -9,10 +9,11 @@
     >
 
 
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="540dp"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:layout_scrollFlags="scroll|enterAlways"
@@ -110,6 +111,7 @@
                     android:text="null"
                     android:fontFamily="@font/roboto_bold"
                     android:textColor="@color/black"
+
                     android:textSize="18sp"></TextView>
 
                 <LinearLayout
@@ -117,6 +119,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:layout_marginTop="6dp"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -160,8 +163,23 @@
 
 
                     </LinearLayout>
+
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/tv_intro"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="32dp"
+                    android:text="소개"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/roboto_regular"
+                    />
 
                 <TextView
                     android:id="@+id/tv_edit"

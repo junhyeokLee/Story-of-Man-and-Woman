@@ -1,11 +1,20 @@
 package com.dev_sheep.story_of_man_and_woman.view.activity
 
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.FB_ChatMessage
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.FB_User
@@ -15,8 +24,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
-import kotlinx.android.synthetic.main.activity_message.*
 import kotlinx.android.synthetic.main.activity_my_messages.*
+import kotlinx.android.synthetic.main.adapter_latest_message_row.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MyMessageActivity  : AppCompatActivity() {
@@ -24,6 +33,11 @@ class MyMessageActivity  : AppCompatActivity() {
     companion object {
         var currentUser: FB_User? = null
         val TAG = "LatestMessages"
+        var readValue = ""
+        val adapter = GroupAdapter<ViewHolder>()
+        val fromId = FirebaseAuth.getInstance().uid
+        val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId")
+
     }
 
     private val memberViewModel: MemberViewModel by viewModel()
@@ -33,7 +47,15 @@ class MyMessageActivity  : AppCompatActivity() {
         setContentView(R.layout.activity_my_messages)
 
         recyclerview_latest_messages.adapter = adapter
-        recyclerview_latest_messages.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        recyclerview_latest_messages.addItemDecoration(
+            DividerItemDecoration(
+                this,
+                DividerItemDecoration.VERTICAL
+            )
+        )
+        iv_back.setOnClickListener {
+            onBackPressed()
+        }
 
         listenForLatestMessages()
 
@@ -47,17 +69,52 @@ class MyMessageActivity  : AppCompatActivity() {
 
     private fun refreshRecyclerViewMessages() {
         adapter.clear()
+
         latestMessagesMap.values.forEach {
-            adapter.add(MessageLatestAdapter(it,memberViewModel))
+            if(it == null){
+                pb_bar.visibility = View.VISIBLE
+//                return
+            }else {
+                pb_bar.visibility = View.GONE
+                adapter.add(MessageLatestAdapter(it, memberViewModel, this))
+                Log.e("log fromId, toID값", "" + it.fromId + "  " + it.toId)
 
+                val itemTouchHelperCallback =
+                    object :
+                        ItemTouchHelper.SimpleCallback(
+                            0,
+                            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+                        ) {
+                        override fun onMove(
+                            recyclerView: RecyclerView,
+                            viewHolder: RecyclerView.ViewHolder,
+                            target: RecyclerView.ViewHolder
+                        ): Boolean {
 
+                            return false
+                        }
+
+                        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                            val toId =
+                                viewHolder.itemView.tv_chat_id.text.toString() // recyclerview viewholder itme에서 FB_Message toId값 받아오기
+                            showDeletePopup(
+                                viewHolder.adapterPosition,
+                                fromId!!,
+                                toId
+                            ) // popup창에서 해당 아이템 삭제
+
+                        }
+
+                    }
+
+                val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
+                itemTouchHelper.attachToRecyclerView(recyclerview_latest_messages)
+            }
         }
     }
 
     private fun listenForLatestMessages() {
-        val fromId = FirebaseAuth.getInstance().uid
-        val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId")
-        ref.addChildEventListener(object: ChildEventListener {
+        ref.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val chatMessage = p0.getValue(FB_ChatMessage::class.java) ?: return
                 latestMessagesMap[p0.key!!] = chatMessage
@@ -73,23 +130,24 @@ class MyMessageActivity  : AppCompatActivity() {
             override fun onChildMoved(p0: DataSnapshot, p1: String?) {
 
             }
+
             override fun onChildRemoved(p0: DataSnapshot) {
 
             }
+
             override fun onCancelled(p0: DatabaseError) {
 
             }
         })
     }
 
-    val adapter = GroupAdapter<ViewHolder>()
-
 
 
     private fun fetchCurrentUser() {
+
         val uid = FirebaseAuth.getInstance().uid
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
-        ref.addListenerForSingleValueEvent(object: ValueEventListener {
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
 
             override fun onDataChange(p0: DataSnapshot) {
                 currentUser = p0.getValue(FB_User::class.java)
@@ -114,5 +172,54 @@ class MyMessageActivity  : AppCompatActivity() {
             ).show()
             startActivity(intent)
         }
+    }
+
+    private fun showDeletePopup(
+        position: Int,
+        fromId: String,
+        toId: String
+    ){
+        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.alert_popup,null)
+        val textView: TextView = view.findViewById(R.id.textView)
+        val latestMessageRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId/$toId")
+        val reference = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId")
+
+        textView.text = "대화방에서 나가시겠습니까?"
+
+        val alertDialog = AlertDialog.Builder(this)
+            .setTitle("대화방 삭제")
+            .setPositiveButton("네"){
+                dialog,which -> Toast.makeText(applicationContext,"삭제하기",Toast.LENGTH_SHORT).show()
+                latestMessageRef.removeValue()
+                reference.removeValue()
+                adapter.removeGroup(position) // group library 스와이프 아이템 삭제
+                adapter.notifyDataSetChanged()
+            }
+            .setNegativeButton("아니요", DialogInterface.OnClickListener { dialog, which ->
+                adapter.notifyDataSetChanged()
+            })
+            .create()
+
+        // remaining_time - 00:00~~10:00 ,  elapsed - 10:00 ~~ 00:00
+        // p1PlayTime = 00:00~ 시작, elapsed
+
+        alertDialog.setView(view)
+        alertDialog.show()
+
+        val btn_color : Button = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+        val btn_color_cancel : Button = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+
+        if(btn_color != null){
+            btn_color.setTextColor(resources.getColor(R.color.main_Accent))
+        }
+        if(btn_color_cancel != null){
+            btn_color_cancel.setTextColor(resources.getColor(R.color.main_Accent))
+        }
+
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
     }
 }

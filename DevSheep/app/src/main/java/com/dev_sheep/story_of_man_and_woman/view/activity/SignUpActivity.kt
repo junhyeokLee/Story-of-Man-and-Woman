@@ -38,26 +38,26 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
         )
         setContentView(R.layout.activity_sign_up)
 
-//        val auto = getSharedPreferences("autoLogin", AppCompatActivity.MODE_PRIVATE)
-//        //처음에는 SharedPreferences에 아무런 정보도 없으므로 값을 저장할 키들을 생성한다.
-//        // getString의 첫 번째 인자는 저장될 키, 두 번쨰 인자는 값입니다.
-//        // 첨엔 값이 없으므로 키값은 원하는 것으로 하시고 값을 null을 줍니다.
-//        //처음에는 SharedPreferences에 아무런 정보도 없으므로 값을 저장할 키들을 생성한다.
-//        // getString의 첫 번째 인자는 저장될 키, 두 번쨰 인자는 값입니다.
-//        // 첨엔 값이 없으므로 키값은 원하는 것으로 하시고 값을 null을 줍니다.
-//        var loginEmail = auto.getString("inputEmail", null)
-//        var loginPassword = auto.getString("inputPassword", null)
-//
-//        if (loginEmail != null && loginPassword != null) {
-//
-//            Toast.makeText(this, loginEmail + "님 반갑습니다.", Toast.LENGTH_SHORT)
-//                .show()
-//            val intent = Intent(this, MainActivity::class.java)
-//            intent.putExtra("email",loginEmail)
-//            startActivity(intent)
-//            finish()
-//
-//        }
+        val auto = getSharedPreferences("autoLogin", AppCompatActivity.MODE_PRIVATE)
+        //처음에는 SharedPreferences에 아무런 정보도 없으므로 값을 저장할 키들을 생성한다.
+        // getString의 첫 번째 인자는 저장될 키, 두 번쨰 인자는 값입니다.
+        // 첨엔 값이 없으므로 키값은 원하는 것으로 하시고 값을 null을 줍니다.
+        //처음에는 SharedPreferences에 아무런 정보도 없으므로 값을 저장할 키들을 생성한다.
+        // getString의 첫 번째 인자는 저장될 키, 두 번쨰 인자는 값입니다.
+        // 첨엔 값이 없으므로 키값은 원하는 것으로 하시고 값을 null을 줍니다.
+        var loginEmail = auto.getString("inputEmail", null)
+        var loginPassword = auto.getString("inputPassword", null)
+
+        if (loginEmail != null && loginPassword != null) {
+
+            Toast.makeText(this, loginEmail + "님 반갑습니다.", Toast.LENGTH_SHORT)
+                .show()
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("email",loginEmail)
+            startActivity(intent)
+            finish()
+
+        }
 
         checkedListener()
         btn_signup.setOnClickListener(this)
