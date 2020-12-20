@@ -26,6 +26,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Member
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.MEMBER_SERVICE
+import com.dev_sheep.story_of_man_and_woman.utils.RedDotImageView
 import com.dev_sheep.story_of_man_and_woman.view.dialog.ImageDialog
 import com.dev_sheep.story_of_man_and_woman.view.dialog.ProfileEditDialog
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
@@ -137,7 +138,6 @@ class ProfileFragmentEdit(my_m_seq:String): Fragment(),View.OnClickListener {
         profileImage?.setOnClickListener(this)
         profileAdd?.setOnClickListener(this)
         backgroundAdd?.setOnClickListener(this)
-
 
 
         initData()

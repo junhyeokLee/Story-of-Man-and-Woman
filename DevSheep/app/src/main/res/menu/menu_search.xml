@@ -6,7 +6,7 @@
     <item
         android:id="@+id/filter"
         android:icon="@drawable/ic_filter"
-        android:iconTint="@color/main_Accent"
+        android:iconTint="@color/main_gray"
         android:title="Item"
         app:showAsAction="always" />
 </menu>

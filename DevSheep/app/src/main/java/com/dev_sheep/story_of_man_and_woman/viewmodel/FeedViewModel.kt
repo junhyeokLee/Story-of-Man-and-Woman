@@ -108,6 +108,16 @@ class FeedViewModel(private val testDAO: TestDAO, private val feedService: FeedS
             })
     }
 
+    fun deleteFeed(feed_seq: Int){
+        val single = feedService.deleteFeed(feed_seq)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+
+            },{
+            })
+
+    }
     fun increaseViewCount(feed_seq:Int){
         val single = feedService.edit_feed_view_count(feed_seq)
         single.subscribeOn(Schedulers.io())
@@ -139,6 +149,7 @@ class FeedViewModel(private val testDAO: TestDAO, private val feedService: FeedS
 
             })
     }
+
 
     fun getTag(){
         val single = feedService.getList()

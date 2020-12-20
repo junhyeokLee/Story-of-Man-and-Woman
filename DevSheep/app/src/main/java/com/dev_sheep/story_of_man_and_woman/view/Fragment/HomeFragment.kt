@@ -2,6 +2,7 @@ package com.dev_sheep.story_of_man_and_woman.view.Fragment
 
 import android.app.Activity
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -10,9 +11,11 @@ import android.os.Looper
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
+import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
@@ -214,6 +217,13 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                                         ?.commit()
                                 }
                             }
+                        },object : FeedAdapter.OnClickDeleteFeedListener{
+                            override fun OnClickDeleted(feed_seq: Int) {
+                                showDeletePopup(feedViewModel,feed_seq)
+                                onResume()
+
+                            }
+
                         })
                     handlerFeed.postDelayed({
                         // stop animating Shimmer and hide the layout
@@ -539,7 +549,48 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             handler.postDelayed(this, delay.toLong())
         }
     }
+    private fun showDeletePopup(feedViewmodel: FeedViewModel,feed_seq: Int) {
+        val fragment = HomeFragment()
 
+        val inflater =
+            context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.alert_popup, null)
+        val textView: TextView = view.findViewById(R.id.textView)
+
+        textView.text = "이 게시물을 삭제 하시겠습니까?"
+
+        val alertDialog = AlertDialog.Builder(context!!)
+            .setTitle("삭제")
+            .setPositiveButton("네") { dialog, which ->
+                feedViewmodel.deleteFeed(feed_seq)
+                mFeedAdapter.notifyDataSetChanged()
+                activity?.supportFragmentManager
+                    ?.beginTransaction()
+                    ?.replace(
+                        R.id.frameLayout,
+                        fragment
+                    )
+                    ?.commit()
+            }
+
+            .setNegativeButton("아니요", DialogInterface.OnClickListener { dialog, which ->
+
+            })
+            .create()
+
+        alertDialog.setView(view)
+        alertDialog.show()
+
+        val btn_color : Button = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+        val btn_color_cancel : Button = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+
+        if(btn_color != null){
+            btn_color.setTextColor(resources.getColor(R.color.main_Accent))
+        }
+        if(btn_color_cancel != null){
+            btn_color_cancel.setTextColor(resources.getColor(R.color.main_Accent))
+        }
+    }
     override fun onRefresh() {
         initData()
         mSwipeRefreshLayout.setRefreshing(false)

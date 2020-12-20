@@ -38,6 +38,12 @@ interface FeedService {
         @Field("type") type: String
     ): Single<Void>
 
+    @FormUrlEncoded
+    @POST("feed_delete.php")
+    fun deleteFeed(
+        @Field("feed_seq") feed_seq: Int
+    ): Single<Void>
+
 
     @GET("feed_get_all.php")
     fun getList(): Observable<List<Feed>>

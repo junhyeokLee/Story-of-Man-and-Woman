@@ -29,6 +29,7 @@ class WriteDialog : BottomSheetDialogFragment() {
             lintent.putExtra("type",TYPE_PUBLIC)
             startActivity(lintent)
             (context as Activity).overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+
             dismiss()
         }
 
@@ -46,6 +47,7 @@ class WriteDialog : BottomSheetDialogFragment() {
             lintent.putExtra("type",TYPE_PRIVATE)
             startActivity(lintent)
             (context as Activity).overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+
             dismiss()
         }
 

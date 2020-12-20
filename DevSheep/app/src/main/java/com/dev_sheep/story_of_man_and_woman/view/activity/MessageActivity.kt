@@ -214,7 +214,8 @@ class MessageActivity : AppCompatActivity(){
 
                 Log.e("from Id = ",""+fromId)
                 Log.e("to Id = ",""+toId)
-                if(chatMessage.readUsers == false && chatMessage.toId.equals(toId) || chatMessage.readUsers == false && chatMessage.toId.equals(fromId) ) {
+                if(chatMessage.readUsers == false && chatMessage.fromId.equals(toId) ||
+                    chatMessage.readUsers == false && chatMessage.fromId.equals(fromId) ) {
                     var map = mutableMapOf<String, Any>()
                     map[p0.key + "/readUsers"] = true
                     ref.updateChildren(map)

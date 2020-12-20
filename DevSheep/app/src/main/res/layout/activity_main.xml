@@ -33,9 +33,9 @@
         android:layout_marginStart="0dp"
         android:layout_marginEnd="0dp"
         android:background="@color/white"
-        app:itemBackground="@color/white"
         app:itemIconTint="@drawable/nav_item_color_state"
         app:labelVisibilityMode="unlabeled"
+        app:itemIconSize="24dp"
         app:layout_anchorGravity="bottom"
         app:menu="@menu/menu_bottom" />
 

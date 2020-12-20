@@ -28,20 +28,33 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.dev_sheep.story_of_man_and_woman.AppExecutors
 import com.dev_sheep.story_of_man_and_woman.R
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.FB_ChatMessage
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.FB_User
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Member
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.MEMBER_SERVICE
+import com.dev_sheep.story_of_man_and_woman.utils.RedDotImageView
+import com.dev_sheep.story_of_man_and_woman.view.activity.MessageActivity
+import com.dev_sheep.story_of_man_and_woman.view.activity.MessageActivity.Companion.currentUser
 import com.dev_sheep.story_of_man_and_woman.view.activity.MyMessageActivity
+import com.dev_sheep.story_of_man_and_woman.view.adapter.MessageFromItem
+import com.dev_sheep.story_of_man_and_woman.view.adapter.MessageToItem
 import com.dev_sheep.story_of_man_and_woman.view.adapter.ProfileViewpagerAdapter
 import com.dev_sheep.story_of_man_and_woman.view.dialog.ImageDialog
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.tabs.TabLayout
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.ViewHolder
 import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_message.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -57,6 +70,13 @@ import java.util.*
 class ProfileFragment: Fragment(),View.OnClickListener {
 
     companion object {
+
+        var currentChat: FB_ChatMessage? = null
+        val TAG = "ProfileFragment"
+        var readValue = ""
+        val fromId = FirebaseAuth.getInstance().uid
+        val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId")
+
         fun newInstance(feed: Feed, transitionId : String, transitionId1 : String): ProfileFragment {
             val args = Bundle()
             args.putString("m_seq",feed.creater_seq)
@@ -129,6 +149,10 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     lateinit var profile_img: String
     lateinit var layout_subscriber: LinearLayout
     lateinit var layout_subscribing: LinearLayout
+    lateinit var profileMessageDot : RedDotImageView
+    lateinit var profileMessageEmpty : ImageView
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -180,8 +204,13 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         age = view.findViewById(R.id.tv_age) as TextView
         intro = view.findViewById(R.id.tv_intro) as TextView
         preferecnes_img = view.findViewById(R.id.preferecnes_img) as ImageView
-        preferecnes_message = view.findViewById(R.id.preferecnes_message) as ImageView
+//        preferecnes_message = view.findViewById(R.id.preferecnes_message) as ImageView
         recyclerView?.layoutManager = layoutManager
+        profileMessageDot = view.findViewById(R.id.preferecnes_message)
+        profileMessageEmpty = view.findViewById(R.id.preferecnes_message_empty)
+
+
+
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
 
 
@@ -246,10 +275,17 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         preferecnes_img?.setOnClickListener(this)
         layout_subscribing?.setOnClickListener(this)
         layout_subscriber?.setOnClickListener(this)
-        preferecnes_message?.setOnClickListener(this)
+        profileMessageDot?.setOnClickListener(this)
+        profileMessageEmpty?.setOnClickListener(this)
         profileEdit.setOnClickListener(this)
         memberViewModel.memberMySubscribeCount(my_m_seq, followCount)
         memberViewModel.memberUserSubscribeCount(my_m_seq, followerCount)
+
+//        profileDot.setMessageDot()
+//        val uid = FirebaseAuth.getInstance().uid
+//        val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$uid")
+
+
         return view
     }
 
@@ -260,6 +296,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             id_Profile_Image.transitionName = arguments?.getString("trId1")
         }
         initData()
+
 
     }
 
@@ -357,16 +394,59 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                 })
         }
 
+        listenForMessages()
 
+    }
+
+    private fun listenForMessages() {
+        val fromId = FirebaseAuth.getInstance().uid
+        val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId")
+
+        ref.addChildEventListener(object: ChildEventListener {
+            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+                val chatMessage = p0.getValue(FB_ChatMessage::class.java)
+
+                Log.e("ProfileFragment chat massages",""+chatMessage?.username)
+                Log.e("ProfileFragment chat massages readvalue",""+chatMessage?.readUsers)
+
+//                RedDotImageView(context,chatMessage?.readUsers as Boolean)
+
+                if(chatMessage?.readUsers == false){
+                    profileMessageDot.visibility = View.VISIBLE
+                    profileMessageEmpty.visibility = View.GONE
+            }else{
+                    profileMessageEmpty.visibility = View.VISIBLE
+                    profileMessageDot.visibility = View.GONE
+                }
+//                    profileMessageDot.setMessageDot(chatMessage?.readUsers as Boolean)
+
+
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+
+            }
+
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+
+            }
+
+            override fun onChildRemoved(p0: DataSnapshot) {
+
+            }
+
+        })
 
     }
 
 
     override fun onResume() {
         super.onResume()
-
         initData()
-
     }
 
 
@@ -763,6 +843,10 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             R.id.preferecnes_message -> {
                 startActivity(Intent(context, MyMessageActivity::class.java))
             }
+            R.id.preferecnes_message_empty ->{
+                startActivity(Intent(context, MyMessageActivity::class.java))
+            }
+
             R.id.tv_edit ->{
                 val profileEdit = ProfileFragmentEdit(my_m_seq)//The fragment that u want to open for example
                 var EditFragmnet = (context as AppCompatActivity).supportFragmentManager
@@ -813,6 +897,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         var ft: FragmentTransaction = fragmentManager.beginTransaction()
         ft.detach(fragment).attach(fragment).commit()
     }
+
 
 }
 

@@ -133,6 +133,7 @@
             android:gravity="center|right"
             >
             <ImageButton
+                android:id="@+id/ib_menu"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@color/white"

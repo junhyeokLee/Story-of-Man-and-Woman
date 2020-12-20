@@ -278,15 +278,32 @@
                             android:textSize="11sp"
                             android:text="쪽지함" />
 
-                        <ImageView
-                            android:id="@+id/preferecnes_message"
+                        <FrameLayout
                             android:layout_width="20dp"
                             android:layout_height="20dp"
+                            android:gravity="center"
+                            android:layout_gravity="center"
                             android:layout_marginTop="12dp"
+                            >
+                        <com.dev_sheep.story_of_man_and_woman.utils.RedDotImageView
+                            android:id="@+id/preferecnes_message"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:visibility="gone"
+                            android:background="@drawable/ic_message_hollow"
+                            />
+                        <ImageView
+                            android:id="@+id/preferecnes_message_empty"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:gravity="center"
                             android:layout_gravity="center"
                             android:background="@drawable/ic_message_hollow"
                             />
+                        </FrameLayout>
+
                     </LinearLayout>
 
                     <View

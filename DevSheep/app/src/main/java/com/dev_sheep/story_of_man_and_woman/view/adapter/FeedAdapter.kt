@@ -1,7 +1,9 @@
 package com.dev_sheep.story_of_man_and_woman.view.adapter
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.PorterDuff
@@ -15,10 +17,10 @@ import android.text.Spanned
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.view.ViewCompat
@@ -28,14 +30,21 @@ import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
+import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
 import com.dev_sheep.story_of_man_and_woman.utils.PokemonColorUtil
 import com.dev_sheep.story_of_man_and_woman.utils.SpacesItemDecoration
 import com.dev_sheep.story_of_man_and_woman.view.Assymetric.AsymmetricRecyclerView
 import com.dev_sheep.story_of_man_and_woman.view.Assymetric.AsymmetricRecyclerViewAdapter
 import com.dev_sheep.story_of_man_and_woman.view.Assymetric.Utils
+import com.dev_sheep.story_of_man_and_woman.view.activity.FeedEditActivity
+import com.dev_sheep.story_of_man_and_woman.view.activity.LoginActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.MainActivity
+import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import com.github.florent37.fiftyshadesof.FiftyShadesOf
 import com.victor.loading.rotate.RotateLoading
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.adapter_feed.view.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -49,7 +58,8 @@ class FeedAdapter(
     private val onClickViewListener: OnClickViewListener,
     private val onClickLikeListener: OnClickLikeListener,
     private val onClickBookMarkListener: OnClickBookMarkListener,
-    private val onClickProfileListener: OnClickProfileListener
+    private val onClickProfileListener: OnClickProfileListener,
+    private val onClickDeleteFeedListener : OnClickDeleteFeedListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     lateinit var mcontext: Context
     var mViewPagerState = HashMap<Int, Int>()
@@ -79,7 +89,8 @@ class FeedAdapter(
                     onClickViewListener,
                     onClickLikeListener,
                     onClickBookMarkListener,
-                    onClickProfileListener
+                    onClickProfileListener,
+                    onClickDeleteFeedListener
                 )
             }
             VIEW_TYPE_LOADING -> {
@@ -163,7 +174,8 @@ class FeedAdapter(
         onClickViewListener: OnClickViewListener,
         onClickLikeListener: OnClickLikeListener,
         onClickBookMarkListener: OnClickBookMarkListener,
-        onClickProfileListener: OnClickProfileListener
+        onClickProfileListener: OnClickProfileListener,
+        onClickDeleteFeedListener: OnClickDeleteFeedListener
     ) :  RecyclerView.ViewHolder(itemView){
         private val feed_layout: RelativeLayout = itemView.findViewById(R.id.feed_layout)
         private var favoriteButton: CheckBox = itemView.findViewById(R.id.favorite_btn)
@@ -180,38 +192,24 @@ class FeedAdapter(
         private val profile_layout : RelativeLayout = itemView.findViewById(R.id.profile_layout)
         private val content : TextView = itemView.findViewById(R.id.tv_content)
         private val recycler_layout : LinearLayout = itemView.findViewById(R.id.recycler_layout)
+        private val ib_menu : ImageButton = itemView.findViewById(R.id.ib_menu)
         //        private val content_img : ImageView = itemView.findViewById(R.id.content_img)
         private var sdf : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         private val onClickFeedView = onClickViewListener
         private val onClickFeedLike = onClickLikeListener
         private val onClickBookMark = onClickBookMarkListener
         private val onClickProfile = onClickProfileListener
+        private val onClickDeleteFeed = onClickDeleteFeedListener
         private val recyclerView : AsymmetricRecyclerView = itemView.findViewById(R.id.recyclerView)
         lateinit var m_seq : String
         private val listImg = list
 
+
         @SuppressLint("Range")
         fun bindView(item: Feed, position: Int) {
 
-//            FiftyShadesOf.with(itemView.context)
-//                .on(feed_layout,profile_layout,content)
-//                .start();
-
-//            if(item == null){
-//                FiftyShadesOf.with(itemView.context)
-//                    .on(feed_layout,profile_layout,content)
-//                    .start();
-//            }else
-//            {
-//                FiftyShadesOf.with(itemView.context)
-//                    .on(feed_layout,profile_layout,content)
-//                    .fadein(true)
-//                    .start()
-//            }
-
             ViewCompat.setTransitionName(itemView.tv_m_nick, position.toString() + "Text")
             ViewCompat.setTransitionName(itemView.img_profile, (position).toString() + "Img")
-
             itemView.tv_m_nick.text = item.creater
             itemView.tv_title.text = item.title
 //            content.text = br2nl(item.content)
@@ -223,6 +221,49 @@ class FeedAdapter(
             itemView.tv_comment_count.text = item.comment_no.toString()
             itemView.like_count.text = item.like_no.toString()
             itemView.tv_gender.text = item.creater_gender
+            itemView.ib_menu.setOnClickListener {
+                val popupMenu = PopupMenu(itemView.context, itemView.ib_menu, Gravity.START)
+                popupMenu.menuInflater.inflate(R.menu.menu_popup, popupMenu.menu)
+
+                if(m_seq == item.creater_seq) {
+                    popupMenu.menu.findItem(R.id.item_alarm).setVisible(false) // 자신의 피드일경우 신고하기 안보이기
+                    popupMenu.menu.findItem(R.id.item_edit).setVisible(true)  // 자신의 피드일경우 삭제하기 보이기
+                    popupMenu.menu.findItem(R.id.item_delete).setVisible(true)  // 자신의 피드일경우 삭제하기 보이기
+
+                }else{
+                    popupMenu.menu.findItem(R.id.item_alarm).setVisible(true)
+                    popupMenu.menu.findItem(R.id.item_edit).setVisible(false)
+                    popupMenu.menu.findItem(R.id.item_delete).setVisible(false)
+
+                }
+                popupMenu.setOnMenuItemClickListener { item_menu: MenuItem ->
+                    when(item_menu?.itemId){
+                        R.id.item_alarm -> {
+                            Toast.makeText(itemView.context, "신고하기", Toast.LENGTH_SHORT).show()
+                        }
+                        R.id.item_edit -> {
+//                            게시물 수정
+                            val intent = Intent(itemView.context, FeedEditActivity::class.java)
+                            intent.putExtra("feed_seq", item.feed_seq)
+                            intent.putExtra("type",item.type)
+                            (itemView.context as Activity).startActivity(intent)
+                            (itemView.context as Activity).overridePendingTransition(
+                                R.anim.fragment_fade_in,
+                                R.anim.fragment_fade_out
+                            )
+//                            activity.startActivity(intent)
+//                            overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+                        }
+                        R.id.item_delete -> {
+//                            게시물 삭제
+                            onClickDeleteFeed.OnClickDeleted(item.feed_seq)
+                        }
+
+                    }
+                    false
+                }
+                popupMenu.show()
+            }
 
 
             if(listImg.get(position).images != null) {
@@ -487,25 +528,6 @@ class FeedAdapter(
 
 
 
-
-//        private fun setFavoriteDrawable(favorited: Boolean, feed: Feed) {
-//            val context = itemView.context
-//            var favCount : String
-//
-//            if(favorited){
-//                feed.favorited = favorited
-//                onClickFeedLike.OnClickFeed(feed.feed_seq, "true")
-//                favCount = feed.like_no?.plus(1).toString()
-//
-//            }else{
-//                feed.favorited = favorited
-//                onClickFeedLike.OnClickFeed(feed.feed_seq, "false")
-//                favCount = feed.like_no.toString()
-//            }
-//            favoriteValue.setText(favCount)
-//
-//        }
-
         private fun setReadMore(view: TextView, text: String, maxLine: Int) {
             val context = view.context
             val expanedText = " ... 더보기"
@@ -621,6 +643,9 @@ class FeedAdapter(
             position: Int
         )
     }
+    interface OnClickDeleteFeedListener{
+        fun OnClickDeleted(feed_seq: Int)
+    }
     // omeFragment에서 클릭시 뷰모델 사용하여 좋아 올리기위함
     interface OnClickLikeListener {
         fun OnClickFeed(feed_seq: Int, boolean_value: String)
@@ -632,6 +657,8 @@ class FeedAdapter(
     interface OnClickProfileListener{
         fun OnClickProfile(feed: Feed, tv: TextView, iv: ImageView)
     }
+
+
 
 
 }

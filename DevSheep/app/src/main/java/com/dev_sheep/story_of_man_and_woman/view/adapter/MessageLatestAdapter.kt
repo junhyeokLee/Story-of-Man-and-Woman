@@ -21,10 +21,7 @@ import com.dev_sheep.story_of_man_and_woman.view.activity.MessageActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.MyMessageActivity
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.adapter_latest_message_row.view.*
@@ -151,4 +148,5 @@ class MessageLatestAdapter(val FBChatMessage: FB_ChatMessage, val memberViewMode
     }
 
   }
+
 }

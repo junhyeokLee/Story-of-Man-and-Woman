@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.dev_sheep.story_of_man_and_woman"
-        minSdkVersion 27
+        minSdkVersion 24
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -137,6 +137,7 @@ dependencies {
 
     //tag 줄바꿈
     implementation 'com.google.android:flexbox:2.0.1'
+
 
     //firebase
     implementation 'com.google.firebase:firebase-auth:18.0.0'
