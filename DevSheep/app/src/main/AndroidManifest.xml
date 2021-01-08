@@ -45,6 +45,8 @@
         <activity android:name=".view.activity.SignUpActivity"
             android:noHistory="true">
         </activity>
+        <activity android:name=".view.activity.PasswordSearchActivity">
+        </activity>
         <activity android:name=".view.activity.MyMessageActivity"></activity>
         <activity android:name=".view.activity.MessageActivity"></activity>
         <activity android:name=".view.activity.FeedSearchActivity">

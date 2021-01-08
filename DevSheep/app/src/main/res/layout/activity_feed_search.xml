@@ -33,6 +33,7 @@
                 android:textColor="@color/black"
                 android:fontFamily="@font/roboto_regular"
                 android:layout_marginLeft="16dp"
+                android:transitionName="@string/tag_name"
                 />
             <LinearLayout
                 android:layout_width="match_parent"

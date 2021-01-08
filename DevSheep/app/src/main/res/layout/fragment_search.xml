@@ -114,8 +114,8 @@
                     app:layoutManager="GridLayoutManager"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"
                     tools:itemCount="10"
-                    tools:listitem="@layout/adpater_tag"
-                    tools:spanCount="3"></androidx.recyclerview.widget.RecyclerView>
+                    tools:listitem="@layout/adapter_search_card"
+                    tools:spanCount="2"></androidx.recyclerview.widget.RecyclerView>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 

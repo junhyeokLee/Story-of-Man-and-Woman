@@ -23,6 +23,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class LoginActivity : AppCompatActivity() {
     val TAG = "LoginActivity"
     val REQUEST_SIGNUP = 0
+    val REQUEST_PASSWORD_SEARCH = 1
+
     private val memberViewModel: MemberViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +46,11 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(getApplicationContext(), SignUpActivity::class.java)
             startActivityForResult(intent, REQUEST_SIGNUP)
             finish()
+        }
+
+        tv_search_password.setOnClickListener {
+            val intent = Intent(getApplicationContext(), PasswordSearchActivity::class.java)
+            startActivityForResult(intent, REQUEST_PASSWORD_SEARCH)
         }
     }
 

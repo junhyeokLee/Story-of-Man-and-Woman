@@ -1,7 +1,11 @@
 package com.dev_sheep.story_of_man_and_woman.view.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.LinearGradient
+import android.graphics.Shader
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,9 +29,28 @@ abstract class Test_tag_Adapter(
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+        @SuppressLint("ResourceAsColor")
         fun bindView(item: Tag) {
 
             itemView.tag_name.text = "  # "+item.tag_name+"   "
+
+//            Shader textShader=new LinearGradient(0, 0, 0, 20, new int[]{
+//                R.color.colorAccent,R.color.colorPrimary
+//            },new float[]{0, 1}, TileMode.CLAMP);
+//            textView.getPaint().setShader(textShader);
+
+            val paint =  itemView.tag_name.paint
+            val width = paint.measureText(itemView.tag_name.text.toString())
+            val textShader: Shader = LinearGradient(0f, 0f, width, itemView.tag_name.textSize, intArrayOf(
+                Color.parseColor("#ec6674"),
+//                Color.parseColor("#429BED"),
+//                Color.parseColor("#64B678"),
+//                Color.parseColor("#478AEA"),
+                Color.parseColor("#7A5DC7")
+            ), null, Shader.TileMode.REPEAT)
+
+            itemView.tag_name.paint.shader = textShader
+
 
             itemView.tag_name.setOnClickListener {
 

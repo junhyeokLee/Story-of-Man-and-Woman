@@ -80,4 +80,7 @@ interface MemberService {
     @POST("update_profile.php")
     fun updateProfile(@Field("m_seq") m_seq: String, @Field("memo") memo: String, @Field("gender") gender:String, @Field("age") age: String): Single<Void>
 
+    @FormUrlEncoded
+    @POST("password_search_send.php")
+    fun passwordSearchSend(@Field("m_seq") m_seq: String): Single<Void>
 }

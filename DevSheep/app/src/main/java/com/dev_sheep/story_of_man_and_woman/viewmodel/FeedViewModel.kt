@@ -72,23 +72,9 @@ class FeedViewModel(private val testDAO: TestDAO, private val feedService: FeedS
         return testDAO.allList(limit,offset)
     }
 
-    fun getListFeed(): LiveData<List<Feed>>{
-        return testDAO.getallList()
-    }
+
 
     fun insertFeed(title:String,content:String,tag_seq:Int,creater:String,type:String){
-        // use rxjava
-//       val single = testService.insertFeed(title,content,tag_seq,creater,type)
-//
-//        single.subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe({
-//                // handle sucess
-//                Log.e("Retrofit 성공 ", ""+it.toString());
-//            },{
-//                // handle fail
-//                Log.e("Retrofit 통신 ERROR: ", it.message);
-//            })
         // use call
         val single = feedService.insertFeed(title,content,tag_seq,creater,type)
         single.subscribeOn(Schedulers.io())

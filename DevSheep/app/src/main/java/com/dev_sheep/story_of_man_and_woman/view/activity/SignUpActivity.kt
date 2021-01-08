@@ -101,7 +101,7 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
             checkBoxMan.setTextColor(getResources().getColor(R.color.white))
             checkBoxWoman.isChecked = false
             checkBoxWoman.setTextColor(getResources().getColor(R.color.black))
-            selected_Gender = checkBoxMan.text.toString()
+            selected_Gender = "남"
         } else {
             checkBoxMan.setTextColor(getResources().getColor(R.color.black))
             selected_Gender = ""
@@ -113,7 +113,7 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
             checkBoxWoman.setTextColor(getResources().getColor(R.color.white))
             checkBoxMan.isChecked = false
             checkBoxMan.setTextColor(getResources().getColor(R.color.black))
-            selected_Gender = checkBoxWoman.text.toString()
+            selected_Gender = "여"
         } else {
             checkBoxWoman.setTextColor(getResources().getColor(R.color.black))
             selected_Gender = ""
@@ -124,13 +124,14 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
     private fun signUpChecked(
         Email: String,
         Password: String,
+        Password_confirm: String,
         Nick_name: String,
         Gender: String,
         Age: String
     ){
 
 
-        if(Email != "" && Password != "" && Nick_name != "" && Gender != "" && Age != ""){
+        if(Email != "" && Password != "" && Password_confirm != "" && Nick_name != "" && Gender != "" && Age != ""){
 
             if(isEmail(Email) == false){
                 Toast.makeText(applicationContext, "이메일 형식을 확인해주세요.", Toast.LENGTH_SHORT).show()
@@ -144,6 +145,10 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
                 Toast.makeText(applicationContext, "닉네임 형식을 확인해주세요.", Toast.LENGTH_SHORT).show()
                 return
 
+            }
+            if(Password != Password_confirm){
+                Toast.makeText(applicationContext, "비밀번호 확인 체크해주세요.", Toast.LENGTH_SHORT).show()
+                return
             }
 
             memberViewModel.insertMember(
@@ -162,7 +167,15 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
                 return
             }
             else if(Password == ""){
-                Toast.makeText(applicationContext, "패스워드를 체크해주세요.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "비밀번호를 체크해주세요.", Toast.LENGTH_SHORT).show()
+                return
+            }
+            else if(Password_confirm == ""){
+                Toast.makeText(applicationContext, "비밀번호 확인 체크해주세요.", Toast.LENGTH_SHORT).show()
+                return
+            }
+            else if(Password != Password_confirm){
+                Toast.makeText(applicationContext, "비밀번호 확인 체크해주세요.", Toast.LENGTH_SHORT).show()
                 return
             }
             else if(Nick_name == ""){
@@ -186,6 +199,7 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
                 signUpChecked(
                     etv_email.text.toString(),
                     etv_password.text.toString(),
+                    etv_password_confirm.text.toString(),
                     etv_nick_name.text.toString(),
                     selected_Gender, selected_Age
                 )

@@ -68,7 +68,7 @@
                     android:layout_marginRight="16dp"
                     android:layout_marginBottom="16dp"
                     android:text="- 전체공개"
-                    android:textColor="@color/main_gray"
+                    android:textColor="@color/gray"
                     android:textSize="12sp"
                     app:fontFamily="@font/roboto_regular" />
             </LinearLayout>
@@ -139,7 +139,7 @@
                     android:layout_marginRight="16dp"
                     android:layout_marginBottom="16dp"
                     android:text="- 구독자 공개 "
-                    android:textColor="@color/main_gray"
+                    android:textColor="@color/gray"
                     android:textSize="12sp"
                     app:fontFamily="@font/roboto_regular" />
             </LinearLayout>
@@ -212,7 +212,7 @@
                     android:layout_marginBottom="16dp"
                     android:lineSpacingExtra="4dp"
                     android:text="- 비공개"
-                    android:textColor="@color/main_gray"
+                    android:textColor="@color/gray"
                     android:textSize="12sp"
                     app:fontFamily="@font/roboto_regular" />
             </LinearLayout>

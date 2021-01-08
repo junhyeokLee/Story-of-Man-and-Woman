@@ -121,14 +121,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            android:gravity="center"
             android:layout_weight="1"
             >
 
             <CheckBox
                 android:id="@+id/checked_man_woman"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:background="@drawable/background_age_category"
                 android:button="@null"
                 android:text="남/여"
@@ -142,9 +142,8 @@
 
             <CheckBox
                 android:id="@+id/checked_man"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:background="@drawable/background_age_category"
                 android:button="@null"
                 android:text="남"
@@ -161,9 +160,8 @@
 
             <CheckBox
                 android:id="@+id/checked_woman"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:background="@drawable/background_age_category"
                 android:button="@null"
                 android:text="여"
@@ -190,12 +188,14 @@
                 android:layout_height="match_parent"
                 android:text="적용"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/white"
-                android:fontFamily="@font/roboto_bold"
-                android:backgroundTint="@color/gray"
+                android:textColor="@color/black"
+                android:fontFamily="@font/roboto_regular"
+                android:background="@drawable/buttonshapewhitebg"
+                android:backgroundTint="@color/main_gray"
                 android:layout_gravity="bottom"
                 android:layout_marginTop="12dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
                 android:layout_marginBottom="12dp"
                 >
 

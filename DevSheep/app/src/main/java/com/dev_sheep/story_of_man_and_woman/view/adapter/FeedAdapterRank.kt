@@ -3,7 +3,6 @@ package com.dev_sheep.story_of_man_and_woman.view.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
-import android.opengl.Visibility
 import android.preference.PreferenceManager
 import android.text.Html
 import android.util.Log
@@ -12,6 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.view.ViewCompat
+import androidx.core.widget.NestedScrollView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -20,12 +21,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
-import com.dev_sheep.story_of_man_and_woman.utils.SpacesItemDecoration
-import com.dev_sheep.story_of_man_and_woman.view.Assymetric.AsymmetricRecyclerView
-import com.dev_sheep.story_of_man_and_woman.view.Assymetric.AsymmetricRecyclerViewAdapter
-import com.dev_sheep.story_of_man_and_woman.view.Assymetric.Utils
-import com.victor.loading.rotate.RotateLoading
-import kotlinx.android.synthetic.main.adapter_feed.view.*
+import com.dev_sheep.story_of_man_and_woman.utils.OnLoadMoreListener
 import kotlinx.android.synthetic.main.adapter_feed.view.bookmark
 import kotlinx.android.synthetic.main.adapter_feed.view.favorite_btn
 import kotlinx.android.synthetic.main.adapter_feed.view.img_profile
@@ -33,7 +29,7 @@ import kotlinx.android.synthetic.main.adapter_feed.view.like_count
 import kotlinx.android.synthetic.main.adapter_feed.view.tv_m_nick
 import kotlinx.android.synthetic.main.adapter_feed.view.tv_title
 import kotlinx.android.synthetic.main.adapter_feed.view.view_count
-import kotlinx.android.synthetic.main.adapter_feed_tag.view.*
+import kotlinx.android.synthetic.main.adapter_feed_rank.view.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.safety.Whitelist
@@ -45,28 +41,17 @@ class FeedAdapterRank(
     private var context: Context,
     private val onClickViewListener: OnClickViewListener,
     private val onClickLikeListener: OnClickLikeListener,
-    private val onClickBookMarkListener: OnClickBookMarkListener,
-    private val onClickProfileListener: OnClickProfileListener
+    private val onClickBookMarkListener: OnClickBookMarkListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     lateinit var mcontext: Context
     var mViewPagerState = HashMap<Int, Int>()
     private val VIEW_TYPE_ITEM = 0
     private val VIEW_TYPE_LOADING = 1
-
-//    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+//    private var mLoadMoreListner: OnLoadMoreListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         mcontext = parent.context
-
         val view: View?
-//        val viewHolder: RecyclerView.ViewHolder
-//        var viewHolder: RecyclerView.ViewHolder? = null
-
-        if(list == null){
-            VIEW_TYPE_LOADING
-        }else{
-            VIEW_TYPE_ITEM
-        }
 
         return when (viewType) {
             VIEW_TYPE_ITEM -> {
@@ -80,8 +65,7 @@ class FeedAdapterRank(
                     list,
                     onClickViewListener,
                     onClickLikeListener,
-                    onClickBookMarkListener,
-                    onClickProfileListener
+                    onClickBookMarkListener
                 )
             }
             VIEW_TYPE_LOADING -> {
@@ -98,7 +82,7 @@ class FeedAdapterRank(
 
 //        if(viewType == VIEW_TYPE_ITEM) {
 //            val view =
-//                LayoutInflater.from(parent.context).inflate(R.layout.adapter_feed, parent, false)
+//                LayoutInflater.from(parent.context).inflate(R.layout.adapter_feed_rank, parent, false)
 //            return FeedHolder(view)
 //        }
 //        else {
@@ -115,83 +99,100 @@ class FeedAdapterRank(
 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int)  {
-
-
-        when(holder.itemViewType){
+        return when(holder.itemViewType){
             VIEW_TYPE_ITEM -> {
                 val viewHolder: FeedHolder = holder as FeedHolder
                 val feed = list[position]
                 viewHolder.bindView(feed, position)
 
+                // 무한스크롤
+//        nestedScrollView.setOnScrollChangeListener(object : NestedScrollView.OnScrollChangeListener {
+//            override fun onScrollChange(
+//                v: NestedScrollView?,
+//                scrollX: Int,
+//                scrollY: Int,
+//                oldScrollX: Int,
+//                oldScrollY: Int
+//            ) {
+//
+//                 if (scrollY == (v!!.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())) {
+//                    mLoadMoreListner?.onLoadMoreStarted()
+//                     nestedScrollView.scaleY - 300
+//                }else{
+//                     mLoadMoreListner?.onLoadMoreFinished()
+//                     nestedScrollView.scaleY - 300
+//                 }
+//
+//            }
+//        })
             }
 
             VIEW_TYPE_LOADING -> {
                 val viewHolder: LoadingViewHolder = holder as LoadingViewHolder
-                viewHolder.bindView()
             }
 
+            else -> {
+
+            }
         }
 
+    }
 
-//        if(holder is FeedHolder){
-//            val list = list[position]
-//            holder.bindView(list)
-//        }
-//        else if(holder is LoadingViewHolder){
-//            val list = list[position]
-//            holder.bindView(list)
-//        }
+    override fun getItemViewType(position: Int): Int {
 
-//        val viewHolder: FeedHolder = holder as FeedHolder
-//        val item = list[position] // 배너에서 시작을 0 부터 했기때문에 피드가 1부터 시작하는걸 -1 시켜서 0부터 보여지게
-//        viewHolder.bindView(item)
+        var viewType : Int
+        if(list.get(position) != null){
+            viewType = VIEW_TYPE_ITEM
+            Log.e("list null check item", "" + viewType + "  " + list)
 
 
+        }else{
+            viewType = VIEW_TYPE_LOADING
+            Log.e("list null check loading", "" + viewType + "  " + list)
+        }
+        return viewType
     }
 
     override fun getItemCount(): Int {
+        if(list == null){
+            return 0
+        }else{
         return list.size
+        }
     }
-
 
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
     }
 
-
+//    fun setLoadMoreListner(loadMoreListner: OnLoadMoreListener) {
+//        mLoadMoreListner = loadMoreListner
+//    }
 
     internal class FeedHolder(
         itemView: View,
         list: List<Feed>,
         onClickViewListener: OnClickViewListener,
         onClickLikeListener: OnClickLikeListener,
-        onClickBookMarkListener: OnClickBookMarkListener,
-        onClickProfileListener: OnClickProfileListener
+        onClickBookMarkListener: OnClickBookMarkListener
     ) :  RecyclerView.ViewHolder(itemView){
         private val feed_layout: RelativeLayout = itemView.findViewById(R.id.feed_layout)
         private var favoriteButton: CheckBox = itemView.findViewById(R.id.favorite_btn)
         private val favoriteValue: TextView = itemView.findViewById(R.id.like_count)
         private val bookmarkButton: CheckBox = itemView.findViewById(R.id.bookmark)
-        private val img_profile : ImageView = itemView.findViewById(R.id.img_profile)
         private val iv_feed_tag : ImageView = itemView.findViewById(R.id.iv_feed_tag)
-        private val m_nick : TextView = itemView.findViewById(R.id.tv_m_nick)
-        private val profile_layout : LinearLayout = itemView.findViewById(R.id.profile_layout)
         private val recycler_layout : LinearLayout = itemView.findViewById(R.id.recycler_layout)
-        private val layout_iv_feed : FrameLayout = itemView.findViewById(R.id.layout_iv_feed)
         private val tv_age : TextView = itemView.findViewById(R.id.tv_age)
         private val tv_gender : TextView = itemView.findViewById(R.id.tv_gender)
         private val tv_rank_num : TextView = itemView.findViewById(R.id.tv_rank_num)
-        //        private val tv_tag : TextView = itemView.findViewById(R.id.tag_id)
         private val tv_content : TextView = itemView.findViewById(R.id.tv_content)
-        private var sdf : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         private val onClickFeedView = onClickViewListener
         private val onClickFeedLike = onClickLikeListener
         private val onClickBookMark = onClickBookMarkListener
-        private val onClickProfile = onClickProfileListener
         lateinit var m_seq : String
-        private val listImg = list
 
         @SuppressLint("Range")
         fun bindView(item: Feed, position: Int) {
+
 
             ViewCompat.setTransitionName(itemView.tv_m_nick, position.toString() + "Text")
             ViewCompat.setTransitionName(itemView.img_profile, (position).toString() + "Img")
@@ -204,10 +205,7 @@ class FeedAdapterRank(
             tv_age.text = item.creater_age.toString()
             tv_gender.text = item.creater_gender.toString()
             tv_content.text = Jsoup.parse(item.content).text()
-
-//            position + 1
             tv_rank_num.text = (position + 1).toString()+"."
-//            tv_tag.text = "#"+item.tag_name.toString()
 
             Glide.with(itemView.context)
                 .load(item.creater_image_url)
@@ -242,11 +240,6 @@ class FeedAdapterRank(
             )
             m_seq = preferences.getString("inputMseq", "")
 
-            with(profile_layout){
-                setOnClickListener {
-                    onClickProfile.OnClickProfile(item, m_nick, itemView.img_profile)
-                }
-            }
 
             with(favoriteButton){
                 val feed = item
@@ -392,12 +385,7 @@ class FeedAdapterRank(
     }
 
     internal class LoadingViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
-        private val progressBar : RotateLoading = itemView.findViewById(R.id.rotateloading)
-
-        fun bindView() {
-            progressBar.start()
-        }
-
+        private val progressBar : ProgressBar = itemView.findViewById(R.id.rotateloading)
     }
 
 

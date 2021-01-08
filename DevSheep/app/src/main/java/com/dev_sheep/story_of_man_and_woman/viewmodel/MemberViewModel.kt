@@ -88,8 +88,15 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
 
                 val getMseq = context.getSharedPreferences("m_seq", AppCompatActivity.MODE_PRIVATE)
                 val m_seq = it.m_seq
+                val age = it.age
+                val nick_name = it.nick_name
+                val gender = it.gender
                 val getSeq : SharedPreferences.Editor = getMseq.edit()
                 getSeq.putString("inputMseq", m_seq);
+                getSeq.putString("inputAge", age);
+                getSeq.putString("inputNickName",nick_name);
+                getSeq.putString("inputGender", gender);
+
                 //꼭 commit()을 해줘야 값이 저장됩니다 ㅎㅎ
                 getSeq.commit();
 

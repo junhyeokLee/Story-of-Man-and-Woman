@@ -130,11 +130,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:background="@drawable/buttonshapewhitebg"
-                android:fontFamily="@font/ridi_batang"
+                android:fontFamily="@font/roboto_regular"
                 android:text="회원가입"
                 android:layout_weight="1"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="16dp"
                 android:textStyle="bold" />
 
@@ -146,10 +146,10 @@
                 android:layout_marginLeft="16dp"
                 android:layout_weight="1"
                 android:background="@drawable/buttonshapewhitebg"
-                android:fontFamily="@font/ridi_batang"
+                android:fontFamily="@font/roboto_regular"
                 android:text="로그인"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="16dp"
                 android:textStyle="bold" />
 
@@ -177,7 +177,7 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/tv_login_activity"
+                android:id="@+id/tv_search_password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"

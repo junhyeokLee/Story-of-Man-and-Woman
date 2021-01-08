@@ -7,13 +7,14 @@
 
 
 
-        <com.victor.loading.rotate.RotateLoading
+        <ProgressBar
             android:id="@+id/rotateloading"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            app:loading_width="5dp"
-            android:layout_gravity="center"
-            app:loading_color="@color/main_Accent"
-            android:layout_centerInParent="true"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:indeterminate="true"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            />
 
 </LinearLayout>

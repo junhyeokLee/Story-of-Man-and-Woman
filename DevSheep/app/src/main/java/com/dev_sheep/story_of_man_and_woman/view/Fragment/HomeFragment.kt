@@ -11,13 +11,11 @@ import android.os.Looper
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,8 +32,8 @@ import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedAdapter
 import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedCardAdapter
 import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedRankAdapter
 import com.dev_sheep.story_of_man_and_woman.view.adapter.Test_tag_Adapter
-import com.dev_sheep.story_of_man_and_woman.view.dialog.FilterDialog
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
+import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import com.facebook.shimmer.ShimmerFrameLayout
 import eu.micer.circlesloadingindicator.CirclesLoadingIndicator
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -56,6 +54,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     private val feedViewModel: FeedViewModel by viewModel()
+    private val memberViewModel: MemberViewModel by viewModel()
 
     private lateinit var m_seq : String
     private var recyclerView : RecyclerView? = null
@@ -65,6 +64,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     private var indicators: CircleIndicator? = null
     private var tollbar : androidx.appcompat.widget.Toolbar? = null
     private var progressBar : CirclesLoadingIndicator? = null
+    private var mNestedScrollView : NestedScrollView? = null
     lateinit var contexts : Context
     lateinit var mFeedAdapter: FeedAdapter
     lateinit var mSwipeRefreshLayout: SwipeRefreshLayout
@@ -72,14 +72,19 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     private var mRankAdapter: FeedRankAdapter? = null
     lateinit var mFeedCardAdater: FeedCardAdapter
     lateinit var mShimmerViewContainer: ShimmerFrameLayout
-    private var limit: Int = 10
+    lateinit var mProgressBar: ProgressBar
+
+    private var limit: Int = 20
     private var offset: Int = 0
     private var previousTotal = 0
-    private var loading = true
+    private var isLoadData = false
     private var visibleThreshold = 2
     private var firstVisibleItem = 0
     private var visibleItemCount = 0
     private var totalItemCount = 0
+    private var lastVisibleItemPosition = 0
+    private lateinit var linearLayoutManager: LinearLayoutManager // 태그 자동스크롤 위한 초기화 제한
+
 
 
     private var handler = Handler()
@@ -87,6 +92,9 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     private var page : Int = 0
     var scrollCount: Int = 0
     private lateinit var layoutManagers: LinearLayoutManager // 태그 자동스크롤 위한 초기화 제한
+
+    private var array_feed : List<Feed>? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -99,12 +107,13 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
         recyclerView = view.findViewById<View>(R.id.recyclerView) as RecyclerView?
         tollbar = view.findViewById<View>(R.id.toolbar) as androidx.appcompat.widget.Toolbar?
-        progressBar = view.findViewById<View>(R.id.progressBar) as CirclesLoadingIndicator?
+        mProgressBar = view.findViewById(R.id.progressBar) as ProgressBar
         recyclerViewTag = view.findViewById<View>(R.id.recyclerView_tag) as RecyclerView?
         mSwipeRefreshLayout = view.findViewById<View>(R.id.sr_refresh) as SwipeRefreshLayout
         mShimmerViewContainer = view.findViewById<View>(R.id.shimmer_view_container) as ShimmerFrameLayout
         viewpager = view.findViewById<View>(R.id.vp) as ViewPager?
         viewpager_card = view.findViewById<View>(R.id.vp_feed_card) as ViewPager
+        mNestedScrollView = view.findViewById(R.id.nestedScrollView) as NestedScrollView
         indicators = view.findViewById<CircleIndicator>(R.id.indicator)
         // 프래그먼트에 toolbar 세팅
         (activity as AppCompatActivity).setSupportActionBar(tollbar)
@@ -113,7 +122,6 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         mSwipeRefreshLayout.setColorSchemeResources(
             R.color.main_Accent
         );
-
 
         return view
     }
@@ -139,13 +147,14 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         // 전체보기
         // display loading indicator
         val handlerFeed: Handler = Handler(Looper.myLooper())
-
-        val single = FEED_SERVICE.getList()
+        linearLayoutManager = LinearLayoutManager(context)
+        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        val single = FEED_SERVICE.getListScroll(offset, limit)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
 
-                if(it.size > 0) {
+                if (it.size > 0) {
 
                     mFeedAdapter =
                         FeedAdapter(it, contexts, object : FeedAdapter.OnClickViewListener {
@@ -217,9 +226,9 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                                         ?.commit()
                                 }
                             }
-                        },object : FeedAdapter.OnClickDeleteFeedListener{
+                        }, object : FeedAdapter.OnClickDeleteFeedListener {
                             override fun OnClickDeleted(feed_seq: Int) {
-                                showDeletePopup(feedViewModel,feed_seq)
+                                showDeletePopup(feedViewModel, feed_seq)
                                 onResume()
 
                             }
@@ -231,16 +240,19 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                         mShimmerViewContainer.visibility = View.GONE
 //                    progressBar?.visibility = View.GONE
                         recyclerView?.apply {
-                            var linearLayoutMnager = LinearLayoutManager(this.context)
-                            this.layoutManager = linearLayoutMnager
+                            this.layoutManager = linearLayoutManager
                             this.itemAnimator = DefaultItemAnimator()
+                            this.setHasFixedSize(true)
                             this.adapter = mFeedAdapter
 
+
                             setViewPager(it)
+
 
                         }
                     }, 1000)
                 }
+
             }, {
                 Log.e("feed 보기 실패함", "" + it.message)
             })
@@ -250,7 +262,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
 
-                if(it.size > 0) {
+                if (it.size > 0) {
 
                     recyclerViewTag?.apply {
                         var recycler_this = this
@@ -291,51 +303,153 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 Log.e("feed 보기2 실패함", "" + it.message)
             })
 
-//        val call = testService.getList()
-//        call.enqueue(object : Callback<List<Feed>?>{
-//            override fun onFailure(call: Call<List<Feed>?>, t: Throwable) {
-//                Log.e("errors",t.message.toString())
-//            }
-//
-//            override fun onResponse(call: Call<List<Feed>?>, response: Response<List<Feed>?>) {
-//                response?.body()?.let { tests: List<Feed> ->
-//                    thread {
-//                        Log.e("getFeed성공",tests.toString())
-//                        Log.e("feed 0 title value = ",tests.get(0).title)
-//
-//                        mFeedAdapter = FeedAdapter(tests, contexts,childFragmentManager)
-//                        recyclerView?.apply {
-//                            var linearLayoutMnager = LinearLayoutManager(this.context)
-//                            this.layoutManager = linearLayoutMnager
-//                            adapter = mFeedAdapter
-//                        }
-//
-//                        if (tests.isNotEmpty()) {
-//                            progressBar?.visibility = View.GONE
-//
-//                        }else {
-//                            progressBar?.visibility = View.VISIBLE
-//                        }
-//
-//
-//                    }
-//                }
-//            }
-//
-//        })
+        // 무한스크
+        mNestedScrollView!!.setOnScrollChangeListener(object : NestedScrollView.OnScrollChangeListener {
+            override fun onScrollChange(
+                v: NestedScrollView?,
+                scrollX: Int,
+                scrollY: Int,
+                oldScrollX: Int,
+                oldScrollY: Int
+            ) {
+                if (v?.getChildAt(v.getChildCount() - 1) != null) {
+                    if (scrollY >= v.getChildAt(v.getChildCount() - 1)
+                            .getMeasuredHeight() - v.getMeasuredHeight() &&
+                        scrollY > oldScrollY
+                    ) {
+                        visibleItemCount = linearLayoutManager.getChildCount()
+                        totalItemCount = linearLayoutManager.getItemCount()
+                        lastVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition()
+//                        if (isLoadData()) {
+                            if (visibleItemCount + lastVisibleItemPosition >= totalItemCount) {
+                                // 마지막 스크롤에 프로그래스바 보여주기 및 무한스크롤
+//                                isLoadData = true
 
-//        feedViewModel.getListFeed().observe(this, Observer {
-//            setAdapter(it)
-//        })
+                                LoadMoreData()
+//                        Load Your Data
+                            }
+//                        }
+                    }
+                }
+            }
 
-        // 페이징 처리
-//        feedViewModel.getListFirst(limit,offset).observe(this, Observer { test ->
-//            setAdapter(test)
-//        })
+
+        })
 
     }
 
-    private fun setViewPager(feed:List<Feed>){
+    private fun LoadMoreData() {
+
+//        if(isLoadData == true) {
+//            mProgressBar.visibility = View.VISIBLE
+//        }else{
+//            mProgressBar.visibility = View.GONE
+//        }
+
+        linearLayoutManager = LinearLayoutManager(context)
+        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        Handler().postDelayed({
+            val single = FEED_SERVICE.getListScroll(offset, addLimit())
+            single.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+
+                    mFeedAdapter =
+                        FeedAdapter(it, contexts, object : FeedAdapter.OnClickViewListener {
+                            override fun OnClickFeed(
+                                feed: Feed,
+                                tv: TextView,
+                                iv: ImageView,
+                                cb: CheckBox,
+                                cb2: CheckBox,
+                                position: Int
+                            ) {
+                                feedViewModel.increaseViewCount(feed.feed_seq)
+
+                                val lintent = Intent(context, FeedActivity::class.java)
+                                lintent.putExtra("feed_seq", feed.feed_seq)
+                                lintent.putExtra("checked" + feed.feed_seq, cb.isChecked)
+                                lintent.putExtra("creater_seq", feed.creater_seq)
+                                lintent.putExtra("bookmark_checked" + feed.feed_seq, cb2.isChecked)
+                                lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
+//                        context.transitionName = position.toString()
+                                (context as Activity).startActivity(lintent)
+                                (context as Activity).overridePendingTransition(
+                                    R.anim.fragment_fade_in,
+                                    R.anim.fragment_fade_out
+                                )
+
+                            }
+                        }, object : FeedAdapter.OnClickLikeListener {
+                            override fun OnClickFeed(feed_seq: Int, boolean_value: String) {
+                                feedViewModel.increaseLikeCount(feed_seq, boolean_value)
+                            }
+
+                        }, object : FeedAdapter.OnClickBookMarkListener {
+                            override fun OnClickBookMark(
+                                m_seq: String,
+                                feed_seq: Int,
+                                boolean_value: String
+                            ) {
+                                feedViewModel.onClickBookMark(m_seq, feed_seq, boolean_value)
+                            }
+
+                        }, object : FeedAdapter.OnClickProfileListener {
+                            override fun OnClickProfile(feed: Feed, tv: TextView, iv: ImageView) {
+
+                                val trId = ViewCompat.getTransitionName(tv).toString()
+                                val trId1 = ViewCompat.getTransitionName(iv).toString()
+
+                                if (feed.creater_seq == m_seq) {
+                                    activity?.supportFragmentManager
+                                        ?.beginTransaction()
+                                        ?.addSharedElement(tv, trId)
+                                        ?.addSharedElement(iv, trId1)
+                                        ?.addToBackStack("ProfileImg")
+                                        ?.replace(
+                                            R.id.frameLayout,
+                                            ProfileFragment.newInstance(feed, trId, trId1)
+                                        )
+                                        ?.commit()
+                                } else {
+                                    activity?.supportFragmentManager
+                                        ?.beginTransaction()
+                                        ?.addSharedElement(tv, trId)
+                                        ?.addSharedElement(iv, trId1)
+                                        ?.addToBackStack("ProfileImg")
+                                        ?.replace(
+                                            R.id.frameLayout,
+                                            ProfileUsersFragment.newInstance(feed, trId, trId1)
+                                        )
+                                        ?.commit()
+                                }
+                            }
+                        }, object : FeedAdapter.OnClickDeleteFeedListener {
+                            override fun OnClickDeleted(feed_seq: Int) {
+                                showDeletePopup(feedViewModel, feed_seq)
+                                onResume()
+
+                            }
+
+                        })
+                    recyclerView?.apply {
+//                            var linearLayoutMnager = LinearLayoutManager(this.context)
+                        this.layoutManager = linearLayoutManager
+                        this.itemAnimator = DefaultItemAnimator()
+                        this.adapter = mFeedAdapter
+                    }
+
+                }, {
+                    Log.e("스크롤 보기 실패함", "" + it.message)
+                })
+            // 스크롤후 리스트 생성시 프로그래스바 없애기
+//            isLoadData = false
+
+
+        }, 500)
+    }
+
+    private fun setViewPager(feed: List<Feed>){
 
         if(!isAdded()) return
 
@@ -362,7 +476,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
         }
 
-        mFeedCardAdater = FeedCardAdapter(feed,contexts,feedViewModel)
+        mFeedCardAdater = FeedCardAdapter(contexts, feedViewModel, memberViewModel)
         viewpager_card?.apply {
             this.adapter = mFeedCardAdater
             this.setPadding(72, 0, 72, 0);
@@ -387,100 +501,6 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         }
     }
 
-//    private fun setTagAdapter(){
-//
-//        val call = testService.getTagList()
-//        call.enqueue(object : Callback<List<Tag>?>{
-//            override fun onFailure(call: Call<List<Tag>?>, t: Throwable) {
-//                Log.e("errors",t.message.toString())
-//            }
-//
-//            override fun onResponse(call: Call<List<Tag>?>, response: Response<List<Tag>?>) {
-//                response?.body()?.let { tag: List<Tag> ->
-//                    thread {
-//                        Log.e("getTag성공",tag.toString())
-//                        recyclerViewTag?.apply {
-//                            var recycler_this = this
-//                            layoutManagers = object : LinearLayoutManager(context) {
-//                                override fun smoothScrollToPosition(recyclerView: RecyclerView, state: RecyclerView.State?, position: Int) {
-//                                    val smoothScroller = object : LinearSmoothScroller(context) {
-//                                        override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics?): Float {
-//                                            return 10.0f;
-//                                        }
-//                                    }
-//                                    smoothScroller.targetPosition = position
-//                                    startSmoothScroll(smoothScroller)
-//                                }
-//                            }
-//                            mTagAdapter = object : Test_tag_Adapter(tag,contexts) {
-//                                override fun load() {
-//                                    if (layoutManagers.findFirstVisibleItemPosition() > 1) {
-//                                        mTagAdapter?.notifyItemMoved(0, tag.size - 1)
-//                                    }
-//                                }
-//                            }
-//                            layoutManagers.orientation = LinearLayoutManager.HORIZONTAL
-//                            recycler_this.layoutManager = layoutManagers
-//                            recycler_this.setHasFixedSize(true)
-//                            recycler_this.setItemViewCacheSize(10)
-//                            recycler_this.isDrawingCacheEnabled = true
-//                            recycler_this.drawingCacheQuality = View.DRAWING_CACHE_QUALITY_LOW
-//                            recycler_this.adapter = mTagAdapter
-//                            autoScroll(tag, mTagAdapter)
-//
-//                        }
-//                    }
-//                }
-//            }
-//
-//        })
-//
-//
-//    }
-
-    //    private fun setAdapter(feed:List<Feed>) {
-//
-//
-//
-////        mTagAdapter = Test_tag_Adapter(feed,view!!.context)
-////        mRankAdapter = FeedRankAdapter(contexts,childFragmentManager)
-////        mFeedAdapter.notifyDataSetChanged()
-//
-////        viewpager?.apply {
-////            adapter = mRankAdapter
-////
-////            this.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
-////                override fun onPageScrollStateChanged(state: Int) {
-////                }
-////                override fun onPageScrolled(
-////                    position: Int,
-////                    positionOffset: Float,
-////                    positionOffsetPixels: Int
-////                ) {
-////                }
-////                override fun onPageSelected(position: Int) {
-////                   page = position
-////                }
-////            })
-////            indicators?.setViewPager(this)
-////
-////        }
-//
-//        mFeedAdapter = FeedAdapter(feed, contexts,childFragmentManager)
-//        recyclerView?.apply {
-//            var linearLayoutMnager = LinearLayoutManager(this.context)
-//            this.layoutManager = linearLayoutMnager
-//            adapter = mFeedAdapter
-//        }
-//
-//
-//        if (feed.isNotEmpty()) {
-//            progressBar?.visibility = View.GONE
-//
-//        }else {
-//            progressBar?.visibility = View.VISIBLE
-//        }
-//    }
 
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -492,13 +512,6 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         super.onOptionsItemSelected(item)
         when(item.itemId){
 
-//            R.id.filter -> {
-//
-////                feedViewModel.getFeed()
-//                val dialog = FilterDialog()
-//                dialog.show(childFragmentManager, dialog.tag)
-//
-//            }
         }
         return true
     }
@@ -549,7 +562,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             handler.postDelayed(this, delay.toLong())
         }
     }
-    private fun showDeletePopup(feedViewmodel: FeedViewModel,feed_seq: Int) {
+    private fun showDeletePopup(feedViewmodel: FeedViewModel, feed_seq: Int) {
         val fragment = HomeFragment()
 
         val inflater =
@@ -596,6 +609,16 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         mSwipeRefreshLayout.setRefreshing(false)
     }
 
+
+    private fun addLimit() : Int{
+        limit += 20
+    return limit
+    }
+
+    private fun addOffset(): Int{
+        offset += 10
+        return offset
+    }
 
 
 }

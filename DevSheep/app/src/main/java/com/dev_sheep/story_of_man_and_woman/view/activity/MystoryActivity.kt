@@ -92,13 +92,22 @@ class MystoryActivity : AppCompatActivity() {
                 tv_creater.text = it.nick_name
                 tv_gender.text = it.gender
                 tv_age.text = it.age
+                if(it.profile_img.toString().equals("null")){
+                    Glide.with(this)
+                        .load("http://storymaw.com/data/member/user.png")
+                        .apply(RequestOptions().circleCrop())
+                        .placeholder(android.R.color.transparent)
+                        .error(R.drawable.error_loading)
+                        .into(img_profile)
+                }else {
+                    Glide.with(this)
+                        .load(it.profile_img)
+                        .apply(RequestOptions().circleCrop())
+                        .placeholder(android.R.color.transparent)
+                        .error(R.drawable.error_loading)
+                        .into(img_profile)
+                }
 
-                Glide.with(this)
-                    .load(it.profile_img)
-                    .apply(RequestOptions().circleCrop())
-                    .placeholder(android.R.color.transparent)
-                    .error(R.drawable.error_loading)
-                    .into(img_profile)
             },
                 {
                     Log.e("errors", it.message)

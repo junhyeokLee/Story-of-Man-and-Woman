@@ -48,11 +48,11 @@ interface FeedService {
     @GET("feed_get_all.php")
     fun getList(): Observable<List<Feed>>
 
-    @GET("feed_get_today.php")
-    fun getTodayList(): Observable<List<Feed>>
+    @GET("feed_get_scroll.php")
+    fun getListScroll(@Query("offset") offset: Int,@Query("limit") limit: Int): Observable<List<Feed>>
 
-    @GET("feed_get_recommend.php")
-    fun getRecommendList(): Observable<List<Feed>>
+    @GET("feed_get_today_recommend.php")
+    fun getTodayList(@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
 
     @GET("feed_get_best.php")
     fun getBestList(): Observable<List<Feed>>
@@ -60,8 +60,23 @@ interface FeedService {
     @GET("feed_get_week.php")
     fun getWeekList(): Observable<List<Feed>>
 
+    @GET("feed_get_man_age_recommend.php")
+    fun getAgeManRecommendList(@Query("age") age: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
+
+    @GET("feed_get_woman_age_recommend.php")
+    fun getAgeWomanRecommendList(@Query("age") age: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
+
+    @GET("feed_get_view_recommend.php")
+    fun getViewRecommendList(@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
+
+    @GET("feed_get_like_recommend.php")
+    fun getLikeRecommendList(@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
+
     @GET("feed_get_tag_search.php")
     fun getTagSearch(@Query("tag_seq") tag_seq: Int): Single<List<Feed>>
+
+    @GET("feed_get_search_card.php")
+    fun getSearchCard(@Query("tag_seq") tag_seq: Int): Single<List<Feed>>
 
     @GET("feed_get_mystory.php")
     fun getListMystory(@Query("m_seq") m_seq: String): Single<List<Feed>>

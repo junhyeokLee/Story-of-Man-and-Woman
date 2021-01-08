@@ -1,12 +1,15 @@
 package com.dev_sheep.story_of_man_and_woman.view.adapter
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -14,6 +17,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
+import com.dev_sheep.story_of_man_and_woman.view.activity.FeedRankActivity
 import kotlinx.android.synthetic.main.adapter_feed.view.*
 import kotlinx.android.synthetic.main.adapter_feed_card_item.view.*
 import kotlinx.android.synthetic.main.adapter_feed_card_item.view.tv_title
@@ -21,8 +25,7 @@ import kotlinx.android.synthetic.main.adapter_feed_card_item.view.tv_title
 class FeedCardItemAdapter(
     private val list: List<Feed>,
     private var context: Context,
-    private val onClickViewListener: FeedCardItemAdapter.OnClickViewListener
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private var tv_context: TextView) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     lateinit var mcontext: Context
     private val VIEW_TYPE_ITEM = 0
 
@@ -41,8 +44,7 @@ class FeedCardItemAdapter(
                 view = LayoutInflater.from(parent.context).inflate(R.layout.adapter_feed_card_item, parent, false)
                 FeedHolder(
                     view,
-                    list,
-                    onClickViewListener
+                    list
                 )
             }
 
@@ -61,7 +63,7 @@ class FeedCardItemAdapter(
             VIEW_TYPE_ITEM -> {
                 val viewHolder: FeedHolder = holder as FeedHolder
                 val feed = list[position]
-                viewHolder.bindView(feed, position)
+                viewHolder.bindView(feed, position,context,tv_context)
 
             }
 
@@ -70,7 +72,15 @@ class FeedCardItemAdapter(
     }
 
     override fun getItemCount(): Int {
-        return 3
+
+        var count = 0
+
+        if(list.size <= 3){
+            count = list.size
+        }else{
+            count = 3
+        }
+        return count
     }
 
 
@@ -81,12 +91,8 @@ class FeedCardItemAdapter(
 
     internal class FeedHolder(
         itemView: View,
-        list: List<Feed>,
-        onClickViewListener: FeedCardItemAdapter.OnClickViewListener
-    ) :  RecyclerView.ViewHolder(itemView) {
+        list: List<Feed>) :  RecyclerView.ViewHolder(itemView) {
         private val iv_feed_card : ImageView = itemView.findViewById(R.id.iv_feed_card)
-        private val linearLayoutBackground : LinearLayout = itemView.findViewById(R.id.linearLayoutBackground)
-        private val onClickFeedView = onClickViewListener
         private var favoriteButton: CheckBox = itemView.findViewById(R.id.favorite_btn)
         private val bookmarkButton: CheckBox = itemView.findViewById(R.id.bookmark)
         private val layoutTitle : LinearLayout = itemView.findViewById(R.id.layout_title)
@@ -97,9 +103,18 @@ class FeedCardItemAdapter(
         private val tv_age : TextView = itemView.findViewById(R.id.tv_age)
 
         @SuppressLint("Range")
-        fun bindView(item: Feed, position: Int) {
+        fun bindView(item: Feed, position: Int,context: Context,tv_context:TextView) {
 
             itemView.tv_title.text = item.title
+            itemView.layout_card_item.setOnClickListener {
+                val lintent = Intent(context, FeedRankActivity::class.java)
+                lintent.putExtra("tv_title", tv_context.text.toString())
+                val options: ActivityOptionsCompat =
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(context as Activity,
+                        tv_context as TextView, "RankName")
+                (context as Activity).startActivity(lintent, options.toBundle())
+
+            }
 
             if(position == 0) {
                 itemView.tv_rank_num.text = "1."
@@ -174,52 +189,9 @@ class FeedCardItemAdapter(
             }
 
 
-            with(linearLayoutBackground){
-                setOnClickListener {
-                    onClickFeedView.OnClickFeed(
-                        item,
-                        favoriteButton,
-                        bookmarkButton,
-                        position
-                    )
-                }
-            }
-
-            with(layoutTitle){
-                setOnClickListener {
-                    onClickFeedView.OnClickFeed(
-                        item,
-                        favoriteButton,
-                        bookmarkButton,
-                        position
-                    )
-                }
-            }
-
-            with(layoutBottom){
-                setOnClickListener {
-                    onClickFeedView.OnClickFeed(
-                        item,
-                        favoriteButton,
-                        bookmarkButton,
-                        position
-                    )
-                }
-            }
-
-
         }
 
 
     }
 
-    // omeFragment에서 클릭시 뷰모델 사용하여 조회수 올리기위함
-    interface OnClickViewListener {
-        fun OnClickFeed(
-            feed: Feed,
-            cb: CheckBox,
-            cb2: CheckBox,
-            position: Int
-        )
-    }
 }
