@@ -136,8 +136,6 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     lateinit var nickname: String
     lateinit var email: String
     lateinit var preferecnes_img : ImageView
-    lateinit var preferecnes_message : ImageView
-    lateinit var followChecked : CheckBox
     lateinit var followerCount : TextView
     lateinit var followCount : TextView
     lateinit var gender : TextView
@@ -267,8 +265,6 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             }
         })
 
-//        initData()
-
         profileImage?.setOnClickListener(this)
         profileAdd?.setOnClickListener(this)
         backgroundAdd?.setOnClickListener(this)
@@ -280,10 +276,6 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         profileEdit.setOnClickListener(this)
         memberViewModel.memberMySubscribeCount(my_m_seq, followCount)
         memberViewModel.memberUserSubscribeCount(my_m_seq, followerCount)
-
-//        profileDot.setMessageDot()
-//        val uid = FirebaseAuth.getInstance().uid
-//        val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$uid")
 
 
         return view
@@ -336,14 +328,14 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                     intro.text = it.memo.toString()
                 }
                     if (it.background_img != null) {
-                        Glide.with(this)
+                        Glide.with(activity!!)
                             .load(it.background_img)
                             .placeholder(android.R.color.transparent)
                             .into(profileBackground)
                     }
 
                 }, {
-                    Log.e("실패 Get Member", "" + it.message)
+                    Log.d("실패 Get Member", "" + it.message)
                 })
 
 
@@ -390,7 +382,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                     }
 
                 }, {
-                    Log.e("실패 Get Member", "" + it.message)
+                    Log.d("실패 Get Member", "" + it.message)
                 })
         }
 
@@ -399,26 +391,19 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     }
 
     private fun listenForMessages() {
-        val fromId = FirebaseAuth.getInstance().uid
-        val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId")
+        val Id = FirebaseAuth.getInstance().uid
+        val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$Id/")
 
         ref.addChildEventListener(object: ChildEventListener {
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val chatMessage = p0.getValue(FB_ChatMessage::class.java)
-
-                Log.e("ProfileFragment chat massages",""+chatMessage?.username)
-                Log.e("ProfileFragment chat massages readvalue",""+chatMessage?.readUsers)
 
 //                RedDotImageView(context,chatMessage?.readUsers as Boolean)
 
                 if(chatMessage?.readUsers == false){
                     profileMessageDot.visibility = View.VISIBLE
                     profileMessageEmpty.visibility = View.GONE
-            }else{
-                    profileMessageEmpty.visibility = View.VISIBLE
-                    profileMessageDot.visibility = View.GONE
-                }
-//                    profileMessageDot.setMessageDot(chatMessage?.readUsers as Boolean)
+                 }
 
 
             }
@@ -449,6 +434,10 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         initData()
     }
 
+    override fun onPause() {
+        super.onPause()
+        initData()
+    }
 
     private fun collapsingToolbarInit(){
 
@@ -553,10 +542,10 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             REQUEST_TAKE_PHOTO -> {
                 if (requestCode == Activity.RESULT_OK) {
                     try {
-                        Log.e("REQUEST_TAKE_PHOTO", "OK!!!!!!")
+                        Log.d("REQUEST_TAKE_PHOTO", "OK!!!!!!")
 //                        galleryAddPic()
                     } catch (e: Exception) {
-                        Log.e("REQUEST_TAKE_PHOTO", e.toString())
+                        Log.d("REQUEST_TAKE_PHOTO", e.toString())
                     }
                     refreshFragment(this, getFragmentManager()!!)
                 } else {
@@ -569,10 +558,10 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             REQUEST_TAKE_PHOTO_BACKGROUND -> {
                 if (requestCode == Activity.RESULT_OK) {
                     try {
-                        Log.e("REQUEST_TAKE_PHOTO BACKGROUND", "OK!!!!!!")
+                        Log.d("REQUEST_TAKE_PHOTO BACKGROUND", "OK!!!!!!")
 //                        galleryAddPic()
                     } catch (e: Exception) {
-                        Log.e("REQUEST_TAKE_PHOTO BACKGROUND", e.toString())
+                        Log.d("REQUEST_TAKE_PHOTO BACKGROUND", e.toString())
                     }
                     refreshFragment(this, getFragmentManager()!!)
                 } else {
@@ -592,7 +581,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
 
                             cropImage(REQUEST_IMAGE_CROP)
                         } catch (e: IOException) {
-                            Log.e("TAKE_ALBUM_SINLE_ERROR", e.toString())
+                            Log.d("TAKE_ALBUM_SINLE_ERROR", e.toString())
                         }
                     }
                     refreshFragment(this, getFragmentManager()!!)
@@ -608,7 +597,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                             albumURI = Uri.fromFile(albumFile)
                             cropImage(REQUEST_IMAGE_CROP_BACKGROUND)
                         } catch (e: IOException) {
-                            Log.e("TAKE_ALBUM_SINLE_ERROR", e.toString())
+                            Log.d("TAKE_ALBUM_SINLE_ERROR", e.toString())
                         }
                     }
                     refreshFragment(this, getFragmentManager()!!)
@@ -633,8 +622,6 @@ class ProfileFragment: Fragment(),View.OnClickListener {
 
                     resultCall.enqueue(object : retrofit2.Callback<Member?> {
                         override fun onResponse(call: Call<Member?>, response: Response<Member?>) {
-                            Log.e("성공함", response.toString())
-                            Log.e("filename", albumFile?.name)
                             memberViewModel.editProfileImg(
                                 my_m_seq,
                                 "http://www.storymaw.com/data/member/" + email + "/" + albumFile?.name.toString()
@@ -644,7 +631,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                         }
 
                         override fun onFailure(call: Call<Member?>, t: Throwable) {
-                            Log.e("에러", t.message)
+                            Log.d("에러", t.message)
                         }
 
                     })
@@ -672,8 +659,6 @@ class ProfileFragment: Fragment(),View.OnClickListener {
 
                     resultCall.enqueue(object : retrofit2.Callback<Member?> {
                         override fun onResponse(call: Call<Member?>, response: Response<Member?>) {
-                            Log.e("성공함", response.toString())
-                            Log.e("filename", albumFile?.name.toString())
                             memberViewModel.editProfileBackgroundImg(
                                 my_m_seq,
                                 "http://www.storymaw.com/data/member/" + email + "/" + albumFile?.name.toString()
@@ -683,7 +668,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                         }
 
                         override fun onFailure(call: Call<Member?>, t: Throwable) {
-                            Log.e("에러", t.message)
+                            Log.d("에러", t.message)
                         }
                     })
                 }
@@ -891,6 +876,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
 //                checkPermission()
 
     }
+
 
 
     fun refreshFragment(fragment: Fragment, fragmentManager: FragmentManager) {

@@ -1,10 +1,13 @@
 package com.dev_sheep.story_of_man_and_woman.viewmodel
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.SharedPreferences
 import android.util.Log
+import android.view.View
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
@@ -15,13 +18,20 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.FB_User
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Notification
 import com.dev_sheep.story_of_man_and_woman.data.remote.api.MemberService
+import com.dev_sheep.story_of_man_and_woman.utils.RedDotImageView
+import com.dev_sheep.story_of_man_and_woman.utils.RedDotImageView2
 import com.dev_sheep.story_of_man_and_woman.view.Fragment.SearchTitleFragment.Companion.TAG
+import com.dev_sheep.story_of_man_and_woman.view.activity.AlarmActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.MainActivity
+import com.google.firebase.analytics.FirebaseAnalytics.Event.SEARCH
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_home.*
+import retrofit2.http.Field
 
 
 class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
@@ -38,8 +48,6 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.e("Insert Member", "" + it.toString())
-
                 if (it.toString() == "true") { // email 중복되면 false 반환 nick_name 중복일땐 false_nick_name
 
                     // 회원가입시 파이어베이스 DB에도 저장
@@ -74,7 +82,7 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
                 }
 
             }, {
-                Log.e("실패함 Insert Member", "" + it.message)
+                Log.d("실패함 Insert Member", "" + it.message)
             })
     }
 
@@ -84,8 +92,6 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.e("성공함 Get Member", "" + it.m_seq)
-
                 val getMseq = context.getSharedPreferences("m_seq", AppCompatActivity.MODE_PRIVATE)
                 val m_seq = it.m_seq
                 val age = it.age
@@ -101,7 +107,7 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
                 getSeq.commit();
 
             },{
-                Log.e("실패 Get Member", "" + it.message)
+                Log.d("실패 Get Member", "" + it.message)
             })
 
     }
@@ -111,10 +117,10 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.e("성공함 profile edit", "" + it.profile_img)
+                Log.d("성공함 profile edit", "" + it.profile_img)
 
             },{
-                Log.e("실패 profile edit", "" + it.message)
+                Log.d("실패 profile edit", "" + it.message)
             })
 
     }
@@ -123,10 +129,10 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.e("성공함 profile backgorund edit", "" + it.profile_img)
+                Log.d("성공함 profile backgorund edit", "" + it.profile_img)
 
             },{
-                Log.e("실패 profile backgorund edit", "" + it.message)
+                Log.d("실패 profile backgorund edit", "" + it.message)
             })
 
     }
@@ -141,8 +147,6 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.e("성공함 Login", "" + it.toString())
-
                 performLogin(email,password,context) // 파이어베이스 로그인
 
                 if (it.toString() == "true") { // email 중복되면 false 반환
@@ -168,7 +172,7 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
                 }
 
             }, {
-                Log.e("실패함 Insert Member", "" + it.message)
+                Log.d("실패함 Insert Member", "" + it.message)
             })
     }
 
@@ -180,11 +184,11 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
                 if(count.text == "구독하기" || count.text == "구독취소"){
 
                 }else {
-                    Log.e("성공함 구독", "" + it.toString())
                     if (it.toString() == "true") {
                         var value = Integer.parseInt(count.text.toString())
                         var result = value + 1
                         count.text = result.toString()
+
                     } else {
                         var value = Integer.parseInt(count.text.toString())
                         var result = value - 1
@@ -192,19 +196,31 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
                     }
                 }
             }, {
-                Log.e("실패함 구독", "" + it.message)
+                Log.d("실패함 구독", "" + it.message)
 
             })
     }
+    fun getMemberNickName(m_seq:String,nick_name: TextView){
+        val single = memberService.getMemberNickName(m_seq)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                nick_name.text = it.toString()
+            }, {
+            })
+
+    }
+
     fun memberSubscribe2(target_m_seq:String,m_seq:String,type:String){
         val single = memberService.memberSubscribe(target_m_seq,m_seq,type)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.e("성공함 구독", "" + it.toString())
+                if(type.equals("true")) {
 
+                }
             }, {
-                Log.e("실패함 구독", "" + it.message)
+                Log.d("실패함 구독", "" + it.message)
 
             })
     }
@@ -222,7 +238,6 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
                     checkBox.isChecked = false
                     checkBox.text = "구독하기"
                     checkBox.setTextColor(context.getColor(R.color.black))
-
                 }
 
             }, {
@@ -248,30 +263,34 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
             })
     }
 
-    fun getSubscribing(m_seq: String){
-        val single = memberService.getSubscribing(m_seq)
-        single.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                Log.e("성공함 ", "" + it.toString())
-            }, {
-                Log.e("실패함", "" + it.message)
-
-            })
-    }
-    fun getSubscriber(m_seq: String){
-        val single = memberService.getSubsribers(m_seq)
-        single.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                Log.e("성공함 ", "" + it.toString())
-            }, {
-                Log.e("실패함", "" + it.message)
-
-            })
-    }
 
     fun getMemberProfileImgFromNickName(nick_name: String,profile: ImageView,context: Context) {
+
+        val single = memberService.getMemberProfileImgFromNickName(nick_name)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                if(it.toString() == ""){
+                    Glide.with(context)
+                        .load("http://www.storymaw.com/data/member/empty_user.png")
+                        .apply(RequestOptions().circleCrop())
+                        .placeholder(android.R.color.transparent)
+                        .into(profile)
+                }else{
+                    Glide.with(context)
+                        .load(it.toString())
+                        .apply(RequestOptions().circleCrop())
+                        .placeholder(android.R.color.transparent)
+                        .into(profile)
+                }
+
+
+            }, {
+                Log.e("실패함", "" + it.message)
+
+            })
+    }
+    fun getMemberProfileImgFromNickNameDot(nick_name: String, profile: RedDotImageView2, context: Context) {
 
         val single = memberService.getMemberProfileImgFromNickName(nick_name)
         single.subscribeOn(Schedulers.io())
@@ -298,13 +317,129 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
 
             })
     }
+    fun getProfileImg(m_seq: String,profile: ImageView,context: Context){
+        val single = memberService.getMemberProfileImgFromMseq(m_seq)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                if(it.toString() == "" || it.toString() == null){
+                    Glide.with(context)
+                        .load("http://www.storymaw.com/data/member/empty_user.png")
+                        .apply(RequestOptions().circleCrop())
+                        .placeholder(android.R.color.transparent)
+                        .into(profile)
+                }else{
+                    Glide.with(context)
+                        .load(it.toString())
+                        .apply(RequestOptions().circleCrop())
+                        .placeholder(android.R.color.transparent)
+                        .into(profile)
+                }
+
+
+            }, {
+                Log.d("getProfileImg failed", "" + it.message)
+
+            })
+    }
+    fun getProfileImgDot(m_seq: String, profile: RedDotImageView2, context: Context){
+        val single = memberService.getMemberProfileImgFromMseq(m_seq)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                if(it.toString() == "" || it.toString() == null){
+                    Glide.with(context)
+                        .load("http://www.storymaw.com/data/member/empty_user.png")
+                        .apply(RequestOptions().circleCrop())
+                        .placeholder(android.R.color.transparent)
+                        .into(profile)
+                }else{
+                    Log.e("이미지가져옴 ", "" + it.toString())
+                    Glide.with(context)
+                        .load(it.toString())
+                        .apply(RequestOptions().circleCrop())
+                        .placeholder(android.R.color.transparent)
+                        .into(profile)
+                }
+
+
+
+            }, {
+                Log.d("실패함", "" + it.message)
+
+            })
+        }
 
     fun updateProfile(m_seq: String,memo:String,gender:String,age:String){
         val single = memberService.updateProfile(m_seq,memo,gender,age)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.d("업데이트 프로필","memo = "+memo+"  age = "+age+"  gender = "+gender)
+
+            }, {
+                Log.d("실패함", "" + it.message)
+
+            })
+    }
+
+    fun addNotifiaction(m_seq: String,target_m_seq: String,noti_content_seq: Int,noti_type: String, noti_message: String){
+        val single = memberService.addNotification(m_seq,target_m_seq,noti_content_seq,noti_type,noti_message)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.d("Notification","Logs = "+it.toString())
+
+            }, {
+                Log.d("실패함", "" + it.message)
+
+            })
+    }
+
+    fun editNotification(noti_seq: Int){
+        val single = memberService.editNotification(noti_seq)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.d("Notification","Logs = "+it.toString())
+            },{
+                Log.d("실패함", "" + it.message)
+
+            })
+    }
+
+
+    @SuppressLint("CheckResult")
+    fun getNotificationCount(target_m_seq: String, alarm: ImageView, alarmDot: RedDotImageView,context: Context){
+
+        alarmDot.setOnClickListener {
+            val lintent = Intent(context, AlarmActivity::class.java)
+            (context as Activity).startActivity(lintent)
+        }
+
+        alarm.setOnClickListener {
+            val lintent = Intent(context, AlarmActivity::class.java)
+            (context as Activity).startActivity(lintent)
+        }
+
+
+        val single = memberService.getNotification(target_m_seq)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+
+               for(noti in it){
+
+                   if(noti.toString().contains("null")){
+                       Log.e("noti not null",""+noti.toString())
+                       alarm.visibility = View.GONE
+                       alarmDot.visibility = View.VISIBLE
+                   }
+//                   else {
+//                       Log.e("noti null",""+noti.toString())
+//                       alarm.visibility = View.VISIBLE
+//                       alarmDot.visibility = View.GONE
+//                   }
+               }
 
             }, {
                 Log.e("실패함", "" + it.message)
@@ -325,13 +460,13 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
             .addOnCompleteListener {
                 if (!it.isSuccessful) return@addOnCompleteListener
 
-                Log.e("가입성공", "가입성공?: ${it.result!!.user!!.uid}")
+                Log.d("가입성공", "가입성공?: ${it.result!!.user!!.uid}")
                 saveUserToFirebaseDatabase(nickname)
 
 
             }
             .addOnFailureListener{
-                Log.e(TAG, "가입실패?: ${it.message}")
+                Log.d(TAG, "가입실패?: ${it.message}")
             }
     }
 
@@ -348,10 +483,10 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
             .addOnCompleteListener {
                 if (!it.isSuccessful) return@addOnCompleteListener
-                Log.e("Login", "Successfully logged in: ${it.result?.user?.uid}")
+                Log.d("Login", "Successfully logged in: ${it.result?.user?.uid}")
             }
             .addOnFailureListener {
-                Log.e(TAG, "파이어베이스 실패: ${it.message}")
+                Log.d(TAG, "파이어베이스 실패: ${it.message}")
             }
     }
     private fun saveUserToFirebaseDatabase(username: String) {
@@ -362,11 +497,11 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
 
         ref.setValue(user)
             .addOnSuccessListener {
-                Log.e(TAG, "파이어베이스 유저 저장")
+                Log.d(TAG, "파이어베이스 유저 저장")
 
             }
             .addOnFailureListener {
-                Log.e(TAG, "파이어베이스 유저 저장실패: ${it.message}")
+                Log.d(TAG, "파이어베이스 유저 저장실패: ${it.message}")
             }
     }
 

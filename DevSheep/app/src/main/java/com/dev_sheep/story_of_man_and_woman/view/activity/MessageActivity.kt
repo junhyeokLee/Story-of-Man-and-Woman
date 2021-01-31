@@ -1,10 +1,12 @@
 package com.dev_sheep.story_of_man_and_woman.view.activity
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,6 +23,10 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_message.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 class MessageActivity : AppCompatActivity(){
     companion object {
@@ -34,6 +40,7 @@ class MessageActivity : AppCompatActivity(){
     //    private var listChat: MutableList<Chat> = ArrayList()
     private val memberViewModel: MemberViewModel by viewModel()
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message)
@@ -131,14 +138,21 @@ class MessageActivity : AppCompatActivity(){
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun performSendMessage() {
         // how do we actually send a message to firebase...
         val text = etMessage.text.toString()
-
+        val currentTime: Date = Calendar.getInstance().getTime()
         val fromId = FirebaseAuth.getInstance().uid
         val user = intent.getParcelableExtra<FB_User>(ProfileUsersFragment.USER_ID) // userID 유저프로필에서 가져오기
         val toId = user.uid
         val username = tv_user_nickname.text.toString()
+
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
+//        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
+        val formatted = current.format(formatter)
 
         if (fromId == null) return
 
@@ -149,7 +163,7 @@ class MessageActivity : AppCompatActivity(){
 
         val toReference = FirebaseDatabase.getInstance().getReference("/user-messages/$toId/$fromId").push()
 
-        val chatMessage = FB_ChatMessage(reference.key!!, text, fromId, toId, System.currentTimeMillis() / 1000,false,username)
+        val chatMessage = FB_ChatMessage(reference.key!!, text, fromId, toId, System.currentTimeMillis() / 1000,false,username,formatted)
 
 
 

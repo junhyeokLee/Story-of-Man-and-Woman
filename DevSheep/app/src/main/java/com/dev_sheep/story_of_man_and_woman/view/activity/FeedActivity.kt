@@ -40,8 +40,11 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
     var checked : Boolean? = false
     var checked_bookmark: Boolean? = false
     var feed_seq: Int? = null
+    var feed_creater : String? = null
+    var feed_title: String? = null
     lateinit var type : String
-
+    private var limit: Int = 5
+    private var offset: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +84,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
         img_profile.setOnClickListener(this)
         layout_bottom_comments.setOnClickListener(this)
         layout_comments.setOnClickListener(this)
+        layout_more_comment.setOnClickListener(this)
     }
 
     fun getIntents(){
@@ -93,6 +97,13 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
 
         if(intent.hasExtra("feed_seq")) {
             feed_seq = intent.getIntExtra("feed_seq", 0)
+        }
+
+        if(intent.hasExtra("feed_creater")) {
+            feed_creater = intent.getStringExtra("feed_creater")
+        }
+        if(intent.hasExtra("feed_title")) {
+            feed_title = intent.getStringExtra("feed_title")
         }
 
         if(intent.hasExtra("checked" + feed_seq)) {
@@ -151,6 +162,13 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                 like_count.text = it.like_no.toString()
                 comment_count.text = it.comment_no.toString()
                 tv_comment_count.text = it.comment_no.toString() + " 개"
+
+                // 더보기
+                if(it.comment_no!! >= 5){
+                    layout_more_comment.visibility = View.VISIBLE
+                }else{
+                    layout_more_comment.visibility = View.GONE
+                }
 
                 type = it.type.toString()
 
@@ -234,7 +252,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                 })
 
 
-        val single_comment = FEED_SERVICE.getComment(feed_seq!!)
+        val single_comment = FEED_SERVICE.getComment(feed_seq!!,offset,limit)
         single_comment.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -242,7 +260,10 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                 recyclerview_comments?.layoutManager = layoutManager
 
                 if(it.size > 0) {
-                    mCommentAdapter = CommentAdapter(it, this,feedViewModel)
+                    mCommentAdapter = CommentAdapter(it, this,feedViewModel,object: CommentAdapter.OnLastIndexListener{
+                        override fun OnLastIndex(last_index: Boolean) {
+                        }
+                    })
 //                Log.e("get comment feed_seq = ",it.get(1).comment)
 
                     recyclerview_comments.apply {
@@ -262,8 +283,10 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 if(event!!.getAction() == MotionEvent.ACTION_DOWN){
 
-                    val intent = Intent(applicationContext, MainActivity::class.java)
+                    val intent = Intent(applicationContext, CommentActivity::class.java)
                     intent.putExtra("feed_seq",feed_seq.toString())
+                    intent.putExtra("feed_creater",m_seq)
+                    intent.putExtra("feed_title",feed_title)
                     intent.putExtra("CommentFragment", true)
                     startActivity(intent)
                     overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
@@ -285,6 +308,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                     check_follow.setTextColor(resources.getColor(R.color.white))
                     check_follow.text = "구독취소"
                     memberViewModel.memberSubscribe(m_seq, my_m_seq, "true", check_follow)
+                    memberViewModel.addNotifiaction(my_m_seq,m_seq,0,"구독알림","님이 구독중 입니다.")
                 } else {
                     check_follow.setTextColor(resources.getColor(R.color.black))
                     check_follow.text = "구독하기"
@@ -328,17 +352,31 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
             }
 
             R.id.layout_bottom_comments -> {
-                val intent = Intent(applicationContext, MainActivity::class.java)
+                val intent = Intent(applicationContext, CommentActivity::class.java)
                 intent.putExtra("feed_seq",feed_seq.toString())
-                intent.putExtra("CommentFragment", true)
+                intent.putExtra("feed_creater",m_seq)
+                intent.putExtra("feed_title",feed_title)
+//                intent.putExtra("CommentFragment", true)
                 startActivity(intent)
                 overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
             }
 
             R.id.layout_comments -> {
-                val intent = Intent(applicationContext, MainActivity::class.java)
+                val intent = Intent(applicationContext, CommentActivity::class.java)
                 intent.putExtra("feed_seq",feed_seq.toString())
-                intent.putExtra("CommentFragment", true)
+                intent.putExtra("feed_creater",m_seq)
+                intent.putExtra("feed_title",feed_title)
+//                intent.putExtra("CommentFragment", true)
+                startActivity(intent)
+                overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+            }
+
+            R.id.layout_more_comment -> {
+                val intent = Intent(applicationContext, CommentActivity::class.java)
+                intent.putExtra("feed_seq",feed_seq.toString())
+                intent.putExtra("feed_creater",m_seq)
+                intent.putExtra("feed_title",feed_title)
+//                intent.putExtra("CommentFragment", true)
                 startActivity(intent)
                 overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
             }

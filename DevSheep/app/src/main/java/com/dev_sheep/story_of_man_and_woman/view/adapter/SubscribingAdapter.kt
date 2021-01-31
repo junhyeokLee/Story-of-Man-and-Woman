@@ -79,14 +79,13 @@ class SubscribingAdapter(
                     it.check_follow.text = "구독취소"
 //                    followerCount.setText("1")
                     memberViewModel.memberSubscribe2(item.m_seq!!, m_seq, "true")
-
+                    memberViewModel.addNotifiaction(my_m_seq,item.m_seq!!,0,"구독알림","님이 구독중 입니다.")
 
                 } else {
                     it.check_follow.setTextColor(itemView.resources.getColor(R.color.black))
                     it.check_follow.text = "구독하기"
 //                    followerCount.setText("0")
                     memberViewModel.memberSubscribe2(item.m_seq!!, m_seq, "false")
-
                 }
             }
 

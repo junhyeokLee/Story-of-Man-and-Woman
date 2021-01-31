@@ -81,6 +81,7 @@
             android:id="@+id/progressbar_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="visible"
             android:gravity="center">
             <eu.micer.circlesloadingindicator.CirclesLoadingIndicator
                 android:id="@+id/progressBar"
@@ -312,6 +313,28 @@
                                 >
 
                             </androidx.recyclerview.widget.RecyclerView>
+
+                            <LinearLayout
+                                android:id="@+id/layout_more_comment"
+                                android:layout_width="200dp"
+                                android:layout_gravity="center"
+                                android:layout_height="wrap_content"
+                                android:visibility="gone"
+                                >
+                                <TextView
+                                    android:id="@+id/tv_more_comment"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginTop="18dp"
+                                    android:gravity="center"
+                                    android:textSize="14sp"
+                                    android:textColor="@color/gray"
+                                    android:fontFamily="@font/roboto_regular"
+                                    android:text="... 더보기"
+                                    >
+                                </TextView>
+                            </LinearLayout>
+
 
                         </LinearLayout>
 

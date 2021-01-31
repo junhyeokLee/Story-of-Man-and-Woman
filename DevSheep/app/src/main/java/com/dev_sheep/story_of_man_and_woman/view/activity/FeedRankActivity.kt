@@ -29,10 +29,13 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_feed_rank.*
+import kotlinx.android.synthetic.main.activity_feed_rank.nestedScrollView
+import kotlinx.android.synthetic.main.activity_feed_rank.progressBar
 import kotlinx.android.synthetic.main.activity_feed_search.recyclerView
 import kotlinx.android.synthetic.main.activity_feed_search.shimmer_view_container
 import kotlinx.android.synthetic.main.activity_feed_search.sr_refresh
 import kotlinx.android.synthetic.main.activity_feed_search.toolbar
+import kotlinx.android.synthetic.main.fragment_home.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.math.sign
 
@@ -95,21 +98,22 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
         Log.e("tv_name",""+tv_name)
 
         if(tv_name.equals("오늘의 관심사")) {
-            single = FEED_SERVICE.getTodayList(0,10)
+            single = FEED_SERVICE.getTodayList(offset,limit)
         } else if(tv_name.equals(my_Age+" 여성들이 좋아하는")) {
-         single = FEED_SERVICE.getAgeWomanRecommendList(my_Age,0,10)
+         single = FEED_SERVICE.getAgeWomanRecommendList(my_Age,offset,limit)
         } else if(tv_name.equals(my_Age+" 남성들이 좋아하는")) {
-        single = FEED_SERVICE.getAgeManRecommendList(my_Age,0,10)
+        single = FEED_SERVICE.getAgeManRecommendList(my_Age,offset,limit)
         } else if(tv_name.equals("가장 많이 읽은 카드")) {
-            single = FEED_SERVICE.getViewRecommendList(0,10)
+            single = FEED_SERVICE.getViewRecommendList(offset,limit)
         } else if(tv_name.equals("가장 많이 좋아한 카드")) {
-            single = FEED_SERVICE.getLikeRecommendList(0,10)
+            single = FEED_SERVICE.getLikeRecommendList(offset,limit)
         }
 
         single?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
                 if (it.size == 0) {
+                    shimmer_view_container?.visibility = View.GONE
                 } else {
                     Log.e("FeedList", "" + it.get(0).content)
 
@@ -182,40 +186,18 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
                 oldScrollY: Int
             ) {
 
-
-//                if (scrollY == (v!!.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())) {
-//
-//                    progressBar.visibility = View.VISIBLE
-//
-//                    Handler().postDelayed({
-//                      LoadMoreData()
-//                    },1000)
-//
-//                }else{
-//                    progressBar.visibility = View.GONE
-//                }
-
-//                if (v?.getChildAt(v.getChildCount() - 1) != null) {
-//                    if ((scrollY >= (v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight())) &&
-//                        scrollY > oldScrollY) {
-//                        LoadMoreData()
-//
-//                        v.scrollY = v.scrollY - 10
-//
-//                    }
-//
-//                }
-
                 if (v?.getChildAt(v.getChildCount() - 1) != null) {
+                    progressBar.visibility = View.VISIBLE
+
                     if (scrollY >= v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight() && scrollY > oldScrollY) {
                         visibleItemCount = linearLayoutManager.getChildCount()
                         totalItemCount = linearLayoutManager.getItemCount()
                         lastVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition()
                             if (visibleItemCount + lastVisibleItemPosition >= totalItemCount) {
-                                progressBar.visibility = View.VISIBLE
-                                Handler().postDelayed({
+//                                Handler().postDelayed({
                                     LoadMoreData()
-                                },1000)
+//                                },1000)
+
                             }else{
                                 progressBar.visibility = View.GONE
                             }
@@ -227,7 +209,6 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
     }
 
     private fun LoadMoreData() {
-
         linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         Handler().postDelayed({
@@ -252,6 +233,7 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
                                 lintent.putExtra("feed_seq", feed.feed_seq)
                                 lintent.putExtra("checked" + feed.feed_seq, cb.isChecked)
                                 lintent.putExtra("creater_seq", feed.creater_seq)
+                                lintent.putExtra("feed_title",feed.title)
                                 lintent.putExtra("bookmark_checked" + feed.feed_seq, cb2.isChecked)
                                 lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
 //                        context.transitionName = position.toString()
@@ -285,12 +267,10 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
                     }
 
                 }, {
-                    Log.e("스크롤 보기 실패함", "" + it.message)
+                    Log.d("스크롤 보기 실패함", "" + it.message)
                 })
-//            mFeedAdapterRank.notifyDataSetChanged()
             progressBar.visibility = View.GONE
         }, 1000)
-//        nestedScrollView.scrollTo(0,nestedScrollView.scrollY - 200)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

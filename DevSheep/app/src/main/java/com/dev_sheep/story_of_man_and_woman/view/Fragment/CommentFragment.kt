@@ -1,6 +1,8 @@
 package com.dev_sheep.story_of_man_and_woman.view.Fragment
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.media.Image
 import android.os.Bundle
@@ -13,10 +15,9 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import androidx.core.view.ViewCompat
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
@@ -26,8 +27,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
+import com.dev_sheep.story_of_man_and_woman.view.activity.FeedActivity
 import com.dev_sheep.story_of_man_and_woman.view.adapter.CommentAdapter
+import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedAdapter
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
+import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -35,29 +39,45 @@ import io.reactivex.schedulers.Schedulers
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class CommentFragment : Fragment(),SwipeRefreshLayout.OnRefreshListener {
+class CommentFragment : Fragment() {
 
     companion object {
         fun newInstance(feed: Feed): CommentFragment {
             val args = Bundle()
             args.putString("feed_seq",feed.feed_seq.toString())
+            args.putString("feed_creater",feed.creater_seq.toString())
+            args.putString("feed_title",feed.title.toString())
+
             val fragment = CommentFragment()
             fragment.arguments = args
             return fragment
         }
     }
     private val feedViewModel: FeedViewModel by viewModel()
+    private val memberViewModel: MemberViewModel by viewModel()
 
     lateinit var contexts : Context
     lateinit var editText : EditText
     lateinit var feed_seq : String
+    lateinit var feed_creater: String
+    lateinit var feed_title: String
     lateinit var m_seq : String
     lateinit var recyclerview_comments: RecyclerView
     lateinit var mCommentAdapter : CommentAdapter
     lateinit var mSwipeRefreshLayout: SwipeRefreshLayout
     lateinit var mShimmerViewContainer: ShimmerFrameLayout
     lateinit var iv_back : ImageView
-
+    private var empty : View? = null
+    private var limit: Int = 5
+    private var offset: Int = 0
+    private var visibleItemCount = 0
+    private var totalItemCount = 0
+    private var lastVisibleItemPosition = 0
+    lateinit var tv_empty: TextView
+    private lateinit var linearLayoutManager: LinearLayoutManager
+    private var shimmer_view_container_comment: ShimmerFrameLayout? = null
+    private var nestedScrollView: NestedScrollView? = null
+    private var progressBar : ProgressBar? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -67,13 +87,14 @@ class CommentFragment : Fragment(),SwipeRefreshLayout.OnRefreshListener {
         val view = inflater.inflate(R.layout.fragment_comment, null)
         recyclerview_comments = view.findViewById(R.id.recyclerview_comments)
         iv_back = view.findViewById(R.id.im_back)
-        mSwipeRefreshLayout = view.findViewById<View>(R.id.sr_refresh) as SwipeRefreshLayout
-        mShimmerViewContainer = view.findViewById<View>(R.id.shimmer_view_container) as ShimmerFrameLayout
 
-        mSwipeRefreshLayout.setOnRefreshListener(this)
-        mSwipeRefreshLayout.setColorSchemeResources(
-            R.color.main_Accent
-        );
+        empty = view.findViewById(R.id.empty)
+        tv_empty = view.findViewById(R.id.emptyText) as TextView
+        nestedScrollView = view.findViewById(R.id.nestedScrollView_comment)
+        progressBar = view.findViewById(R.id.progressBar)
+        shimmer_view_container_comment = view.findViewById(R.id.shimmer_view_container_comment)
+        tv_empty.setText(R.string.empty)
+
         val layoutManager = GridLayoutManager(view.context, 1)
         recyclerview_comments?.layoutManager = layoutManager
 
@@ -103,7 +124,9 @@ class CommentFragment : Fragment(),SwipeRefreshLayout.OnRefreshListener {
                 ) {
                     // your action here
                     feedViewModel.addComment(m_seq,Integer.parseInt(feed_seq),editText.text.toString())
-                    Toast.makeText(context, "완료.", Toast.LENGTH_SHORT).show();
+                    memberViewModel.addNotifiaction(m_seq,feed_creater,Integer.parseInt(feed_seq),"댓글알림","님이 '\'"+ feed_title+" '\' 에 댓글을 남겼습니다.")
+
+                    Toast.makeText(context, "댓글등록.", Toast.LENGTH_SHORT).show();
 
                     activity!!.onBackPressed()
                     return@OnTouchListener true
@@ -122,34 +145,45 @@ class CommentFragment : Fragment(),SwipeRefreshLayout.OnRefreshListener {
 
     private fun initData(){
         feed_seq = arguments?.getString("feed_seq").toString()
-        val handlerFeed: Handler = Handler(Looper.myLooper())
+        feed_creater = arguments?.getString("feed_creater").toString()
+        feed_title = arguments?.getString("feed_title").toString()
 
-        val single = FEED_SERVICE.getComment(Integer.parseInt(feed_seq))
+        var lastIndex:Boolean? = null
+
+        val handlerFeed: Handler = Handler(Looper.myLooper())
+        linearLayoutManager = LinearLayoutManager(context)
+        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+
+        val single = FEED_SERVICE.getComment(Integer.parseInt(feed_seq),offset,limit)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-
                 if(it.size > 0) {
-                    mCommentAdapter = CommentAdapter(it, context!!, feedViewModel)
+                    mCommentAdapter = CommentAdapter(it, context!!, feedViewModel,object :CommentAdapter.OnLastIndexListener{
+                        override fun OnLastIndex(last_index: Boolean) {
+                                InfinityScroll(last_index)
+                        }
+
+                    })
 
                     handlerFeed.postDelayed({
-                        // stop animating Shimmer and hide the layout
-                        mShimmerViewContainer.stopShimmerAnimation()
-                        mShimmerViewContainer.visibility = View.GONE
-//                    progressBar?.visibility = View.GONE
-
-                        recyclerview_comments.apply {
+                        shimmer_view_container_comment?.stopShimmerAnimation()
+                        shimmer_view_container_comment?.visibility = View.GONE
+                        recyclerview_comments?.apply {
+//                            var linearLayoutMnager = LinearLayoutManager(this.context)
+                            this.layoutManager = linearLayoutManager
+                            this.itemAnimator = DefaultItemAnimator()
                             this.adapter = mCommentAdapter
                         }
-                    }, 1000)
+                    },1000)
                 }else{
-                    mShimmerViewContainer.stopShimmerAnimation()
-                    mShimmerViewContainer.visibility = View.GONE
+                    shimmer_view_container_comment?.visibility = View.GONE
+                    empty!!.visibility = View.VISIBLE
                 }
 
-
-
             },{
+                shimmer_view_container_comment?.visibility = View.GONE
+                empty!!.visibility = View.VISIBLE
                 Log.e("get comment 실패 = ",it.message.toString())
 
             })
@@ -162,23 +196,83 @@ class CommentFragment : Fragment(),SwipeRefreshLayout.OnRefreshListener {
         }
     }
 
+    private fun InfinityScroll(last_index:Boolean){
+        // 무한스크롤
+        nestedScrollView?.setOnScrollChangeListener(object: NestedScrollView.OnScrollChangeListener{
+            override fun onScrollChange(
+                v: NestedScrollView?,
+                scrollX: Int,
+                scrollY: Int,
+                oldScrollX: Int,
+                oldScrollY: Int
+            ) {
+                if (v?.getChildAt(v.getChildCount() - 1) != null) {
+
+                    if (scrollY >= v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight() && scrollY > oldScrollY
+                        && last_index == false) {
+                        visibleItemCount = linearLayoutManager.getChildCount()
+                        totalItemCount = linearLayoutManager.getItemCount()
+                        lastVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition()
+                        if (visibleItemCount + lastVisibleItemPosition >= totalItemCount)
+                        {
+                            progressBar?.visibility = View.VISIBLE
+                            LoadMoreData()
+
+                        }
+
+                    } else if(last_index == true){
+                        progressBar?.visibility = View.GONE
+                    }
+                }
+            }
+
+        })
+    }
+
+    private fun LoadMoreData() {
+        linearLayoutManager = LinearLayoutManager(context)
+        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        Handler().postDelayed({
+            val single = FEED_SERVICE.getComment(Integer.parseInt(feed_seq),offset,addLimit())
+            single.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+
+                    mCommentAdapter = CommentAdapter(it, context!!, feedViewModel,object :CommentAdapter.OnLastIndexListener{
+                        override fun OnLastIndex(last_index: Boolean) {
+                                InfinityScroll(last_index)
+                        }
+                    })
+
+                    recyclerview_comments?.apply {
+                        this.layoutManager = linearLayoutManager
+                        this.itemAnimator = DefaultItemAnimator()
+                        this.adapter = mCommentAdapter
+                    }
+
+                }, {
+                    Log.d("스크롤 보기 실패함", "" + it.message)
+                })
+            progressBar?.visibility = View.GONE
+        }, 1000)
+    }
+
     override fun onResume() {
         super.onResume()
         initData()
-        mShimmerViewContainer.startShimmerAnimation()
+        shimmer_view_container_comment?.startShimmerAnimation()
 
     }
 
     override fun onPause() {
         super.onPause()
-        super.onPause()
-        mShimmerViewContainer.stopShimmerAnimation()
-    }
-
-    override fun onRefresh() {
         initData()
-        mSwipeRefreshLayout.setRefreshing(false)
+        shimmer_view_container_comment?.startShimmerAnimation()
     }
 
+    private fun addLimit() : Int{
+        limit += 5
+        return limit
+    }
 
 }

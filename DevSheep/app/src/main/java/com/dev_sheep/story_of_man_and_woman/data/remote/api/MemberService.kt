@@ -1,9 +1,6 @@
 package com.dev_sheep.story_of_man_and_woman.data.remote.api
 
-import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
-import com.dev_sheep.story_of_man_and_woman.data.database.entity.FollowMember
-import com.dev_sheep.story_of_man_and_woman.data.database.entity.Member
-import com.dev_sheep.story_of_man_and_woman.data.database.entity.Tag
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.*
 import io.reactivex.Single
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -36,12 +33,15 @@ interface MemberService {
     fun getMember(@Field("m_seq") m_seq: String): Single<Member>
 
     @GET("user_get_search.php")
-    fun getUserSearch(@Query("nick_name") nick_name: String): Single<List<Member>>
+    fun getUserSearch(@Query("nick_name") nick_name: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Member>>
 
     //사용자가 프로필 이미지를 변경했을때 해당 이미지를 서버로 전송하는 통신
     @Multipart
     @POST("member_profile_upload.php")
     fun uploadProfile(@Part("email") nick_name: String, @Part File: MultipartBody.Part?): Call<Member>
+
+    @GET("member_get_nickname.php")
+    fun getMemberNickName(@Query("m_seq") m_seq: String): Single<String>
 
     @FormUrlEncoded
     @POST("member_edit_profile.php")
@@ -65,16 +65,19 @@ interface MemberService {
 
     @FormUrlEncoded
     @POST("subscribers_get.php")
-    fun getSubsribers(@Field("m_seq") m_seq: String): Single<List<Member>>
+    fun getSubsribers(@Field("m_seq") m_seq: String,@Field("offset") offset: Int,@Field("limit") limit: Int): Single<List<Member>>
 
     @FormUrlEncoded
     @POST("subscribing_get.php")
-    fun getSubscribing(@Field("m_seq") m_seq: String): Single<List<Member>>
+    fun getSubscribing(@Field("m_seq") m_seq: String,@Field("offset") offset: Int,@Field("limit") limit: Int): Single<List<Member>>
 
 
-    @FormUrlEncoded
-    @POST("get_member_profile_img_from_nickname.php")
-    fun getMemberProfileImgFromNickName(@Field("nick_name") nick_name: String): Single<String>
+    @GET("get_member_profile_img_from_nickname.php")
+    fun getMemberProfileImgFromNickName(@Query("nick_name") nick_name: String): Single<String>
+
+
+    @GET("get_member_profile_img_from_m_seq.php")
+    fun getMemberProfileImgFromMseq(@Query("m_seq") m_seq: String): Single<String>
 
     @FormUrlEncoded
     @POST("update_profile.php")
@@ -83,4 +86,17 @@ interface MemberService {
     @FormUrlEncoded
     @POST("password_search_send.php")
     fun passwordSearchSend(@Field("m_seq") m_seq: String): Single<Void>
+
+    @FormUrlEncoded
+    @POST("notification_add.php")
+    fun addNotification(@Field("m_seq") m_seq: String,@Field("target_m_seq") target_m_seq: String
+    ,@Field("noti_content_seq") noti_content_seq: Int,@Field("noti_type") noti_type: String
+    ,@Field("noti_message") noti_message: String): Single<Notification>
+
+    @GET("notification_get.php")
+    fun getNotification(@Query("target_m_seq") target_m_seq: String): Single<List<Notification>>
+
+    @FormUrlEncoded
+    @POST("notification_edit.php")
+    fun editNotification(@Field("noti_seq") noti_seq: Int): Single<Notification>
 }

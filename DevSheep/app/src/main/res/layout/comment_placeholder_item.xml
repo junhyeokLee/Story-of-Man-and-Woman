@@ -9,7 +9,7 @@
         android:layout_width="@dimen/placeholder_image_comment"
         android:layout_height="@dimen/placeholder_image_comment"
         android:layout_marginRight="@dimen/activity_padding"
-        android:background="@color/placeholder_bg" />
+        android:background="@drawable/shape" />
 
     <View
         android:id="@+id/name"

@@ -1,6 +1,7 @@
 package com.dev_sheep.story_of_man_and_woman.view.Fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -25,6 +26,12 @@ class SearchFragment: Fragment() {
     lateinit var recyclerViewTag : RecyclerView
     lateinit var et_comment : EditText
     private val feedViewModel: FeedViewModel by viewModel()
+    private var layoutManager_Tag : GridLayoutManager? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+//        layoutManager_Tag = GridLayoutManager(context,2 )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,8 +41,7 @@ class SearchFragment: Fragment() {
         val view = inflater.inflate(R.layout.fragment_search,null)
         recyclerViewTag = view.findViewById<RecyclerView>(R.id.recyclerView_tag)
         et_comment = view.findViewById<EditText>(R.id.et_comment)
-
-        val layoutManager_Tag = GridLayoutManager(view.context,2 )
+        layoutManager_Tag = GridLayoutManager(context,2 )
         recyclerViewTag?.layoutManager = layoutManager_Tag
 
         et_comment.setOnTouchListener(object: View.OnTouchListener {
@@ -66,9 +72,13 @@ class SearchFragment: Fragment() {
             .subscribe({
 
                 if (it.isNotEmpty()) {
-                    progressBar_tag?.visibility = View.GONE
-                    recyclerViewTag?.layoutManager = layoutManager_Tag
-                    recyclerViewTag?.adapter = SearchCardAdapter(it,view.context,feedViewModel)
+                    if(context == null){
+                    }else {
+                        progressBar_tag?.visibility = View.GONE
+                        recyclerViewTag?.layoutManager = layoutManager_Tag
+                        recyclerViewTag?.adapter =
+                            SearchCardAdapter(it, view.context, feedViewModel)
+                    }
                 }else {
                     progressBar_tag?.visibility = View.VISIBLE
                 }

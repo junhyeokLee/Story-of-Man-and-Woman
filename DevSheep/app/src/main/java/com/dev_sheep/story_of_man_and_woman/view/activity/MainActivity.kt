@@ -42,12 +42,16 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
         val bottomNavigation = bottomNavigationView
 
-        // FeedAcitivity 에서 유저 클릭시
+        // FeedAcitivity or AlarmActivity 에서 유저 클릭시
         if(intent.hasExtra("ProfileUsersFragment")) {
 
             var checked = intent.getBooleanExtra("ProfileUsersFragment" , false)
             if(checked == true){
+
+                bottomNavigation.selectedItemId = R.id.menuProfile
+
                 if(intent.hasExtra("m_seq")){
+
                     var m_seq = intent.getStringExtra("m_seq");
                     val arguments = Bundle()
                     arguments.putString("feed_activity_m_seq", m_seq)
@@ -61,7 +65,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         // FeedAcitivity 에서 자신을 클릭시
         else if(intent.hasExtra("ProfileMyFragment")){
             var checked = intent.getBooleanExtra("ProfileMyFragment" , false)
+
             if(checked == true){
+                bottomNavigation.selectedItemId = R.id.menuProfile
                 supportFragmentManager.beginTransaction().replace(R.id.frameLayout, profileFragment)
                     .commit()
             }
@@ -72,33 +78,37 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             fragmentTransaction.replace(R.id.frameLayout, homeFragment).commitAllowingStateLoss();
         }
 
-        if(intent.hasExtra("CommentFragment")) {
-            var checked = intent.getBooleanExtra("CommentFragment" , false)
-            if(checked == true){
-                if(intent.hasExtra("feed_seq")){
-                    var feed_seq = intent.getStringExtra("feed_seq")
-                    val arguments = Bundle()
-                    arguments.putString("feed_seq", feed_seq)
-                    commentFragment.arguments = arguments
-                    supportFragmentManager.beginTransaction().replace(R.id.frameLayout, commentFragment)
-                        .commit()
-                }
-            }
-        }
+//        if(intent.hasExtra("CommentFragment")) {
+//            var checked = intent.getBooleanExtra("CommentFragment" , false)
+//            if(checked == true){
+//                if(intent.hasExtra("feed_seq")){
+//                    var feed_seq = intent.getStringExtra("feed_seq")
+//                    var feed_creater = intent.getStringExtra("feed_creater")
+//                    var feed_title = intent.getStringExtra("feed_title")
+//                    val arguments = Bundle()
+//                    arguments.putString("feed_seq", feed_seq)
+//                    arguments.putString("feed_creater",feed_creater)
+//                    arguments.putString("feed_title",feed_title)
+//                    commentFragment.arguments = arguments
+//                    supportFragmentManager.beginTransaction().replace(R.id.frameLayout, commentFragment)
+//                        .commit()
+//                }
+//            }
+//        }
 
-        if(intent.hasExtra("ReCommentFragment")) {
-            var checked = intent.getBooleanExtra("ReCommentFragment" , false)
-            if(checked == true){
-                if(intent.hasExtra("comment_seq")){
-                    var comment_seq = intent.getStringExtra("comment_seq")
-                    val arguments = Bundle()
-                    arguments.putString("comment_seq", comment_seq)
-                    reCommentFragment.arguments = arguments
-                    supportFragmentManager.beginTransaction().replace(R.id.frameLayout, reCommentFragment)
-                        .commit()
-                }
-            }
-        }
+//        if(intent.hasExtra("ReCommentFragment")) {
+//            var checked = intent.getBooleanExtra("ReCommentFragment" , false)
+//            if(checked == true){
+//                if(intent.hasExtra("comment_seq")){
+//                    var comment_seq = intent.getStringExtra("comment_seq")
+//                    val arguments = Bundle()
+//                    arguments.putString("comment_seq", comment_seq)
+//                    reCommentFragment.arguments = arguments
+//                    supportFragmentManager.beginTransaction().replace(R.id.frameLayout, reCommentFragment)
+//                        .commit()
+//                }
+//            }
+//        }
 
 
 

@@ -12,7 +12,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.dev_sheep.story_of_man_and_woman.R
@@ -27,6 +26,8 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_my_messages.*
 import kotlinx.android.synthetic.main.adapter_latest_message_row.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.*
+import kotlin.collections.HashMap
 
 class MyMessageActivity  : AppCompatActivity() {
 
@@ -35,24 +36,26 @@ class MyMessageActivity  : AppCompatActivity() {
         val TAG = "LatestMessages"
         var readValue = ""
         val adapter = GroupAdapter<ViewHolder>()
-        val fromId = FirebaseAuth.getInstance().uid
-        val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId")
+        val myId = FirebaseAuth.getInstance().uid
+        val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$myId")
 
     }
 
     private val memberViewModel: MemberViewModel by viewModel()
-
+    private val latestMessagesMap = HashMap<String, FB_ChatMessage>()
+    private var list : FB_ChatMessage? = null
+    private var context:Context ? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_messages)
-
+        context = this
         recyclerview_latest_messages.adapter = adapter
-        recyclerview_latest_messages.addItemDecoration(
-            DividerItemDecoration(
-                this,
-                DividerItemDecoration.VERTICAL
-            )
-        )
+//        recyclerview_latest_messages.addItemDecoration(
+//            DividerItemDecoration(
+//                this,
+//                DividerItemDecoration.VERTICAL
+//            )
+//        )
         iv_back.setOnClickListener {
             onBackPressed()
         }
@@ -65,19 +68,21 @@ class MyMessageActivity  : AppCompatActivity() {
 
     }
 
-    val latestMessagesMap = HashMap<String, FB_ChatMessage>()
 
     private fun refreshRecyclerViewMessages() {
         adapter.clear()
+        // hash sortByDescending 으로 key값이 아닌 value값의 날짜 내림차순 순으로 정렬
+        latestMessagesMap.entries.sortedByDescending { it.value.date }.forEach {
+//                sortedMap[it.value] = it.value
+            var fb_chatmessage = it
 
-        latestMessagesMap.values.forEach {
-            if(it == null){
+            if(fb_chatmessage == null){
                 pb_bar.visibility = View.VISIBLE
 //                return
             }else {
                 pb_bar.visibility = View.GONE
-                adapter.add(MessageLatestAdapter(it, memberViewModel, this))
-                Log.e("log fromId, toID값", "" + it.fromId + "  " + it.toId)
+
+                adapter.add(MessageLatestAdapter(fb_chatmessage.value, memberViewModel, this))
 
                 val itemTouchHelperCallback =
                     object :
@@ -99,7 +104,7 @@ class MyMessageActivity  : AppCompatActivity() {
                                 viewHolder.itemView.tv_chat_id.text.toString() // recyclerview viewholder itme에서 FB_Message toId값 받아오기
                             showDeletePopup(
                                 viewHolder.adapterPosition,
-                                fromId!!,
+                                myId!!,
                                 toId
                             ) // popup창에서 해당 아이템 삭제
 
@@ -110,10 +115,13 @@ class MyMessageActivity  : AppCompatActivity() {
                 val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
                 itemTouchHelper.attachToRecyclerView(recyclerview_latest_messages)
             }
+
         }
+
     }
 
     private fun listenForLatestMessages() {
+//        orderByChild("date").startAt("20210120000000").endAt("20410120000000") 파이어베이스 날짜순으로 정렬하기 ,지금은 해쉬맵을 사용했기때문에 해쉬맵에서 솔팅해줌
         ref.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val chatMessage = p0.getValue(FB_ChatMessage::class.java) ?: return
@@ -125,6 +133,7 @@ class MyMessageActivity  : AppCompatActivity() {
                 val chatMessage = p0.getValue(FB_ChatMessage::class.java) ?: return
                 latestMessagesMap[p0.key!!] = chatMessage
                 refreshRecyclerViewMessages()
+
             }
 
             override fun onChildMoved(p0: DataSnapshot, p1: String?) {
@@ -201,8 +210,6 @@ class MyMessageActivity  : AppCompatActivity() {
             })
             .create()
 
-        // remaining_time - 00:00~~10:00 ,  elapsed - 10:00 ~~ 00:00
-        // p1PlayTime = 00:00~ 시작, elapsed
 
         alertDialog.setView(view)
         alertDialog.show()

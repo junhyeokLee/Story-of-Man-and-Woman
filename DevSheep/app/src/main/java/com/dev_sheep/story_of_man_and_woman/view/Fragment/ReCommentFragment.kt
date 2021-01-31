@@ -165,13 +165,17 @@ class ReCommentFragment : Fragment() ,SwipeRefreshLayout.OnRefreshListener {
                     .into(img_profile)
 
 
-                val single_recomment = FEED_SERVICE.getReComment(Integer.parseInt(it.feed_seq!!),it.group_seq!!)
+                val single_recomment = FEED_SERVICE.getReComment(Integer.parseInt(it.feed_seq!!),it.group_seq!!,0,0)
                 single_recomment.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
 
                         if(it.size > 0) {
-                            mCommentAdapter = CommentReAdapter(it, context!!, feedViewModel)
+                            mCommentAdapter = CommentReAdapter(it, context!!, feedViewModel,object :CommentReAdapter.OnLastIndexListener{
+                                override fun OnLastIndex(last_index: Boolean) {
+                                }
+
+                            })
 
                             handlerFeed.postDelayed({
                                 // stop animating Shimmer and hide the layout

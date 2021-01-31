@@ -8,7 +8,6 @@ import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 

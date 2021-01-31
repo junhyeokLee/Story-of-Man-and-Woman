@@ -16,24 +16,26 @@ import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Comment
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
-import com.dev_sheep.story_of_man_and_woman.view.activity.FeedActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.MainActivity
+import com.dev_sheep.story_of_man_and_woman.view.activity.ReCommentActivity
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.adapter_comment.view.*
 import java.text.SimpleDateFormat
-import java.util.*
 
 class CommentAdapter(private val commentList: List<Comment>,
                      private val context: Context,
-                     private val feedViewModel: FeedViewModel
+                     private val feedViewModel: FeedViewModel,
+                     private val onLastIndexListener: OnLastIndexListener
 ) : RecyclerView.Adapter<CommentAdapter.ViewHolder>() {
+
+
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         lateinit var my_m_seq : String
         private var sdf : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        fun bindView(item: Comment,feedViewModel:FeedViewModel,context: Context) {
+        fun bindView(item: Comment,feedViewModel:FeedViewModel,context: Context,onLastIndexListener: OnLastIndexListener) {
 
             // 저장된 m_seq 가져오기
             val getM_seq = context.getSharedPreferences("m_seq", AppCompatActivity.MODE_PRIVATE)
@@ -45,6 +47,12 @@ class CommentAdapter(private val commentList: List<Comment>,
             itemView.tv_gender.text = item.writer_gender
             itemView.tv_feed_date.text = calculateTime(sdf.parse(item.comment_date))
             itemView.like_count.text = item.like_no.toString()
+
+            if (item.last_index == "true"){
+                onLastIndexListener.OnLastIndex(true)
+            }else{
+                onLastIndexListener.OnLastIndex(false)
+            }
 
             with(itemView.layout_nick){
                 setOnClickListener {
@@ -94,11 +102,10 @@ class CommentAdapter(private val commentList: List<Comment>,
 
             with(itemView.tv_re_cemment){
                 setOnClickListener {
-                    val lintent = Intent(context, MainActivity::class.java)
+                    val lintent = Intent(context, ReCommentActivity::class.java)
                     lintent.putExtra("comment_seq" , item.comment_seq.toString())
-                    lintent.putExtra("ReCommentFragment", true)
-
-                    lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
+//                    lintent.putExtra("ReCommentFragment", true)
+//                    lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
 //                        context.transitionName = position.toString()
                     (context as Activity).startActivity(lintent)
                     (context as Activity).overridePendingTransition(
@@ -111,14 +118,18 @@ class CommentAdapter(private val commentList: List<Comment>,
             with(itemView.rv_recomment){
                 val layoutManager = GridLayoutManager(itemView.context, 1)
                 this?.layoutManager = layoutManager
-                val single_recomment = FEED_SERVICE.getReComment(Integer.parseInt(item.feed_seq!!),item.group_seq!!)
+                val single_recomment = FEED_SERVICE.getReComment(Integer.parseInt(item.feed_seq!!),item.group_seq!!,0,5)
                 single_recomment.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
 
                         if(it.size > 0) {
 
-                            this.adapter =  CommentReAdapter(it, context!!, feedViewModel)
+                            this.adapter =  CommentReAdapter(it, context!!, feedViewModel,object :CommentReAdapter.OnLastIndexListener{
+                                override fun OnLastIndex(last_index: Boolean) {
+                                }
+
+                            })
                             Log.e("eqeq","ddddd")
                         }
 
@@ -135,8 +146,8 @@ class CommentAdapter(private val commentList: List<Comment>,
 
             with(itemView.favorite_btn) {
 
-                if (preferences.contains("checked" + item.comment_seq) &&
-                    preferences.getBoolean("checked" +item.comment_seq, false) == true)
+                if (preferences.contains("checked_comment" + item.comment_seq) &&
+                    preferences.getBoolean("checked_comment" +item.comment_seq, false) == true)
                 {
                     this.isChecked = true
 
@@ -149,12 +160,12 @@ class CommentAdapter(private val commentList: List<Comment>,
                         if (this.isChecked) {
                             feedViewModel.increaseLikeCommentCount(item.comment_seq, "true")
                             favCount = item.like_no.toString()
-                            editor.putBoolean("checked" + item.comment_seq, true)
+                            editor.putBoolean("checked_comment" + item.comment_seq, true)
                             editor.apply()
                         } else {
                             feedViewModel.increaseLikeCommentCount(item.comment_seq, "false")
                             favCount = item.like_no?.minus(1).toString()
-                            editor.putBoolean("checked" + item.comment_seq, false)
+                            editor.putBoolean("checked_comment" + item.comment_seq, false)
                             editor.apply()
                         }
                         itemView.like_count.text = favCount
@@ -164,12 +175,12 @@ class CommentAdapter(private val commentList: List<Comment>,
                         if (this.isChecked) {
                             feedViewModel.increaseLikeCommentCount(item.comment_seq, "true")
                             favCount = item.like_no?.plus(1).toString()
-                            editor.putBoolean("checked" + item.comment_seq, true)
+                            editor.putBoolean("checked_comment" + item.comment_seq, true)
                             editor.apply()
                         } else {
                             feedViewModel.increaseLikeCommentCount(item.comment_seq, "false")
                             favCount = item.like_no.toString()
-                            editor.putBoolean("checked" + item.comment_seq, false)
+                            editor.putBoolean("checked_comment" + item.comment_seq, false)
                             editor.apply()
                         }
                         itemView.like_count.text = favCount
@@ -192,52 +203,16 @@ class CommentAdapter(private val commentList: List<Comment>,
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = commentList[position]
         val viewModel = feedViewModel
-        holder.bindView(item,viewModel,context)
 
+        holder.bindView(item,viewModel,context,onLastIndexListener)
 
     }
 
     override fun getItemCount(): Int {
-
-        return commentList.size   // 7개 까지만
+        return commentList.size
     }
 
-    /** 몇분전, 방금 전,  */
-
-    private object TIME_MAXIMUM {
-        const val SEC = 60
-        const val MIN = 60
-        const val HOUR = 24
-        const val DAY = 30
-        const val MONTH = 12
+    interface OnLastIndexListener{
+        fun OnLastIndex(last_index: Boolean)
     }
-
-
-    fun calculateTime(date: Date): String? {
-        val curTime = System.currentTimeMillis()
-        val regTime = date.time
-        var diffTime = (curTime - regTime) / 1000
-        var msg: String? = null
-        if (diffTime < TIME_MAXIMUM.SEC) {
-            // sec
-            msg = diffTime.toString() + " 초전"
-        } else if (TIME_MAXIMUM.SEC.let { diffTime /= it; diffTime } < TIME_MAXIMUM.MIN) {
-            // min
-            println(diffTime)
-            msg = diffTime.toString() + " 분전"
-        } else if (TIME_MAXIMUM.MIN.let { diffTime /= it; diffTime } < TIME_MAXIMUM.HOUR) {
-            // hour
-            msg = diffTime.toString() + " 시간전"
-        } else if (TIME_MAXIMUM.HOUR.let { diffTime /= it; diffTime } < TIME_MAXIMUM.DAY) {
-            // day
-            msg = diffTime.toString() + " 일전"
-        } else if (TIME_MAXIMUM.DAY.let { diffTime /= it; diffTime } < TIME_MAXIMUM.MONTH) {
-            // day
-            msg = diffTime.toString() + " 달전"
-        } else {
-            msg = diffTime.toString() + " 년전"
-        }
-        return msg
-    }
-
 }

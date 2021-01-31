@@ -36,6 +36,7 @@ import com.dev_sheep.story_of_man_and_woman.utils.SpacesItemDecoration
 import com.dev_sheep.story_of_man_and_woman.view.Assymetric.AsymmetricRecyclerView
 import com.dev_sheep.story_of_man_and_woman.view.Assymetric.AsymmetricRecyclerViewAdapter
 import com.dev_sheep.story_of_man_and_woman.view.Assymetric.Utils
+import com.dev_sheep.story_of_man_and_woman.view.activity.CommentActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.FeedEditActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.LoginActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.MainActivity
@@ -55,6 +56,7 @@ import java.util.*
 class FeedAdapter(
     private val list: List<Feed>,
     private var context: Context,
+    private var feedViewModel: FeedViewModel,
     private val onClickViewListener: OnClickViewListener,
     private val onClickLikeListener: OnClickLikeListener,
     private val onClickBookMarkListener: OnClickBookMarkListener,
@@ -130,7 +132,8 @@ class FeedAdapter(
             VIEW_TYPE_ITEM -> {
                 val viewHolder: FeedHolder = holder as FeedHolder
                 val feed = list[position]
-                viewHolder.bindView(feed, position)
+                var feedViewModel = feedViewModel
+                viewHolder.bindView(feed, position,feedViewModel)
 
             }
 
@@ -140,21 +143,6 @@ class FeedAdapter(
             }
 
         }
-
-
-//        if(holder is FeedHolder){
-//            val list = list[position]
-//            holder.bindView(list)
-//        }
-//        else if(holder is LoadingViewHolder){
-//            val list = list[position]
-//            holder.bindView(list)
-//        }
-
-//        val viewHolder: FeedHolder = holder as FeedHolder
-//        val item = list[position] // 배너에서 시작을 0 부터 했기때문에 피드가 1부터 시작하는걸 -1 시켜서 0부터 보여지게
-//        viewHolder.bindView(item)
-
 
     }
 
@@ -206,7 +194,7 @@ class FeedAdapter(
 
 
         @SuppressLint("Range")
-        fun bindView(item: Feed, position: Int) {
+        fun bindView(item: Feed, position: Int,feedViewModel: FeedViewModel) {
 
             ViewCompat.setTransitionName(itemView.tv_m_nick, position.toString() + "Text")
             ViewCompat.setTransitionName(itemView.img_profile, (position).toString() + "Img")
@@ -239,7 +227,8 @@ class FeedAdapter(
                 popupMenu.setOnMenuItemClickListener { item_menu: MenuItem ->
                     when(item_menu?.itemId){
                         R.id.item_alarm -> {
-                            Toast.makeText(itemView.context, "신고하기", Toast.LENGTH_SHORT).show()
+                            feedViewModel.increaseComplain(item.feed_seq)
+                            Toast.makeText(itemView.context, "신고가 접수되었습니다.", Toast.LENGTH_SHORT).show()
                         }
                         R.id.item_edit -> {
 //                            게시물 수정
@@ -388,9 +377,12 @@ class FeedAdapter(
 
             with(layout_comment){
                 setOnClickListener {
-                    val intent = Intent(context, MainActivity::class.java)
+//                    val intent = Intent(context, MainActivity::class.java)
+                    val intent = Intent(context, CommentActivity::class.java)
                     intent.putExtra("feed_seq",item.feed_seq.toString())
-                    intent.putExtra("CommentFragment", true)
+                    intent.putExtra("feed_creater",item.creater_seq)
+                    intent.putExtra("feed_title",item.title)
+//                    intent.putExtra("CommentFragment", true)
                     context.startActivity(intent)
                 }
             }
@@ -415,12 +407,12 @@ class FeedAdapter(
                 if(this.isChecked == true){
                     setOnCheckedChangeListener { compoundButton, b ->
                         if(this.isChecked){
-                            onClickFeedLike.OnClickFeed(feed.feed_seq, "true")
+                            onClickFeedLike.OnClickFeed(feed, "true")
                             favCount = feed.like_no.toString()
                             editor.putBoolean("checked" + feed.feed_seq, true)
                             editor.apply()
                         }else{
-                            onClickFeedLike.OnClickFeed(feed.feed_seq, "false")
+                            onClickFeedLike.OnClickFeed(feed, "false")
                             favCount = feed.like_no?.minus(1).toString()
                             editor.putBoolean("checked" + feed.feed_seq, false)
                             editor.apply()
@@ -430,12 +422,12 @@ class FeedAdapter(
                 }else{
                     setOnCheckedChangeListener { compoundButton, b ->
                         if(this.isChecked){
-                            onClickFeedLike.OnClickFeed(feed.feed_seq, "true")
+                            onClickFeedLike.OnClickFeed(feed, "true")
                             favCount = feed.like_no?.plus(1).toString()
                             editor.putBoolean("checked" + feed.feed_seq, true)
                             editor.apply()
                         }else{
-                            onClickFeedLike.OnClickFeed(feed.feed_seq, "false")
+                            onClickFeedLike.OnClickFeed(feed, "false")
                             favCount = feed.like_no.toString()
                             editor.putBoolean("checked" + feed.feed_seq, false)
                             editor.apply()
@@ -648,7 +640,7 @@ class FeedAdapter(
     }
     // omeFragment에서 클릭시 뷰모델 사용하여 좋아 올리기위함
     interface OnClickLikeListener {
-        fun OnClickFeed(feed_seq: Int, boolean_value: String)
+        fun OnClickFeed(feed_seq: Feed, boolean_value: String)
     }
     // omeFragment에서 클릭시 뷰모델 사용하여 저장하기위
     interface OnClickBookMarkListener {

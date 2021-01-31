@@ -169,7 +169,16 @@ class ProfileFragmentEdit(my_m_seq:String): Fragment(),View.OnClickListener {
                         .apply(RequestOptions().circleCrop())
                         .placeholder(android.R.color.transparent)
                         .into(profileImage)
-                }else {
+                }
+                else if(it.profile_img == null){
+                    profile_img = "http://storymaw.com/data/member/user.png"
+                    Glide.with(this)
+                        .load(profile_img)
+                        .apply(RequestOptions().circleCrop())
+                        .placeholder(android.R.color.transparent)
+                        .into(profileImage)
+                }
+                else {
                     profile_img = it.profile_img!!
                     Glide.with(this)
                         .load(profile_img)

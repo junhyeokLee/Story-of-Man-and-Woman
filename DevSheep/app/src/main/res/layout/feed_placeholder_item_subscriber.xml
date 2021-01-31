@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="12dp"
+    android:padding="@dimen/activity_padding">
+
+    <View
+        android:id="@+id/thumbnail"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginRight="@dimen/activity_padding"
+        android:background="@drawable/shape" />
+
+    <View
+        android:id="@+id/name"
+        android:layout_width="150dp"
+        android:layout_height="12dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@id/thumbnail"
+        android:background="@color/placeholder_bg" />
+
+    <View
+        android:layout_width="100dp"
+        android:layout_height="10dp"
+        android:layout_below="@id/name"
+        android:layout_marginTop="12dp"
+        android:layout_toRightOf="@id/thumbnail"
+        android:background="@color/placeholder_bg" />
+
+
+    <View
+        android:layout_width="@dimen/placeholder_image_button_width"
+        android:layout_height="@dimen/placeholder_image_button_height"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="@dimen/activity_padding"
+        android:layout_toEndOf="@id/name"
+        android:layout_marginTop="8dp"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/background_follow_rounded_placeholder" />
+
+
+
+</RelativeLayout>

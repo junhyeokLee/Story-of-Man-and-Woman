@@ -3,6 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:shimmer="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
@@ -33,6 +35,42 @@
 
     </androidx.appcompat.widget.Toolbar>
 
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView_subscribe"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <LinearLayout
+        android:descendantFocusability="blocksDescendants"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmer_view_container_subscribing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:visibility="visible"
+            shimmer:duration="800">
+
+            <!-- Adding 3 rows of placeholders -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <include layout="@layout/feed_placeholder_item_subscriber" />
+                <include layout="@layout/feed_placeholder_item_subscriber" />
+                <include layout="@layout/feed_placeholder_item_subscriber" />
+                <include layout="@layout/feed_placeholder_item_subscriber" />
+                <include layout="@layout/feed_placeholder_item_subscriber" />
+                <include layout="@layout/feed_placeholder_item_subscriber" />
+
+
+            </LinearLayout>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_subscribers"
@@ -41,5 +79,73 @@
         android:layout_margin="12dp"
         android:background="@android:color/transparent"></androidx.recyclerview.widget.RecyclerView>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:background="@color/white"
+            android:layout_gravity="bottom|center"
+            android:gravity="bottom|center"
+            >
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="bottom|center"
+                android:visibility="gone"
+                />
+        </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/empty"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="64dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/emptyText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginRight="16dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:textColor="@color/gray"
+                    android:textColorHighlight="@color/gray"
+                    android:textColorHint="@color/gray"
+                    android:textColorLink="@color/gray"
+                    android:textSize="12sp"
+                    tools:text="Go do something..." />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginRight="16dp"
+                    android:paddingLeft="32dp"
+                    android:paddingRight="32dp"
+                    android:scaleType="centerInside"
+                    app:srcCompat="@drawable/state_empty" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

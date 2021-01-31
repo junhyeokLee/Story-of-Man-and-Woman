@@ -48,11 +48,21 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="21dp"
+                    android:id="@+id/iv_alarm"
+                    android:layout_width="19dp"
                     android:layout_height="21dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/ic_notification_empty"
-                    android:backgroundTint="@color/main_gray"
+                    android:background="@drawable/ic_alarm"
+                    android:backgroundTint="@color/black"
+                    />
+                <com.dev_sheep.story_of_man_and_woman.utils.RedDotImageView
+                    android:id="@+id/iv_alarm_dot"
+                    android:layout_width="19dp"
+                    android:layout_height="21dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ic_alarm"
+                    android:backgroundTint="@color/black"
+                    android:visibility="gone"
                     />
 
             </LinearLayout>
@@ -128,9 +138,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <include layout="@layout/feed_placeholder_item" />
+                <include layout="@layout/feed_placeholder_item_adv" />
 
-                <include layout="@layout/feed_placeholder_item" />
+                <include layout="@layout/feed_placeholder_item_card" />
 
                 <include layout="@layout/feed_placeholder_item" />
 

@@ -31,9 +31,7 @@ import io.reactivex.schedulers.Schedulers
 
 
 class FeedCardAdapter(
-    private val context: Context,
-    private val feedViewModel: FeedViewModel,
-    private val memberViewModel: MemberViewModel
+    private val context: Context
 ) : PagerAdapter() {
     lateinit var layoutInflater: LayoutInflater
     // my_m_seq 가져오기

@@ -218,4 +218,9 @@ class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshList
         initData()
         shimmer_view_container.stopShimmerAnimation()
     }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        supportFinishAfterTransition();
+    }
 }

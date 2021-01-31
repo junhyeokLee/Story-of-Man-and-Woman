@@ -15,25 +15,29 @@ import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.FB_ChatMessage
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.FB_User
 import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileUsersFragment
-import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileUsersFragment.Companion.USER_ID
-import com.dev_sheep.story_of_man_and_woman.view.activity.FeedRankActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.MessageActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.MyMessageActivity
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.adapter_latest_message_row.view.*
+import java.text.SimpleDateFormat
 
 
 class MessageLatestAdapter(val FBChatMessage: FB_ChatMessage, val memberViewModel:MemberViewModel,val context: Context): Item<ViewHolder>() {
   var chatPartnerUser: FB_User? = null
   var fromId : String? = null
   var toId : String? = null
+  var sdf : SimpleDateFormat = SimpleDateFormat("yyyyMMddHHmmss")
+  val myId = FirebaseAuth.getInstance().uid
+  val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$myId")
 
   override fun bind(viewHolder: ViewHolder, position: Int) {
-
 
     viewHolder.itemView.layout_item.setOnClickListener {
       val intent = Intent(viewHolder.itemView.context, MessageActivity::class.java)
@@ -50,16 +54,20 @@ class MessageLatestAdapter(val FBChatMessage: FB_ChatMessage, val memberViewMode
     val chatPartnerId: String
     if (FBChatMessage.fromId == FirebaseAuth.getInstance().uid) {
       chatPartnerId = FBChatMessage.toId
-      Log.e("MessageLatestAdapter toId = ",""+chatPartnerId)
+      toId = FBChatMessage.toId
     } else {
       chatPartnerId = FBChatMessage.fromId
-      Log.e("MessageLatestAdapter fromId = ",""+chatPartnerId)
+      fromId = FBChatMessage.fromId
     }
 
-    fromId = FirebaseAuth.getInstance().uid
+
 
     viewHolder.itemView.tv_chat_id.text = chatPartnerId
     viewHolder.itemView.message_textview_latest_message.text = FBChatMessage.text
+    viewHolder.itemView.tv_noti_date.text = calculateTime(sdf.parse(FBChatMessage.date))
+
+
+
     viewHolder.itemView.layout_item.setOnLongClickListener(object : View.OnLongClickListener{
       override fun onLongClick(v: View?): Boolean {
 
@@ -73,10 +81,11 @@ class MessageLatestAdapter(val FBChatMessage: FB_ChatMessage, val memberViewMode
 
     // 읽음 안읽음 표시
     if(FBChatMessage.readUsers == false) {
-      viewHolder.itemView.state_view.visibility = View.VISIBLE
+      viewHolder.itemView.imageview_latest_message_dot.visibility = View.VISIBLE
+      viewHolder.itemView.imageview_latest_message.visibility = View.INVISIBLE
     }else{
-      viewHolder.itemView.state_view.visibility = View.GONE
-
+      viewHolder.itemView.imageview_latest_message_dot.visibility = View.INVISIBLE
+      viewHolder.itemView.imageview_latest_message.visibility = View.VISIBLE
     }
 
     val ref = FirebaseDatabase.getInstance().getReference("/users/$chatPartnerId")
@@ -84,7 +93,9 @@ class MessageLatestAdapter(val FBChatMessage: FB_ChatMessage, val memberViewMode
       override fun onDataChange(p0: DataSnapshot) {
         chatPartnerUser = p0.getValue(FB_User::class.java)
         viewHolder.itemView.username_textview_latest_message.text = chatPartnerUser?.username
+
         memberViewModel.getMemberProfileImgFromNickName(chatPartnerUser?.username!!,viewHolder.itemView.imageview_latest_message,viewHolder.itemView.context)
+        memberViewModel.getMemberProfileImgFromNickNameDot(chatPartnerUser?.username!!,viewHolder.itemView.imageview_latest_message_dot,viewHolder.itemView.context)
 
       }
       override fun onCancelled(p0: DatabaseError) {

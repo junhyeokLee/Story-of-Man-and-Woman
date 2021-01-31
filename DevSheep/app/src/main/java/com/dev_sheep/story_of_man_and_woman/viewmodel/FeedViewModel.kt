@@ -23,26 +23,6 @@ class FeedViewModel(private val testDAO: TestDAO, private val feedService: FeedS
 //        initNetworkRequest()
 //    }
 
-//    private fun initNetworkRequest() {
-//        val call = testService.getList()
-//        call.enqueue(object : Callback<List<Feed>?> {
-//            override fun onResponse(
-//                call: Call<List<Feed>?>?,
-//                response: Response<List<Feed>?>?
-//            ) {
-//                response?.body()?.let { tests: List<Feed> ->
-//                    thread {
-//                        testDAO.addAllList(tests)
-//                    }
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<List<Feed>?>, t: Throwable) {
-//            }
-//        })
-//
-//
-//    }
 
     fun addSearch(search_title: Search){
         return testDAO.addSearch(search_title)
@@ -136,6 +116,17 @@ class FeedViewModel(private val testDAO: TestDAO, private val feedService: FeedS
             })
     }
 
+    fun increaseComplain(feed_seq:Int){
+        val single = feedService.increase_Complain(feed_seq)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+
+            },{
+
+            })
+    }
+
 
     fun getTag(){
         val single = feedService.getList()
@@ -150,17 +141,6 @@ class FeedViewModel(private val testDAO: TestDAO, private val feedService: FeedS
     }
     fun onClickBookMark(m_seq:String,feed_seq: Int,boolean_value: String){
         val single = feedService.onClickBookMark(m_seq,feed_seq,boolean_value)
-        single.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                Log.e("BookMark m_seq = ",m_seq)
-
-            },{
-
-            })
-    }
-    fun getBookMark(m_seq:String){
-        val single = feedService.getBookMark(m_seq)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -192,6 +172,19 @@ class FeedViewModel(private val testDAO: TestDAO, private val feedService: FeedS
 
             },{
                 Log.e("add Recomment 실패 = ",it.message.toString())
+
+            })
+    }
+
+    fun getFeed(feed_seq: Int){
+        val single = feedService.getFeed(feed_seq)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.d("get Feed = ",it.toString())
+
+            },{
+                Log.d("get Feed 실패 = ",it.message.toString())
 
             })
     }

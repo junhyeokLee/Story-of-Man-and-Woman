@@ -16,6 +16,7 @@
     <string name="profile_name">ProfileName</string>
     <string name="profile_img">ProfileImg</string>
     <string name="tag_name">RankName</string>
+    <string name="card_name">CardName</string>
 
 
     <!-- end Transition_Names -->

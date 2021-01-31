@@ -122,7 +122,7 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
         get_creater_nick_name = arguments?.getString("creater_nick").toString()
         get_creater_img = arguments?.getString("creater_image").toString()
         m_seq = arguments?.getString("m_seq").toString()
-        // user FeedActivity 에서 프로필 클릭시 ( MainActivity에서 argument 값 받음 )
+        // user FeedActivity or AlarmAcitivity 에서 프로필 클릭시 ( MainActivity에서 argument 값 받음 )
         feed_activity_m_seq = arguments?.getString("feed_activity_m_seq").toString()
 
         // my_m_seq 가져오기
@@ -441,6 +441,7 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
                         followChecked.text = "구독취소"
 //                    followerCount.setText("1")
                         memberViewModel.memberSubscribe(feed_activity_m_seq, my_m_seq, "true", followerCount)
+                        memberViewModel.addNotifiaction(my_m_seq,feed_activity_m_seq,0,"구독알림","님이 구독중 입니다.")
 
                     } else {
                         followChecked.setTextColor(resources.getColor(R.color.black))
@@ -454,12 +455,15 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
                         followChecked.text = "구독취소"
 //                    followerCount.setText("1")
                         memberViewModel.memberSubscribe(m_seq, my_m_seq, "true", followerCount)
+                        memberViewModel.addNotifiaction(my_m_seq,m_seq,0,"구독알림","님이 구독중 입니다.")
+
 
                     } else {
                         followChecked.setTextColor(resources.getColor(R.color.black))
                         followChecked.text = "구독하기"
 //                    followerCount.setText("0")
                         memberViewModel.memberSubscribe(m_seq, my_m_seq, "false", followerCount)
+
                     }
                 }
             }

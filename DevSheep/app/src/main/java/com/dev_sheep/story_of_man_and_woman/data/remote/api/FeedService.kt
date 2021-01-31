@@ -79,22 +79,22 @@ interface FeedService {
     fun getSearchCard(@Query("tag_seq") tag_seq: Int): Single<List<Feed>>
 
     @GET("feed_get_mystory.php")
-    fun getListMystory(@Query("m_seq") m_seq: String): Single<List<Feed>>
+    fun getListMystory(@Query("m_seq") m_seq: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
 
     @GET("feed_get_search.php")
-    fun getFeedSearch(@Query("title") title: String): Single<List<Feed>>
+    fun getFeedSearch(@Query("title") title: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
 
     @GET("feed_get_secret.php")
-    fun getListSecert(@Query("m_seq") m_seq: String): Single<List<Feed>>
+    fun getListSecert(@Query("m_seq") m_seq: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
 
     @GET("feed_get_subscribe.php")
-    fun getListSubscribe(@Query("m_seq") m_seq: String): Single<List<Feed>>
+    fun getListSubscribe(@Query("m_seq") m_seq: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
 
     @GET("feed_get_notification_subscribe.php")
     fun getListNotificationSubscribe(@Query("m_seq") m_seq: String): Single<List<Feed>>
 
     @GET("feed_get_user_subscribe.php")
-    fun getListUserSubscribe(@Query("m_seq") m_seq: String,@Query("my_seq") my_seq: String): Single<List<Feed>>
+    fun getListUserSubscribe(@Query("m_seq") m_seq: String,@Query("my_seq") my_seq: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
 
     @FormUrlEncoded
     @POST("feed_edit_view_count.php")
@@ -112,7 +112,9 @@ interface FeedService {
     @POST("feed_item_get.php")
     fun getFeed(@Field("feed_seq") feed_seq: Int): Single<Feed>
 
-
+    @FormUrlEncoded
+    @POST("feed_complain.php")
+    fun increase_Complain(@Field("feed_seq") feed_seq: Int): Single<Feed>
 
     //사용자가 프로필 이미지를 변경했을때 해당 이미지를 서버로 전송하는 통신
     @Multipart
@@ -126,7 +128,7 @@ interface FeedService {
 
     @FormUrlEncoded
     @POST("book_mark_get.php")
-    fun getBookMark(@Field("m_seq") m_seq: String): Single<List<Feed>>
+    fun getBookMark(@Field("m_seq") m_seq: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
 
     //comment 등록
     @FormUrlEncoded
@@ -139,11 +141,11 @@ interface FeedService {
                      @Field("depth") depth: Int,@Field("comment") comment: String): Single<Void>
 
     @GET("recomment_get.php")
-    fun getReComment(@Query("feed_seq") feed_seq: Int,@Query("group_seq") group_seq: Int): Single<List<Comment>>
+    fun getReComment(@Query("feed_seq") feed_seq: Int,@Query("group_seq") group_seq: Int,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Comment>>
 
 
     @GET("comment_get.php")
-    fun getComment(@Query("feed_seq") feed_seq: Int): Single<List<Comment>>
+    fun getComment(@Query("feed_seq") feed_seq: Int,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Comment>>
 
     @GET("comment_item_get.php")
     fun getCommentItem(@Query("comment_seq") comment_seq: Int): Single<Comment>

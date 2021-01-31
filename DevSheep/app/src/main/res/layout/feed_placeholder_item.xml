@@ -6,10 +6,10 @@
 
     <View
         android:id="@+id/thumbnail"
-        android:layout_width="@dimen/placeholder_image"
-        android:layout_height="@dimen/placeholder_image"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_marginRight="@dimen/activity_padding"
-        android:background="@color/placeholder_bg" />
+        android:background="@drawable/shape" />
 
     <View
         android:id="@+id/name"
@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/thumbnail"
         android:layout_marginBottom="40dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="12dp"
         android:orientation="vertical">
 
         <View

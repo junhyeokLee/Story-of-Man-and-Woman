@@ -27,6 +27,7 @@ import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Tag
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
+import com.dev_sheep.story_of_man_and_woman.view.activity.AlarmActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.FeedActivity
 import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedAdapter
 import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedCardAdapter
@@ -38,6 +39,7 @@ import com.facebook.shimmer.ShimmerFrameLayout
 import eu.micer.circlesloadingindicator.CirclesLoadingIndicator
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_home.*
 import me.relex.circleindicator.CircleIndicator
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -136,13 +138,17 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         )
         m_seq = preferences.getString("inputMseq", "")
 
+        memberViewModel.getNotificationCount(m_seq,iv_alarm,iv_alarm_dot,contexts)
 
         initData()
+
     }
 
     private fun initData(){
 
-
+        if(feedViewModel == null){
+            return
+        }
 //        setTagAdapter()
         // 전체보기
         // display loading indicator
@@ -157,7 +163,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 if (it.size > 0) {
 
                     mFeedAdapter =
-                        FeedAdapter(it, contexts, object : FeedAdapter.OnClickViewListener {
+                        FeedAdapter(it, contexts,feedViewModel, object : FeedAdapter.OnClickViewListener {
                             override fun OnClickFeed(
                                 feed: Feed,
                                 tv: TextView,
@@ -172,6 +178,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                                 lintent.putExtra("feed_seq", feed.feed_seq)
                                 lintent.putExtra("checked" + feed.feed_seq, cb.isChecked)
                                 lintent.putExtra("creater_seq", feed.creater_seq)
+                                lintent.putExtra("feed_title",feed.title)
                                 lintent.putExtra("bookmark_checked" + feed.feed_seq, cb2.isChecked)
                                 lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
 //                        context.transitionName = position.toString()
@@ -183,9 +190,20 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
                             }
                         }, object : FeedAdapter.OnClickLikeListener {
-                            override fun OnClickFeed(feed_seq: Int, boolean_value: String) {
-                                feedViewModel.increaseLikeCount(feed_seq, boolean_value)
-                            }
+                            override fun OnClickFeed(feed: Feed, boolean_value: String) {
+                                feedViewModel.increaseLikeCount(feed.feed_seq, boolean_value)
+                                if(boolean_value.equals("true")) {
+                                    memberViewModel.addNotifiaction(
+                                        m_seq,
+                                        feed.creater_seq!!,
+                                        feed.feed_seq,
+                                        "피드알림",
+                                        "님이 '\' "
+                                                + feed.title +
+                                                " '\' 를 좋아합니다."
+                                    )
+                                }
+                                }
 
                         }, object : FeedAdapter.OnClickBookMarkListener {
                             override fun OnClickBookMark(
@@ -303,6 +321,13 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 Log.e("feed 보기2 실패함", "" + it.message)
             })
 
+
+//        // alarm click
+//        iv_alarm.setOnClickListener {
+//            val lintent = Intent(context, AlarmActivity::class.java)
+//            (context as Activity).startActivity(lintent)
+//        }
+
         // 무한스크
         mNestedScrollView!!.setOnScrollChangeListener(object : NestedScrollView.OnScrollChangeListener {
             override fun onScrollChange(
@@ -355,7 +380,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 .subscribe({
 
                     mFeedAdapter =
-                        FeedAdapter(it, contexts, object : FeedAdapter.OnClickViewListener {
+                        FeedAdapter(it, contexts,feedViewModel, object : FeedAdapter.OnClickViewListener {
                             override fun OnClickFeed(
                                 feed: Feed,
                                 tv: TextView,
@@ -370,7 +395,9 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                                 lintent.putExtra("feed_seq", feed.feed_seq)
                                 lintent.putExtra("checked" + feed.feed_seq, cb.isChecked)
                                 lintent.putExtra("creater_seq", feed.creater_seq)
+                                lintent.putExtra("feed_title",feed.title)
                                 lintent.putExtra("bookmark_checked" + feed.feed_seq, cb2.isChecked)
+                                lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
                                 lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
 //                        context.transitionName = position.toString()
                                 (context as Activity).startActivity(lintent)
@@ -381,9 +408,20 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
                             }
                         }, object : FeedAdapter.OnClickLikeListener {
-                            override fun OnClickFeed(feed_seq: Int, boolean_value: String) {
-                                feedViewModel.increaseLikeCount(feed_seq, boolean_value)
-                            }
+                         override fun OnClickFeed(feed: Feed, boolean_value: String) {
+                                feedViewModel.increaseLikeCount(feed.feed_seq, boolean_value)
+                                if(boolean_value.equals("true")) {
+                                    memberViewModel.addNotifiaction(
+                                        m_seq,
+                                        feed.creater_seq!!,
+                                        feed.feed_seq,
+                                        "피드알림",
+                                        "님이 '\' "
+                                                + feed.title +
+                                                " '\' 를 좋아합니다."
+                                    )
+                                }
+                                }
 
                         }, object : FeedAdapter.OnClickBookMarkListener {
                             override fun OnClickBookMark(
@@ -476,7 +514,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
         }
 
-        mFeedCardAdater = FeedCardAdapter(contexts, feedViewModel, memberViewModel)
+        mFeedCardAdater = FeedCardAdapter(contexts)
         viewpager_card?.apply {
             this.adapter = mFeedCardAdater
             this.setPadding(72, 0, 72, 0);

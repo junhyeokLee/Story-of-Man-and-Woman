@@ -25,22 +25,52 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/user" />
+    <com.dev_sheep.story_of_man_and_woman.utils.RedDotImageView2
+        android:id="@+id/imageview_latest_message_dot"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="visible"
+        app:srcCompat="@drawable/user" />
+
 
     <TextView
         android:id="@+id/username_textview_latest_message"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginLeft="12dp"
         android:fontFamily="@font/roboto_regular"
         android:textColor="@android:color/black"
         android:textSize="13sp"
         android:textStyle="bold"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        tools:text="Username"
         app:layout_constraintBottom_toTopOf="@+id/message_textview_latest_message"
         app:layout_constraintStart_toEndOf="@+id/imageview_latest_message"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:text="Username" />
+        />
+
+
+    <TextView
+        android:id="@+id/tv_noti_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:layout_marginEnd="24dp"
+        android:fontFamily="@font/roboto_regular"
+        android:text="1 일전  "
+        android:textColor="@color/gray"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/message_textview_latest_message"
+        app:layout_constraintVertical_bias="1" />
 
     <TextView
         android:id="@+id/message_textview_latest_message"
@@ -60,17 +90,15 @@
         app:layout_constraintStart_toEndOf="@+id/imageview_latest_message"
         app:layout_constraintTop_toBottomOf="@+id/username_textview_latest_message" />
 
-    <ImageView
-        android:id="@+id/state_view"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:layout_marginRight="24dp"
-        android:fontFamily="@font/roboto_regular"
-        android:background="@drawable/ic_message2"
-        android:backgroundTint="@color/main_Accent"
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:background="@color/main_gray"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintTop_toBottomOf="@+id/username_textview_latest_message" />
+        tools:ignore="MissingConstraints"></View>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

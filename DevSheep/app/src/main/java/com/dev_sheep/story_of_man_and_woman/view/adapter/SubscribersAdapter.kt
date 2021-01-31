@@ -75,6 +75,7 @@ class SubscribersAdapter(
                     it.check_follow.text = "구독취소"
 //                    followerCount.setText("1")
                     memberViewModel.memberSubscribe2(item.m_seq!!, my_m_seq, "true")
+                    memberViewModel.addNotifiaction(my_m_seq,item.m_seq!!,0,"구독알림","님이 구독중 입니다.")
 
 
                 } else {
@@ -82,6 +83,7 @@ class SubscribersAdapter(
                     it.check_follow.text = "구독하기"
 //                    followerCount.setText("0")
                     memberViewModel.memberSubscribe2(item.m_seq!!, my_m_seq, "false")
+
 
                 }
             }

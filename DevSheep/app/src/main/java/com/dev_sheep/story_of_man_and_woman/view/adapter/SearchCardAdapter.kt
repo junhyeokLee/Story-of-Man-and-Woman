@@ -109,16 +109,18 @@ class SearchCardAdapter(
 
                 })
 
-            itemView.layout_frame.setOnClickListener {
+            itemView.card_view.setOnClickListener {
                 val intent = Intent(itemView.context, FeedSearchActivity::class.java)
                 intent.putExtra("tag_seq",item.tag_seq.toString())
                 intent.putExtra("tag_name",item.tag_name)
-                itemView.context.startActivity(intent)
+//                itemView.context.startActivity(intent)
                 val options: ActivityOptionsCompat =
                     ActivityOptionsCompat.makeSceneTransitionAnimation(itemView.context as Activity,
                         itemView.tag_name as TextView, "RankName")
                 itemView.context.startActivity(intent,options.toBundle())
             }
+
+
 
 
 

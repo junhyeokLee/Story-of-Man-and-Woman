@@ -32,7 +32,6 @@ class MessageToItem(val text: String,val user: FB_User,val memberViewModel: Memb
     memberViewModel.getMemberProfileImgFromNickName(user.username,viewHolder.itemView.profile_img_from,viewHolder.itemView.context)
     // load our user image into the star
 
-
   }
 
   override fun getLayout(): Int {

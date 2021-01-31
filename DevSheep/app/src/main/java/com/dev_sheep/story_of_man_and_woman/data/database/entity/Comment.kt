@@ -35,5 +35,7 @@ data class Comment( @PrimaryKey
                     @SerializedName("writer_gender")
                     var writer_gender:String? = null,
                     @SerializedName("writer_age")
-                    var writer_age:String? = null
+                    var writer_age:String? = null,
+                    @SerializedName("last_index")
+                    var last_index: String? = null
                     )

@@ -49,6 +49,10 @@
         </activity>
         <activity android:name=".view.activity.MyMessageActivity"></activity>
         <activity android:name=".view.activity.MessageActivity"></activity>
+        <activity android:name=".view.activity.AlarmActivity"></activity>
+        <activity android:name=".view.activity.CommentActivity"></activity>
+        <activity android:name=".view.activity.ReCommentActivity"></activity>
+
         <activity android:name=".view.activity.FeedSearchActivity">
         </activity>
         <activity android:name=".view.activity.FeedActivity">
@@ -63,6 +67,7 @@
         <activity android:name=".view.activity.SelectTagActivity"
             android:theme="@style/WriteTheme"
             ></activity>
+
 
         <provider
             android:name="androidx.core.content.FileProvider"

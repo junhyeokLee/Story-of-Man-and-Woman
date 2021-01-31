@@ -22,7 +22,9 @@
             android:background="@color/white"
             android:theme="?attr/actionBarTheme"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:layout_collapseMode="pin">
+            app:layout_collapseMode="pin"
+            android:transitionName="@string/card_name"
+            >
 
             <TextView
                 android:id="@+id/tv_tag_search_name"

@@ -5,14 +5,9 @@
     android:id="@+id/layoutss"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    >
 
-    <FrameLayout
-        android:id="@+id/layout_frame"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="true"
-        >
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view"
@@ -23,7 +18,8 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="3dp"
         app:cardCornerRadius="8dp"
-        app:cardElevation="3dp">
+        app:cardElevation="3dp"
+        >
 
         <RelativeLayout
             android:id="@+id/layout_card_background"
@@ -68,5 +64,4 @@
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>
-    </FrameLayout>
 </LinearLayout>
