@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:layout_gravity="center">
+
+
+	<com.jsibbold.zoomage.ZoomageView
+		android:id="@+id/autoSliderImageView"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:src="@drawable/error"
+		app:zoomage_restrictBounds="false"
+		app:zoomage_animateOnReset="true"
+		app:zoomage_autoResetMode="UNDER"
+		app:zoomage_autoCenter="true"
+		app:zoomage_zoomable="true"
+		app:zoomage_translatable="true"
+		app:zoomage_maxScale="4"
+		/>
+<!--	app:zoomage_minScale="0.6"-->
+	<TextView
+		android:id="@+id/descriptionTextView"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="top"
+		android:background="@drawable/bg_overlay"
+		android:padding="@dimen/padding_4dp"
+		android:textColor="@android:color/white"
+		android:textSize="18sp"
+		app:layout_anchor="@id/autoSliderImageView"
+		app:layout_anchorGravity="top|center"
+		android:gravity="center"
+		android:textStyle="bold"
+		tools:text="1/2" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

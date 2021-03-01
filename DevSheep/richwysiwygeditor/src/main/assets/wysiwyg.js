@@ -181,9 +181,11 @@ editor.setCode = function() {
 }
 
 editor.insertImage = function(url, alt) {
-    var html = '<img style="width:100%;max-width:400px" src="' + url + '" alt="' + alt + '" />';
+    var html = '<img style="width:100%;max-width:400px" src="' + url + '" alt="' + alt + '" />' + window.getSelection().toString() + '</br>';
     editor.insertHTML(html);
 }
+
+
 
 editor.insertLatex = function(latex) {
     var html = '<img src="https://private.codecogs.com/png.download?\\dpi{300} \\fn_jvn \\tiny ' + latex + '" alt="' + latex + '" />';
@@ -324,3 +326,6 @@ editor.editor.addEventListener("keyup", function(e) {
     }
 });
 editor.editor.addEventListener("click", editor.enabledEditingItems);
+
+editor.addEventListener = function(){
+}

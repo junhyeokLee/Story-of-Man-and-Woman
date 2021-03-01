@@ -2,6 +2,7 @@ package com.lumyjuwon.richwysiwygeditor.RichEditor;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -11,6 +12,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -48,6 +50,7 @@ import java.util.regex.Pattern;
  */
 
 public class RichEditor extends WebView implements NestedScrollingChild {
+
 
   public enum Type {
     BOLD,
@@ -141,11 +144,12 @@ public class RichEditor extends WebView implements NestedScrollingChild {
   private static final String STATE_SCHEME = "re-state://";
   private boolean isReady = false;
   private String mContents;
+  private String mFeedUrl;
   private OnTextChangeListener mTextChangeListener;
   private OnDecorationStateListener mDecorationStateListener;
   private AfterInitialLoadListener mLoadListener;
   private YoutubeLoadLinkListener mLoadYoutubeLinkListener;
-
+  public int FEED_IMAGE_ACTIVITY = 0;
 
   private int mLastY;
   private final int[] mScrollOffset = new int[2];
@@ -169,6 +173,7 @@ public class RichEditor extends WebView implements NestedScrollingChild {
     getSettings().setJavaScriptEnabled(true);
     setWebChromeClient(new WebChromeClient());
     setWebViewClient(createWebviewClient());
+    addJavascriptInterface(this,"android"); // android 연결
 
     mChildHelper = new NestedScrollingChildHelper(this);
     setNestedScrollingEnabled(false);
@@ -176,6 +181,7 @@ public class RichEditor extends WebView implements NestedScrollingChild {
 
     applyAttributes(context, attrs);
   }
+
 
   protected EditorWebViewClient createWebviewClient() {
     return new EditorWebViewClient();
@@ -272,6 +278,37 @@ public class RichEditor extends WebView implements NestedScrollingChild {
     ta.recycle();
   }
 
+//  @JavascriptInterface
+//  public void getFeedImage(String content,int count,int select_count){
+//
+//    Log.e("Select Img Src2 = "," "+select_count);
+//
+//    Intent intent = new Intent("com.example.main.mainactivity");
+//    intent.putExtra("feed_content",content);
+//    intent.putExtra("img_count",count);
+//    intent.putExtra("select_count",select_count);
+//
+//    getContext().startActivity(intent);
+//  }
+  @JavascriptInterface
+  public void getFeedImage(String select_url){
+
+      Intent intent = new Intent("com.example.main.mainactivity");
+//    intent.putExtra("feed_content",content);
+      intent.putExtra("select_url", select_url);
+      Log.e("selecot url",""+select_url);
+
+    if(getFeedActivityType() != 999) {
+      getContext().startActivity(intent);
+    }else{
+      return ;
+    }
+  }
+
+  public void setIntent(){
+
+  }
+
   public void setHtml(String contents) {
     if (contents == null) {
       contents = "";
@@ -284,8 +321,19 @@ public class RichEditor extends WebView implements NestedScrollingChild {
     mContents = contents;
   }
 
+
+
+
   public String getHtml() {
     return mContents;
+  }
+
+  public String getmFeedUrl() {
+    return mFeedUrl;
+  }
+
+  public void setmFeedUrl(String mFeedUrl) {
+    this.mFeedUrl = mFeedUrl;
   }
 
   public RichEditor setEditorFontColor(int color) {
@@ -474,6 +522,7 @@ public class RichEditor extends WebView implements NestedScrollingChild {
     exec("javascript:RE.prepareInsert();");
     exec("javascript:RE.insertImage('" + url + "', '" + alt + "');");
   }
+
 
   public void insertYoutubeVideo(String url){
     exec("javascript:RE.prepareInsert();");
@@ -684,4 +733,13 @@ public class RichEditor extends WebView implements NestedScrollingChild {
     return mChildHelper.dispatchNestedPreFling(velocityX, velocityY);
   }
 
+
+  public int getFeedActivityType() {
+    return FEED_IMAGE_ACTIVITY;
+  }
+
+  public void setFeedActivityType(int FEED_IMAGE_ACTIVITY) {
+    this.FEED_IMAGE_ACTIVITY = FEED_IMAGE_ACTIVITY;
+  }
 }
+

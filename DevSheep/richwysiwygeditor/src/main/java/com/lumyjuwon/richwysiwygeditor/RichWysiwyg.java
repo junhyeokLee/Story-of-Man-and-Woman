@@ -3,9 +3,6 @@ package com.lumyjuwon.richwysiwygeditor;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -18,6 +15,9 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.lumyjuwon.richwysiwygeditor.RichEditor.RichEditor;
 import com.lumyjuwon.richwysiwygeditor.WysiwygUtils.ImgPicker;

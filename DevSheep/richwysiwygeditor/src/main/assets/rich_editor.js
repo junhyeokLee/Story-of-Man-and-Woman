@@ -25,6 +25,8 @@ RE.currentSelection = {
 
 RE.editor = document.getElementById('editor');
 
+RE.feedImage = document.getElementById('feed_img');
+
 document.addEventListener("selectionchange", function() { RE.backuprange(); });
 
 // Initializations
@@ -246,12 +248,13 @@ RE.setBlockquote = function() {
 
 
 RE.insertImage = function(url, alt) {
-    var html = '<img class="feed_img" src="' + url + '" alt="' + alt + '" /><br><br>';
+//    var html = '<img class="feed_img" id="feed_img'+alt+'" style="width:100%;height:wrap;" src="' + url + '" alt="' + alt + '" onClick="sendURL('+alt+')" /> <br></br><br>';
+    var html = '<img class="feed_img" id="feed_img" style="width:100%;height:wrap;" src="' + url + '" alt="' + alt + '" onclick=\'sendURL("'+alt+'")\' /> <br></br><br>';
     RE.insertHTML(html);
 }
 
 RE.insertYoutubeVideo = function(url) {
-    var html = '<iframe id="player" type="text/html" src="https://www.youtube.com/embed/' + url + '?enablejsapi=1" frameborder="0"></iframe><br><br>'
+    var html = '<iframe id="player" type="text/html" src="https://www.youtube.com/embed/' + url + '?enablejsapi=1" frameborder="0"></iframe><br><br>';
     RE.insertHTML(html);
 }
 
@@ -405,4 +408,62 @@ RE.editor.addEventListener("keyup", function(e) {
         RE.enabledEditingItems(e);
     }
 });
+
 RE.editor.addEventListener("click", RE.enabledEditingItems);
+
+//RE.doAlert = function(e){
+// var HTML = ""+document.getElementById("feed_img");
+//  window.HTMLOUT.showHTML(HTML);
+//}
+
+
+//function imageClick(){
+////var image = url;
+//var alt = document.selection('feed_img').getAttribute('alt');
+//document.selection
+//var feed_img = document.getElementById('feed_img').getAttribute('src');
+////var int_alt = parseInt(alt);
+//var img_value = documsendURLent.getElementById('img_value');
+//
+// img_value.value = feed_img;
+//
+//}
+
+//function sendURL(alt){
+////var alt = document.getElementById('feed_alt').getAttribute('value');
+//var body = document.body.innerHTML
+//var count = document.images.length;
+//var select_img = document.getElementById('feed_img2').getAttribute('src');
+//
+//    window.android.getFeedImage(body,count,alt);
+//}
+
+function sendURL(alt){
+//var alt = document.getElementById('feed_img').getAttribute('src');
+//var alt_value = document.getElementById('feed_img').getAttribute('alt');
+//var body = document.body.innerHTML
+//var count = document.images.length;
+//var select_img = document.getElementById('feed_img2').getAttribute('src');
+    window.android.getFeedImage(alt);
+}
+
+
+
+
+
+//RE.imageClick = function() {
+////var image = url;
+//var alt = document.getElementById('feed_img').getAttribute('alt');
+//var feed_img = document.getElementById('feed_img').getAttribute('src');
+////var int_alt = parseInt(alt);
+//var img_value = document.getElementById('img_value');
+//
+// img_value.value = "imagez";
+// }
+// img_value.value = "image";
+//
+//}
+//RE.image = function(e){
+//document.body.style.backgroundColor = "red";
+//}
+//RE.feedImage.addEventListener("click", RE.imageClick);

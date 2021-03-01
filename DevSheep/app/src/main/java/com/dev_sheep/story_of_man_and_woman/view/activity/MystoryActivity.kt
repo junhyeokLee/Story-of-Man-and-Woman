@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.text.format.Formatter
 import android.util.Log
@@ -25,6 +26,7 @@ import com.esafirm.imagepicker.model.Image
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_feed_write.*
+import kotlinx.android.synthetic.main.adapter_feed.view.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -34,6 +36,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileNotFoundException
 import java.io.FileOutputStream
 
 
@@ -48,6 +51,7 @@ class MystoryActivity : AppCompatActivity() {
     lateinit var TAG_NAME : String
     lateinit var EMAIL : String
     lateinit var M_SEQ: String
+    private var count: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,6 +123,8 @@ class MystoryActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
+        // 글 작성할때는 이미지 클릭 제어
+        richwysiwygeditor.content.feedActivityType = 999
 
         richwysiwygeditor.getContent()
             .setEditorFontSize(16)
@@ -154,11 +160,13 @@ class MystoryActivity : AppCompatActivity() {
             //파일 생성
             //img_url은 이미지의 경로
             val file = File(images.get(i).path)
-            val reFile = saveBitmapToFile(file)
+//            val reFile = saveBitmapToFile(file)
             val requestFile: RequestBody =
-                RequestBody.create(MediaType.parse("multipart/form-data"), reFile)
+                RequestBody.create(MediaType.parse("multipart/form-data"), file)
             val body =
-                MultipartBody.Part.createFormData("uploaded_file", reFile?.name, requestFile)
+                MultipartBody.Part.createFormData("uploaded_file", file?.name, requestFile)
+
+
             val resultCall: Call<Feed> = FEED_SERVICE.uploadImage(EMAIL,body)
             resultCall.enqueue(object : Callback<Feed?> {
                 override fun onResponse(
@@ -169,11 +177,14 @@ class MystoryActivity : AppCompatActivity() {
 //                    Log.e("성공함",response.toString())
 //                    Log.e("filename",file.name)
                     if(response.isSuccessful) {
-                        stringBuffer.append(reFile?.name).append("\n")
+                        stringBuffer.append(file?.name).append("\n")
+
                         richwysiwygeditor.getContent().insertImage(
-                            "http://www.storymaw.com/data/feed/" + EMAIL + "/" + reFile?.name,
-                            "alt"
+                            "http://www.storymaw.com/data/feed/" + EMAIL + "/" + file?.name,
+                            file?.name
                         )
+                        increaseCount()
+
                     }
                 }
                 override fun onFailure(
@@ -188,6 +199,7 @@ class MystoryActivity : AppCompatActivity() {
 
 
             i++
+
         }
     }
 
@@ -254,7 +266,7 @@ class MystoryActivity : AppCompatActivity() {
             // BitmapFactory options to downsize the image
             val o: BitmapFactory.Options = BitmapFactory.Options()
             o.inJustDecodeBounds = true
-            o.inSampleSize = 6
+            o.inSampleSize = 1
             // factor of downsizing the image
             var inputStream = FileInputStream(file)
             //Bitmap selectedBitmap = null;
@@ -286,5 +298,47 @@ class MystoryActivity : AppCompatActivity() {
             null
         }
     }
+
+
+
+    private fun getCount():Int{
+       return this.count
+    }
+    private fun increaseCount(){
+        this.count += 1
+    }
+
+
+    fun resize(context:Context, uri: Uri, resize:Int):Bitmap {
+         var resizeBitmap:Bitmap? = null;
+
+       var options: BitmapFactory.Options  = BitmapFactory.Options();
+        try {
+            BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri), null, options); // 1번
+
+            var width = options.outWidth;
+            var height = options.outHeight;
+            var samplesize = 1;
+
+            while (true) {//2번
+                if (width / 2 < resize || height / 2 < resize)
+                    break;
+                width /= 2;
+                height /= 2;
+                samplesize *= 2;
+            }
+
+            options.inSampleSize = samplesize;
+            var bitmap = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri), null, options); //3번
+            resizeBitmap=bitmap;
+
+        } catch (e : FileNotFoundException) {
+            e.printStackTrace();
+        }
+        return resizeBitmap!!;
+    }
+
+
+
 
 }
