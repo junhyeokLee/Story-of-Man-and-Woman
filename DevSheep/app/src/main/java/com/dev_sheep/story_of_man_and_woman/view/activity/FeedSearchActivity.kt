@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
@@ -25,6 +26,7 @@ import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
 import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileFragment
 import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileUsersFragment
+import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedAdapterRank
 import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedAdapterTag
 import com.dev_sheep.story_of_man_and_woman.view.dialog.FilterDialog
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
@@ -34,12 +36,14 @@ import kotlinx.android.synthetic.main.activity_feed_search.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener{
-
+    private val TAG = "FeedSearchActivity"
     lateinit var tag_seq: String
     lateinit var tag_name: String
     lateinit var mFeedAdapterTag: FeedAdapterTag
     private val feedViewModel: FeedViewModel by viewModel()
     private lateinit var m_seq : String
+    private var limit: Int = 10
+    private var offset: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,11 +65,13 @@ class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshList
 
         if(intent.hasExtra("tag_seq")) {
             tag_seq = intent.getStringExtra("tag_seq")
-            Log.e("tag_seq", tag_seq)
+            Log.e(TAG+"tag_seq", tag_seq.toString())
         }
         if(intent.hasExtra("tag_name")) {
             tag_name = intent.getStringExtra("tag_name")
             tv_tag_search_name.text = tag_name
+            Log.e(TAG+"tag_name", tag_name.toString())
+
         }
 
         initData()
@@ -77,12 +83,14 @@ class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshList
         // display loading indicator
         val handlerFeed: Handler = Handler(Looper.myLooper())
         // tag_search
-        val single = FEED_SERVICE.getTagSearch(Integer.parseInt(tag_seq))
+        val single = FEED_SERVICE.getTagSearch(Integer.parseInt(tag_seq),offset,limit)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnSuccess { progressBar?.visibility = View.GONE }
             .subscribe({
                 if (it.size > 0) {
+
+                    Log.e(TAG+"dat", it.toString())
+
 
                     mFeedAdapterTag = FeedAdapterTag(it, this, object : FeedAdapterTag.OnClickViewListener {
                         override fun OnClickFeed(
@@ -153,6 +161,15 @@ class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshList
                                     ?.commit()
                             }
                         }
+                    },object :FeedAdapterTag.OnEndlessScrollListener{
+                        override fun OnEndless(boolean_value: Boolean) {
+                            if (boolean_value == false) {
+                                EndlessScroll(false)
+                            } else if (boolean_value == true) {
+                                EndlessScroll(true)
+                            }
+                        }
+
                     })
 
                     handlerFeed.postDelayed({
@@ -177,6 +194,27 @@ class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshList
                 Log.e("feed 보기 실패함", "" + it.message)
             })
 
+    }
+
+    fun EndlessScroll(isLoading: Boolean){
+        // 무한스크롤
+
+        recyclerView!!.setOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (!recyclerView.canScrollVertically(1)) {
+                    if (isLoading == false) {
+                        val single = FEED_SERVICE.getTagSearch(Integer.parseInt(tag_seq),offset,addLimit())
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe({
+                                mFeedAdapterTag.updateList(it)
+                            }, {
+                                Log.d("Error MoreData", it.message.toString())
+                            })
+                    }
+                }
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -223,4 +261,10 @@ class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshList
         super.onBackPressed()
         supportFinishAfterTransition();
     }
+
+    private fun addLimit() : Int{
+        limit += 10
+        return limit
+    }
 }
+

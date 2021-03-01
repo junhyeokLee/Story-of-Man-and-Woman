@@ -39,7 +39,7 @@
                 android:text="댓글"
                 android:textSize="18sp"
                 android:textColor="@color/black"
-                android:fontFamily="@font/roboto_regular"
+                android:fontFamily="@font/apple_sd_gothic_neo_t"
                 android:layout_marginLeft="16dp"
                 />
 
@@ -133,7 +133,7 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginTop="12dp"
                     android:layout_marginRight="16dp"
-                    android:fontFamily="@font/roboto_regular"
+                    android:fontFamily="@font/apple_sd_gothic_neo_t"
                     android:gravity="center"
                     android:textAlignment="center"
                     android:textColor="@color/gray"
@@ -206,7 +206,7 @@
                         android:id="@+id/et_comment"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:fontFamily="@font/roboto_regular"
+                        android:fontFamily="@font/apple_sd_gothic_neo_t"
                         android:textStyle="bold"
                         android:layout_weight="1"
                         android:hint="어떻게 생각하세요?"

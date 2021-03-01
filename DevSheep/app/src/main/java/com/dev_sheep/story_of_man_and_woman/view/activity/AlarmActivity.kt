@@ -11,9 +11,12 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.dev_sheep.story_of_man_and_woman.R
+import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.MEMBER_SERVICE
 import com.dev_sheep.story_of_man_and_woman.view.Fragment.ProfileUsersFragment
+import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedAdapter
 import com.dev_sheep.story_of_man_and_woman.view.adapter.NotificationAdapter
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
@@ -30,7 +33,8 @@ class AlarmActivity : AppCompatActivity() {
     lateinit var m_seq : String // 자신의 seq
     lateinit var context: Context
     private lateinit var linearLayoutManager: LinearLayoutManager
-
+    private var limit: Int = 10
+    private var offset: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +47,6 @@ class AlarmActivity : AppCompatActivity() {
             onBackPressed()
         }
     }
-
 
     private fun initData(){
 
@@ -62,7 +65,7 @@ class AlarmActivity : AppCompatActivity() {
         var likeCheck: Boolean? = null
         var bookMarkCheck: Boolean? = null
 
-        val single = MEMBER_SERVICE.getNotification(m_seq)
+        val single = MEMBER_SERVICE.getNotification(m_seq,offset,limit)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -90,17 +93,38 @@ class AlarmActivity : AppCompatActivity() {
                             }
                             // 피드 조회수 증가
                             feedViewModel.increaseViewCount(feed_seq)
+                            // 피드 타이틀 가져와서 넘겨주기
+                            FEED_SERVICE.getFeedTitle(feed_seq)
+                            .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({
+                                    var feed_title: String
+                                    feed_title = it.toString()
+                                    val intent = Intent(context, FeedActivity::class.java)
+                                    intent.putExtra("feed_seq", feed_seq)
+                                    intent.putExtra("feed_title",feed_title)
+                                    intent.putExtra("creater_seq", m_seq)
+                                    intent.putExtra("checked" + feed_seq, likeCheck!!)
+                                    intent.putExtra("bookmark_checked" + feed_seq, bookMarkCheck!!)
+                                    intent.putExtra(FeedActivity.EXTRA_POSITION, 0)
+                                    startActivity(intent)
+                                    overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+                                    finish()
+                                },{
+                                    Log.d("get Feed Title Failed = ",it.message.toString())
 
-                            val intent = Intent(context, FeedActivity::class.java)
-                            intent.putExtra("feed_seq", feed_seq)
-                            intent.putExtra("creater_seq", m_seq)
-                            intent.putExtra("checked" + feed_seq, likeCheck!!)
-                            intent.putExtra("bookmark_checked" + feed_seq, bookMarkCheck!!)
-                            intent.putExtra(FeedActivity.EXTRA_POSITION, 0)
-                            startActivity(intent)
-                            overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
-                            finish()
+                                })
 
+
+                        }
+
+                    }, object : NotificationAdapter.OnEndlessScrollListener {
+                        override fun OnEndless(boolean_value: Boolean) {
+                            if (boolean_value == false) {
+                                EndlessScroll(false)
+                            } else if (boolean_value == true) {
+                                EndlessScroll(true)
+                            }
                         }
 
                     })
@@ -115,5 +139,31 @@ class AlarmActivity : AppCompatActivity() {
                 Log.e("Notification 보기 실패함", "" + it.message)
             })
 
+    }
+
+    fun EndlessScroll(isLoading: Boolean){
+        // 무한스크롤
+        recyclerview_alarm!!.setOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (!recyclerView.canScrollVertically(1)) {
+                    if (isLoading == false) {
+                        val single = MEMBER_SERVICE.getNotification(m_seq,offset,addLimit())
+                        single.subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe({
+                                mNotificationAdapter.updateList(it)
+                            }, {
+                                Log.d("Error MoreData", it.message.toString())
+                            })
+                    }
+                }
+            }
+        })
+    }
+
+
+    private fun addLimit() : Int{
+        limit += 10
+        return limit
     }
 }

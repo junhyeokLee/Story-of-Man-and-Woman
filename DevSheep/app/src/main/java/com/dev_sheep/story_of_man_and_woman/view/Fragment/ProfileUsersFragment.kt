@@ -244,9 +244,9 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
 
     private fun initData(){
 
-        Log.e("m_seq",m_seq)
-        Log.e("activity_m_seq",feed_activity_m_seq)
-        Log.e("creater Image",get_creater_img)
+        if(feedViewModel == null || memberViewModel == null){
+            return
+        }
 
         if(m_seq == "null") {
 

@@ -49,7 +49,9 @@ data class Feed(
     @SerializedName("bookmark_check")
     var bookmark_check: String? = null,
     @SerializedName("images")
-    var images: ArrayList<ItemImage>
+    var images: ArrayList<ItemImage>,
+    @SerializedName("last_index")
+    var last_index: String? = null
 ) : Parcelable{
 
     constructor(parcel: Parcel) : this(

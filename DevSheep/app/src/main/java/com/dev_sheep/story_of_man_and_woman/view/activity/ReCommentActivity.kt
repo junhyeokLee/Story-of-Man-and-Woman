@@ -1,6 +1,8 @@
 package com.dev_sheep.story_of_man_and_woman.view.activity
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
@@ -8,10 +10,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -22,18 +21,21 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Comment
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
 import com.dev_sheep.story_of_man_and_woman.view.adapter.CommentAdapter
 import com.dev_sheep.story_of_man_and_woman.view.adapter.CommentReAdapter
-import com.dev_sheep.story_of_man_and_woman.view.adapter.calculateTime
+import com.dev_sheep.story_of_man_and_woman.view.adapter.OnClickViewListener
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import com.facebook.shimmer.ShimmerFrameLayout
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.adapter_re_comment.view.*
 import kotlinx.android.synthetic.main.fragment_recomment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
+import java.util.*
 
 class ReCommentActivity : AppCompatActivity() {
 
@@ -42,9 +44,15 @@ class ReCommentActivity : AppCompatActivity() {
 
     lateinit var contexts : Context
     lateinit var editText : EditText
-    lateinit var comment_seq : String
-    private var feed_seq : Int? = null
-    //    private var writer_seq : String? = null
+
+    private var comment_seq : String? = null
+//    private var comment_writer_seq: String? = null
+    private var re_comment_seq: String? = null
+    private var re_comment_writer: String? = null
+    private var re_comment_writer_seq: String? = null
+    private var re_comment_text: String? = null
+
+    private var feed_seq: String? = null
     private var group_seq : Int? = null
     private var depth : Int? = null
 
@@ -60,30 +68,45 @@ class ReCommentActivity : AppCompatActivity() {
     private var totalItemCount = 0
     private var lastVisibleItemPosition = 0
     private lateinit var linearLayoutManager: LinearLayoutManager
-    private var nestedScrollView: NestedScrollView? = null
-    private var progressBar : ProgressBar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recomment)
+        contexts = this
 
         recyclerview_recomments = findViewById(R.id.recyclerview_recomments)
         iv_back = findViewById(R.id.im_back)
 
 //        mSwipeRefreshLayout = findViewById<View>(R.id.sr_refresh) as SwipeRefreshLayout
         mShimmerViewContainer = findViewById<View>(R.id.shimmer_view_container) as ShimmerFrameLayout
-        nestedScrollView = findViewById(R.id.nestedScrollView_comment)
-        progressBar = findViewById(R.id.progressBar)
 
         if(intent.hasExtra("comment_seq")) {
             comment_seq = intent.getStringExtra("comment_seq")
+        }
+
+        if(intent.hasExtra("re_comment_seq")) {
+            re_comment_seq = intent.getStringExtra("re_comment_seq")
+        }
+        if(intent.hasExtra("re_comment_writer")) {
+            re_comment_writer = intent.getStringExtra("re_comment_writer")
+        }
+        if(intent.hasExtra("re_comment_writer_seq")) {
+            re_comment_writer_seq = intent.getStringExtra("re_comment_writer_seq")
+        }
+        if(intent.hasExtra("re_comment_text")) {
+            re_comment_text = intent.getStringExtra("re_comment_text")
+        }
+        if(intent.hasExtra("feed_seq")){
+            feed_seq = intent.getStringExtra("feed_seq")
         }
 
         val layoutManager = GridLayoutManager(this, 1)
         recyclerview_recomments?.layoutManager = layoutManager
 
         editText = findViewById(R.id.et_comment)
+
         editText.requestFocus();
+
 
         // my_m_seq 가져오기
         val preferences: SharedPreferences = this.getSharedPreferences(
@@ -95,32 +118,6 @@ class ReCommentActivity : AppCompatActivity() {
 
         initData()
 
-        editText.setOnTouchListener(View.OnTouchListener { v, event ->
-            val DRAWABLE_LEFT = 0
-            val DRAWABLE_TOP = 1
-            val DRAWABLE_RIGHT = 2
-            val DRAWABLE_BOTTOM = 3
-            if (event.action == MotionEvent.ACTION_UP) {
-                if (event.rawX >= editText.getRight() - editText.getCompoundDrawables()
-                        .get(DRAWABLE_RIGHT).getBounds().width()
-                ) {
-                    // your action here
-                    feedViewModel.addReComment(
-                        Integer.parseInt(comment_seq),
-                        feed_seq!!,
-                        m_seq!!,
-                        group_seq!!,
-                        depth!!,
-                        editText.text.toString()
-                    )
-                    Toast.makeText(this, "완료.", Toast.LENGTH_SHORT).show();
-
-                    onBackPressed()
-                    return@OnTouchListener true
-                }
-            }
-            false
-        })
     }
     private fun initData(){
 
@@ -129,6 +126,7 @@ class ReCommentActivity : AppCompatActivity() {
         linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         var sdf : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+
 
         val single = APIService.FEED_SERVICE.getCommentItem(Integer.parseInt(comment_seq))
         single.subscribeOn(Schedulers.io())
@@ -141,23 +139,29 @@ class ReCommentActivity : AppCompatActivity() {
                 tv_gender.text = it.writer_gender
                 tv_feed_date.text = calculateTime(sdf.parse(it.comment_date))
                 like_count.text = it.like_no.toString()
+                if(re_comment_seq == null || re_comment_writer == null || re_comment_writer_seq == null) {
+                    editText.setText("@" + it.writer + " ")
+                    getEditText(it.comment_seq.toString(),it.feed_seq.toString()!!,it.writer_seq!!,it.comment!!)
 
+                }else{
+                    editText.setText("@" + re_comment_writer + " ")
+                    getEditText(re_comment_seq.toString(),feed_seq.toString()!!,re_comment_writer_seq!!,re_comment_text!!)
 
-                feed_seq = Integer.parseInt(it.feed_seq)
+                }
+                editText.setSelection(et_comment.text.length)
+
                 group_seq = it.group_seq
                 depth= it.depth
 
-                editText.setText("@"+it.writer+" ")
-                editText.setSelection(et_comment.text.length)
+                if(!this.isFinishing()) {
+                    Glide.with(this)
+                        .load(it.writer_img)
+                        .apply(RequestOptions().circleCrop())
+                        .placeholder(getDrawable(R.drawable.user))
+                        .into(img_profile)
+                }
 
-                Glide.with(this)
-                    .load(it.writer_img)
-                    .apply(RequestOptions().circleCrop())
-                    .placeholder(android.R.color.transparent)
-                    .into(img_profile)
-
-
-                val single_recomment = APIService.FEED_SERVICE.getReComment(Integer.parseInt(it.feed_seq!!),it.group_seq!!,offset,limit)
+                val single_recomment = APIService.FEED_SERVICE.getReComment(Integer.parseInt(feed_seq),it.group_seq!!,offset,limit)
                 single_recomment.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
@@ -165,9 +169,32 @@ class ReCommentActivity : AppCompatActivity() {
                         if(it.size > 0) {
                             mCommentAdapter = CommentReAdapter(it, this, feedViewModel,object : CommentReAdapter.OnLastIndexListener{
                                 override fun OnLastIndex(last_index: Boolean) {
-                                    InfinityScroll(last_index)
+                                    if(last_index == false){
+                                        EndlessScroll(false,group_seq!!)
+                                    }else if(last_index == true){
+                                        EndlessScroll(true,group_seq!!)
+                                    }
                                 }
 
+                            },object : CommentReAdapter.OnClickViewListener{
+                                override fun onClickView(comment: Comment) {
+//                                    val lintent = Intent(contexts, ReCommentActivity::class.java)
+//                                    lintent.putExtra("comment_seq" , comment_seq.toString())
+//                                    lintent.putExtra("feed_seq",comment.feed_seq.toString())
+//                                    lintent.putExtra("re_comment_seq",comment.comment_seq.toString())
+//                                    lintent.putExtra("re_comment_writer",comment.writer.toString())
+//                                    lintent.putExtra("re_comment_writer_seq",comment.writer_seq.toString())
+//                                    lintent.putExtra("re_comment_text",comment.comment.toString())
+//
+//                                    startActivity(lintent)
+//                                    overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+                                    editText.setText("@" + comment.writer + " ")
+                                    editText.setSelection(et_comment.text.length)
+
+                                    getEditText(comment.comment_seq.toString(),comment.feed_seq.toString(),comment.writer_seq.toString(),comment.comment.toString())
+
+
+                                }
                             })
 
                             handlerFeed.postDelayed({
@@ -205,70 +232,66 @@ class ReCommentActivity : AppCompatActivity() {
         }
     }
 
-    private fun InfinityScroll(last_index:Boolean){
+    fun EndlessScroll(isLoading: Boolean,group_seq:Int){
         // 무한스크롤
-        nestedScrollView?.setOnScrollChangeListener(object: NestedScrollView.OnScrollChangeListener{
-            override fun onScrollChange(
-                v: NestedScrollView?,
-                scrollX: Int,
-                scrollY: Int,
-                oldScrollX: Int,
-                oldScrollY: Int
-            ) {
-                if (v?.getChildAt(v.getChildCount() - 1) != null) {
 
-                    if (scrollY >= v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight() && scrollY > oldScrollY
-                        && last_index == false) {
-                        visibleItemCount = linearLayoutManager.getChildCount()
-                        totalItemCount = linearLayoutManager.getItemCount()
-                        lastVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition()
-                        if (visibleItemCount + lastVisibleItemPosition >= totalItemCount)
-                        {
-                            progressBar?.visibility = View.VISIBLE
-                            LoadMoreData()
-
-                        }
-
-                    } else if(last_index == true){
-                        progressBar?.visibility = View.GONE
+        recyclerview_recomments!!.setOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (!recyclerView.canScrollVertically(1)) {
+                    if (isLoading == false) {
+                        val single = APIService.FEED_SERVICE.getReComment(Integer.parseInt(feed_seq),group_seq,offset,addLimit())
+                        single.subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe({
+                                mCommentAdapter.updateList(it)
+                            }, {
+                                Log.d("Error MoreData", it.message.toString())
+                            })
                     }
                 }
             }
-
         })
     }
 
-    private fun LoadMoreData() {
-        linearLayoutManager = LinearLayoutManager(this)
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-        Handler().postDelayed({
 
-            Log.e("more feed_seq!!!",""+feed_seq)
-            Log.e("more group_seq!!!",""+group_seq)
+    private fun getEditText(comment_seq:String,feed_seq:String,writer_seq:String,comment_text:String){
+        editText.setOnTouchListener(View.OnTouchListener { v, event ->
+            val DRAWABLE_LEFT = 0
+            val DRAWABLE_TOP = 1
+            val DRAWABLE_RIGHT = 2
+            val DRAWABLE_BOTTOM = 3
+            if (event.action == MotionEvent.ACTION_UP) {
+                if (event.rawX >= editText.getRight() - editText.getCompoundDrawables()
+                        .get(DRAWABLE_RIGHT).getBounds().width()
+                ) {
+                    // your action here
+                    feedViewModel.addReComment(
+                        Integer.parseInt(comment_seq),
+                        Integer.parseInt(feed_seq),
+                        m_seq!!,
+                        group_seq!!,
+                        depth!!,
+                        editText.text.toString()
+                    )
+                    // 댓글단 사람의
+                    memberViewModel.addNotifiaction(
+                        m_seq,
+                        writer_seq,
+                        Integer.parseInt(feed_seq),
+                        "대댓글 알림",
+                        "님이 '\' " + comment_text + " '\' 에 댓글을 남겼습니다."+
+                                "  -  "+editText.text.toString()
+                    )
 
-            val single_recomment = APIService.FEED_SERVICE.getReComment(feed_seq!!,group_seq!!,offset,addLimit())
+                    Toast.makeText(this, "댓글등록.", Toast.LENGTH_SHORT).show();
 
-            single_recomment.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    mCommentAdapter = CommentReAdapter(it, this, feedViewModel,object :CommentReAdapter.OnLastIndexListener{
-                        override fun OnLastIndex(last_index: Boolean) {
-                            InfinityScroll(last_index)
-                        }
-
-                    })
-
-                    recyclerview_recomments?.apply {
-                        this.layoutManager = linearLayoutManager
-                        this.itemAnimator = DefaultItemAnimator()
-                        this.adapter = mCommentAdapter
-                    }
-
-                }, {
-                    Log.d("스크롤 보기 실패함", "" + it.message)
-                })
-            progressBar?.visibility = View.GONE
-        }, 1000)
+                    initData()
+                    editText.setText("")
+                    return@OnTouchListener true
+                }
+            }
+            false
+        })
     }
 
     override fun onResume() {
@@ -287,6 +310,41 @@ class ReCommentActivity : AppCompatActivity() {
     private fun addLimit() : Int{
         limit += 15
         return limit
+    }
+
+    private object TIME_MAXIMUM {
+        const val SEC = 60
+        const val MIN = 60
+        const val HOUR = 24
+        const val DAY = 30
+        const val MONTH = 12
+    }
+
+    fun calculateTime(date: Date): String? {
+        val curTime = System.currentTimeMillis()
+        val regTime = date.time
+        var diffTime = (curTime - regTime) / 1000
+        var msg: String? = null
+        if (diffTime < TIME_MAXIMUM.SEC) {
+            // sec
+            msg = diffTime.toString() + " 초전"
+        } else if (TIME_MAXIMUM.SEC.let { diffTime /= it; diffTime } < TIME_MAXIMUM.MIN) {
+            // min
+            println(diffTime)
+            msg = diffTime.toString() + " 분전"
+        } else if (TIME_MAXIMUM.MIN.let { diffTime /= it; diffTime } < TIME_MAXIMUM.HOUR) {
+            // hour
+            msg = diffTime.toString() + " 시간전"
+        } else if (TIME_MAXIMUM.HOUR.let { diffTime /= it; diffTime } < TIME_MAXIMUM.DAY) {
+            // day
+            msg = diffTime.toString() + " 일전"
+        } else if (TIME_MAXIMUM.DAY.let { diffTime /= it; diffTime } < TIME_MAXIMUM.MONTH) {
+            // day
+            msg = diffTime.toString() + " 달전"
+        } else {
+            msg = diffTime.toString() + " 년전"
+        }
+        return msg
     }
 
 }

@@ -148,6 +148,10 @@ class ProfileFragmentEdit(my_m_seq:String): Fragment(),View.OnClickListener {
 
     private fun initData(){
 
+        if(memberViewModel == null){
+            return
+        }
+
         val single = MEMBER_SERVICE.getMember(m_seq)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

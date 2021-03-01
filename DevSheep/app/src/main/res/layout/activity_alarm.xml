@@ -7,11 +7,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar"
+    <LinearLayout
+        android:id="@+id/alarm_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fitsSystemWindows="true">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -19,6 +20,7 @@
             android:layout_gravity="top"
             android:background="@color/white"
             android:theme="?attr/actionBarTheme"
+            android:elevation="4dp"
             app:layout_scrollFlags="scroll|enterAlways"
             app:layout_collapseMode="pin">
 
@@ -34,7 +36,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto_regular"
+                android:fontFamily="@font/apple_sd_gothic_neo_t"
                 android:text="알림"
                 android:textColor="#000000"
                 android:textSize="18sp"
@@ -42,29 +44,18 @@
 
         </androidx.appcompat.widget.Toolbar>
 
-    </com.google.android.material.appbar.AppBarLayout>
 
 
-    <LinearLayout
-        android:id="@+id/alarm_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        >
 
-        <ProgressBar
-            android:id="@+id/pb_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            ></ProgressBar>
+
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview_alarm"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:paddingBottom="32dp"
             android:clipToPadding="false"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             />
@@ -72,17 +63,16 @@
         <TextView
             android:id="@+id/tv_alarm"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_margin="16dp"
-            android:fontFamily="@font/roboto_regular"
+            android:layout_height="0dp"
+            android:layout_weight="0.3"
+            android:gravity="center|top"
+            android:fontFamily="@font/apple_sd_gothic_neo_t"
             android:textSize="12sp"
             android:textColor="@color/gray"
-            android:text="알림 내역은 최근 3개월 까지 확인할 수 있습니다.">
+            android:text="알림 내역은 최근 3개월 까지 확인할 수 있습니다."/>
 
-        </TextView>
 
-    </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/empty_layout"
@@ -100,7 +90,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="12dp"
             android:layout_marginRight="16dp"
-            android:fontFamily="@font/roboto_regular"
+            android:fontFamily="@font/apple_sd_gothic_neo_t"
             android:gravity="center"
             android:textAlignment="center"
             android:textColor="@color/gray"
@@ -123,5 +113,6 @@
 
     </LinearLayout>
 
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

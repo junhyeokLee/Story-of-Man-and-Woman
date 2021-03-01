@@ -40,16 +40,37 @@
         <activity android:name=".view.activity.MystoryActivity"
             android:theme="@style/WriteTheme">
         </activity>
-        <activity android:name=".view.activity.LoginActivity">
+        <activity android:name=".view.activity.LoginActivity"
+            android:theme="@style/Theme.App"
+            >
         </activity>
         <activity android:name=".view.activity.SignUpActivity"
+            android:theme="@style/Theme.App"
             android:noHistory="true">
         </activity>
-        <activity android:name=".view.activity.PasswordSearchActivity">
+        <activity android:name=".view.activity.SignUpStartActivity"
+            android:theme="@style/Theme.App"
+            android:noHistory="true">
+        </activity>
+        <activity android:name=".view.activity.PasswordSearchActivity"
+            android:theme="@style/Theme.App"
+            >
         </activity>
         <activity android:name=".view.activity.MyMessageActivity"></activity>
         <activity android:name=".view.activity.MessageActivity"></activity>
-        <activity android:name=".view.activity.AlarmActivity"></activity>
+        <activity android:name=".view.activity.AlarmActivity">
+            <!--            <intent-filter>-->
+            <!--                <action android:name="com.example.main.mainactivity" />-->
+            <!--                <category android:name="android.intent.category.DEFAULT" />-->
+            <!--            </intent-filter>-->
+
+        </activity>
+        <activity android:name=".view.activity.ImageActivity">
+            <intent-filter>
+                <action android:name="com.example.main.mainactivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity android:name=".view.activity.CommentActivity"></activity>
         <activity android:name=".view.activity.ReCommentActivity"></activity>
 

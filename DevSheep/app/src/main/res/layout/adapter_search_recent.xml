@@ -18,7 +18,7 @@
             android:layout_margin="16dp"
             android:textColor="@color/black"
             android:textSize="16sp"
-            android:fontFamily="@font/roboto_regular"
+            android:fontFamily="@font/apple_sd_gothic_neo_t"
             android:layout_weight="3"
             android:text="최근 검색어"
             >

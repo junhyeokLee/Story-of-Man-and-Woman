@@ -29,8 +29,8 @@ import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
 import com.dev_sheep.story_of_man_and_woman.view.adapter.CommentAdapter
 import com.dev_sheep.story_of_man_and_woman.view.adapter.CommentReAdapter
-import com.dev_sheep.story_of_man_and_woman.view.adapter.calculateTime
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
+import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -54,6 +54,7 @@ class ReCommentFragment : Fragment() ,SwipeRefreshLayout.OnRefreshListener {
         }
     }
     private val feedViewModel: FeedViewModel by viewModel()
+    private val memberViewModel: MemberViewModel by viewModel()
 
     lateinit var contexts : Context
     lateinit var editText : EditText
@@ -134,6 +135,11 @@ class ReCommentFragment : Fragment() ,SwipeRefreshLayout.OnRefreshListener {
     }
 
     private fun initData(){
+
+        if(feedViewModel == null || memberViewModel == null){
+            return
+        }
+
         comment_seq = arguments?.getString("comment_seq").toString()
         val handlerFeed: Handler = Handler(Looper.myLooper())
         var sdf : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -173,6 +179,10 @@ class ReCommentFragment : Fragment() ,SwipeRefreshLayout.OnRefreshListener {
                         if(it.size > 0) {
                             mCommentAdapter = CommentReAdapter(it, context!!, feedViewModel,object :CommentReAdapter.OnLastIndexListener{
                                 override fun OnLastIndex(last_index: Boolean) {
+                                }
+
+                            },object :CommentReAdapter.OnClickViewListener{
+                                override fun onClickView(comment: Comment) {
                                 }
 
                             })

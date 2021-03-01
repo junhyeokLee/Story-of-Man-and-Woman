@@ -159,7 +159,7 @@ class CommentFragment : Fragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 if(it.size > 0) {
-                    mCommentAdapter = CommentAdapter(it, context!!, feedViewModel,object :CommentAdapter.OnLastIndexListener{
+                    mCommentAdapter = CommentAdapter(it, context!!, feedViewModel,memberViewModel,object :CommentAdapter.OnLastIndexListener{
                         override fun OnLastIndex(last_index: Boolean) {
                                 InfinityScroll(last_index)
                         }
@@ -238,7 +238,7 @@ class CommentFragment : Fragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
 
-                    mCommentAdapter = CommentAdapter(it, context!!, feedViewModel,object :CommentAdapter.OnLastIndexListener{
+                    mCommentAdapter = CommentAdapter(it, context!!, feedViewModel,memberViewModel,object :CommentAdapter.OnLastIndexListener{
                         override fun OnLastIndex(last_index: Boolean) {
                                 InfinityScroll(last_index)
                         }

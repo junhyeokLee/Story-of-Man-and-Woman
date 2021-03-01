@@ -25,7 +25,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
-import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
 import com.dev_sheep.story_of_man_and_woman.view.activity.FeedActivity
@@ -49,7 +48,7 @@ class ProfileUserSubscriberFragment(get_m_seq : String): Fragment() {
     lateinit var mFeedAdapter: FeedAdapter
     private val get_m_seq = get_m_seq
     lateinit var m_seq : String
-    private var limit: Int = 5
+    private var limit: Int = 10
     private var offset: Int = 0
     private var visibleItemCount = 0
     private var totalItemCount = 0
@@ -72,8 +71,6 @@ class ProfileUserSubscriberFragment(get_m_seq : String): Fragment() {
         empty = view.findViewById(R.id.empty)
         tv_empty = view.findViewById(R.id.emptyText) as TextView
         tv_empty.setText(R.string.empty)
-        nestedScrollView = view.findViewById(R.id.nestedScrollView_profile_feed)
-        progressBar = view.findViewById(R.id.progressBar)
         shimmer_view_container_profile_feed = view.findViewById(R.id.shimmer_view_container_profile_feed)
 
         // 저장된 m_seq 가져오기
@@ -86,6 +83,11 @@ class ProfileUserSubscriberFragment(get_m_seq : String): Fragment() {
     }
 
     private fun initData() {
+
+        if(feedViewModel == null || memberViewModel == null){
+            return
+        }
+
         val handlerFeed: Handler = Handler(Looper.myLooper())
         linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
@@ -189,6 +191,15 @@ class ProfileUserSubscriberFragment(get_m_seq : String): Fragment() {
 
                             }
 
+                        }, object : FeedAdapter.OnEndlessScrollListener {
+                            override fun OnEndless(boolean_value: Boolean) {
+                                if (boolean_value == false) {
+                                    EndlessScroll(false)
+                                } else if (boolean_value == true) {
+                                    EndlessScroll(true)
+                                }
+                            }
+
                         })
                     handlerFeed.postDelayed({
                         shimmer_view_container_profile_feed?.stopShimmerAnimation()
@@ -214,151 +225,27 @@ class ProfileUserSubscriberFragment(get_m_seq : String): Fragment() {
                 Log.e("feed 보기 실패함", "" + it.message)
             })
 
-        nestedScrollView?.setOnScrollChangeListener(object: NestedScrollView.OnScrollChangeListener{
-            override fun onScrollChange(
-                v: NestedScrollView?,
-                scrollX: Int,
-                scrollY: Int,
-                oldScrollX: Int,
-                oldScrollY: Int
-            ) {
-                if (v?.getChildAt(v.getChildCount() - 1) != null) {
-                    progressBar?.visibility = View.VISIBLE
+    }
 
-                    if (scrollY >= v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight() && scrollY > oldScrollY) {
-                        visibleItemCount = linearLayoutManager.getChildCount()
-                        totalItemCount = linearLayoutManager.getItemCount()
-                        lastVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition()
-                        if (visibleItemCount + lastVisibleItemPosition >= totalItemCount) {
-//                                Handler().postDelayed({
-                            LoadMoreData()
-//                                },1000)
+    fun EndlessScroll(isLoading: Boolean){
+        // 무한스크롤
 
-                        }else{
-                            progressBar?.visibility = View.GONE
-                        }
+        recyclerView!!.setOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (!recyclerView.canScrollVertically(1)) {
+                    if (isLoading == false) {
+                        val single = FEED_SERVICE.getListUserSubscribe(get_m_seq,m_seq,offset,addLimit())
+                        single.subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe({
+                                mFeedAdapter.updateList(it)
+                            }, {
+                                Log.d("Error MoreData", it.message.toString())
+                            })
                     }
                 }
             }
-
         })
-
-    }
-
-    private fun LoadMoreData() {
-        linearLayoutManager = LinearLayoutManager(context)
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-        Handler().postDelayed({
-            val single = FEED_SERVICE.getListUserSubscribe(get_m_seq,m_seq,offset, addLimit())
-            single.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-
-                    mFeedAdapter = FeedAdapter(
-                        it,
-                        contexts,
-                        feedViewModel,
-                        object : FeedAdapter.OnClickViewListener {
-                            override fun OnClickFeed(
-                                feed: Feed,
-                                tv: TextView,
-                                iv: ImageView,
-                                cb: CheckBox,
-                                cb2: CheckBox,
-                                position: Int
-                            ) {
-                                feedViewModel.increaseViewCount(feed.feed_seq)
-
-                                val lintent = Intent(context, FeedActivity::class.java)
-                                lintent.putExtra("feed_seq", feed.feed_seq)
-                                lintent.putExtra("checked" + feed.feed_seq, cb.isChecked)
-                                lintent.putExtra("creater_seq", feed.creater_seq)
-                                lintent.putExtra("feed_title",feed.title)
-                                lintent.putExtra("bookmark_checked" + feed.feed_seq, cb2.isChecked)
-                                lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
-
-//                        context.transitionName = position.toString()
-                                context!!.startActivity(lintent)
-                                (context as Activity).overridePendingTransition(
-                                    R.anim.fragment_fade_in,
-                                    R.anim.fragment_fade_out
-                                )
-
-                            }
-                        },
-                        object : FeedAdapter.OnClickLikeListener {
-                            override fun OnClickFeed(feed: Feed, boolean_value: String) {
-                                feedViewModel.increaseLikeCount(feed.feed_seq, boolean_value)
-                                if(boolean_value.equals("true")) {
-                                    memberViewModel.addNotifiaction(
-                                        m_seq,
-                                        feed.creater_seq!!,
-                                        feed.feed_seq,
-                                        "피드알림",
-                                        "님이 '\' "
-                                                + feed.title +
-                                                " '\' 를 좋아합니다."
-                                    )
-                                }
-                            }
-
-                        }, object : FeedAdapter.OnClickBookMarkListener {
-                            override fun OnClickBookMark(
-                                m_seq: String,
-                                feed_seq: Int,
-                                boolean_value: String
-                            ) {
-                                feedViewModel.onClickBookMark(m_seq, feed_seq, boolean_value)
-                            }
-
-                        }, object : FeedAdapter.OnClickProfileListener {
-                            override fun OnClickProfile(feed: Feed, tv: TextView, iv: ImageView) {
-                                val trId = ViewCompat.getTransitionName(tv).toString()
-                                val trId1 = ViewCompat.getTransitionName(iv).toString()
-                                if (feed.creater_seq == m_seq) {
-                                    activity?.supportFragmentManager
-                                        ?.beginTransaction()
-                                        ?.addSharedElement(tv, trId)
-                                        ?.addSharedElement(iv, trId1)
-                                        ?.addToBackStack("ProfileImg")
-                                        ?.replace(
-                                            R.id.frameLayout,
-                                            ProfileFragment.newInstance(feed, trId, trId1)
-                                        )
-                                        ?.commit()
-                                } else {
-                                    activity?.supportFragmentManager
-                                        ?.beginTransaction()
-                                        ?.addSharedElement(tv, trId)
-                                        ?.addSharedElement(iv, trId1)
-                                        ?.addToBackStack("ProfileImg")
-                                        ?.replace(
-                                            R.id.frameLayout,
-                                            ProfileUsersFragment.newInstance(feed, trId, trId1)
-                                        )
-                                        ?.commit()
-                                }
-                            }
-
-                        },object: FeedAdapter.OnClickDeleteFeedListener{
-                            override fun OnClickDeleted(feed_seq: Int) {
-//                                mFeedAdapter.notifyDataSetChanged()
-
-                            }
-
-                        })
-                    recyclerView?.apply {
-//                            var linearLayoutMnager = LinearLayoutManager(this.context)
-                        this.layoutManager = linearLayoutManager
-                        this.itemAnimator = DefaultItemAnimator()
-                        this.adapter = mFeedAdapter
-                    }
-
-                }, {
-                    Log.d("스크롤 보기 실패함", "" + it.message)
-                })
-            progressBar?.visibility = View.GONE
-        }, 1000)
     }
 
     override fun onResume() {
@@ -374,7 +261,7 @@ class ProfileUserSubscriberFragment(get_m_seq : String): Fragment() {
     }
 
     private fun addLimit() : Int{
-        limit += 5
+        limit += 10
         return limit
     }
 }

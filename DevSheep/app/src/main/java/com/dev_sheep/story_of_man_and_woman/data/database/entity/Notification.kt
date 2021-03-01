@@ -23,5 +23,7 @@ data class Notification(@PrimaryKey
                         @SerializedName("noti_datetime")
                     var noti_datetime: String? = null,
                         @SerializedName("noti_read_datetime")
-                    var noti_read_datetime: String? = null
+                    var noti_read_datetime: String? = null,
+                        @SerializedName("last_index")
+                        var last_index: String? = null
                     )

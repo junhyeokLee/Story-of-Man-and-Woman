@@ -15,9 +15,6 @@ interface FeedService {
     @GET("tag_get.php")
     fun getTagList(): Single<List<Tag>>
 
-    // Feed
-    @GET("pokemon.json")
-    fun get(): Call<List<Test>>
 
     @FormUrlEncoded
     @POST("feed_add.php")
@@ -46,13 +43,13 @@ interface FeedService {
 
 
     @GET("feed_get_all.php")
-    fun getList(): Observable<List<Feed>>
+    fun getList(): Observable<MutableList<Feed>>
 
     @GET("feed_get_scroll.php")
-    fun getListScroll(@Query("offset") offset: Int,@Query("limit") limit: Int): Observable<List<Feed>>
+    fun getListScroll(@Query("offset") offset: Int,@Query("limit") limit: Int): Observable<MutableList<Feed>>
 
     @GET("feed_get_today_recommend.php")
-    fun getTodayList(@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
+    fun getTodayList(@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
 
     @GET("feed_get_best.php")
     fun getBestList(): Observable<List<Feed>>
@@ -61,40 +58,40 @@ interface FeedService {
     fun getWeekList(): Observable<List<Feed>>
 
     @GET("feed_get_man_age_recommend.php")
-    fun getAgeManRecommendList(@Query("age") age: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
+    fun getAgeManRecommendList(@Query("age") age: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
 
     @GET("feed_get_woman_age_recommend.php")
-    fun getAgeWomanRecommendList(@Query("age") age: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
+    fun getAgeWomanRecommendList(@Query("age") age: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
 
     @GET("feed_get_view_recommend.php")
-    fun getViewRecommendList(@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
+    fun getViewRecommendList(@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
 
     @GET("feed_get_like_recommend.php")
-    fun getLikeRecommendList(@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
+    fun getLikeRecommendList(@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
 
     @GET("feed_get_tag_search.php")
-    fun getTagSearch(@Query("tag_seq") tag_seq: Int): Single<List<Feed>>
+    fun getTagSearch(@Query("tag_seq") tag_seq: Int,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
 
     @GET("feed_get_search_card.php")
-    fun getSearchCard(@Query("tag_seq") tag_seq: Int): Single<List<Feed>>
+    fun getSearchCard(@Query("tag_seq") tag_seq: Int): Single<MutableList<Feed>>
 
     @GET("feed_get_mystory.php")
-    fun getListMystory(@Query("m_seq") m_seq: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
+    fun getListMystory(@Query("m_seq") m_seq: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
 
     @GET("feed_get_search.php")
-    fun getFeedSearch(@Query("title") title: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
+    fun getFeedSearch(@Query("title") title: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
 
     @GET("feed_get_secret.php")
-    fun getListSecert(@Query("m_seq") m_seq: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
+    fun getListSecert(@Query("m_seq") m_seq: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
 
     @GET("feed_get_subscribe.php")
-    fun getListSubscribe(@Query("m_seq") m_seq: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
+    fun getListSubscribe(@Query("m_seq") m_seq: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
 
     @GET("feed_get_notification_subscribe.php")
-    fun getListNotificationSubscribe(@Query("m_seq") m_seq: String): Single<List<Feed>>
+    fun getListNotificationSubscribe(@Query("m_seq") m_seq: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
 
     @GET("feed_get_user_subscribe.php")
-    fun getListUserSubscribe(@Query("m_seq") m_seq: String,@Query("my_seq") my_seq: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
+    fun getListUserSubscribe(@Query("m_seq") m_seq: String,@Query("my_seq") my_seq: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
 
     @FormUrlEncoded
     @POST("feed_edit_view_count.php")
@@ -113,6 +110,14 @@ interface FeedService {
     fun getFeed(@Field("feed_seq") feed_seq: Int): Single<Feed>
 
     @FormUrlEncoded
+    @POST("feed_get_images.php")
+    fun getFeedImages(@Field("feed_seq") feed_seq: Int): Single<List<ItemImage>>
+
+    @FormUrlEncoded
+    @POST("feed_title_get.php")
+    fun getFeedTitle(@Field("feed_seq") feed_seq: Int): Single<String>
+
+    @FormUrlEncoded
     @POST("feed_complain.php")
     fun increase_Complain(@Field("feed_seq") feed_seq: Int): Single<Feed>
 
@@ -128,7 +133,12 @@ interface FeedService {
 
     @FormUrlEncoded
     @POST("book_mark_get.php")
-    fun getBookMark(@Field("m_seq") m_seq: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Feed>>
+    fun getBookMark(@Field("m_seq") m_seq: String,@Field("offset") offset: Int,@Field("limit") limit: Int): Single<MutableList<Feed>>
+
+    @FormUrlEncoded
+    @POST("book_mark_checked.php")
+    fun checkedBookMark(@Field("m_seq") m_seq: String,@Field("feed_seq") feed_seq: Int): Single<String>
+
 
     //comment 등록
     @FormUrlEncoded
@@ -137,15 +147,18 @@ interface FeedService {
 
     @FormUrlEncoded
     @POST("recomment_add.php")
-    fun addReComment(@Field("comment_seq") TaskEntrycomment_seq: Int, @Field("feed_seq") feed_seq: Int,@Field("writer_seq") writer_seq: String, @Field("group_seq") group_seq: Int,
+    fun addReComment(@Field("comment_seq") comment_seq: Int, @Field("feed_seq") feed_seq: Int,@Field("writer_seq") writer_seq: String, @Field("group_seq") group_seq: Int,
                      @Field("depth") depth: Int,@Field("comment") comment: String): Single<Void>
 
     @GET("recomment_get.php")
-    fun getReComment(@Query("feed_seq") feed_seq: Int,@Query("group_seq") group_seq: Int,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Comment>>
+    fun getReComment(@Query("feed_seq") feed_seq: Int,@Query("group_seq") group_seq: Int,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Comment>>
+
+    @GET("recomment_count_get.php")
+    fun getReCommentCount(@Query("feed_seq") feed_seq: Int,@Query("group_seq") group_seq: Int): Single<String>
 
 
     @GET("comment_get.php")
-    fun getComment(@Query("feed_seq") feed_seq: Int,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Comment>>
+    fun getComment(@Query("feed_seq") feed_seq: Int,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Comment>>
 
     @GET("comment_item_get.php")
     fun getCommentItem(@Query("comment_seq") comment_seq: Int): Single<Comment>

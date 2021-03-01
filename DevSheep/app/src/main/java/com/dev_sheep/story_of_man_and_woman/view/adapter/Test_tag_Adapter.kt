@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Tag
-import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
 import com.dev_sheep.story_of_man_and_woman.view.activity.FeedSearchActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.MystoryActivity
 import kotlinx.android.synthetic.main.adpater_tag.view.*

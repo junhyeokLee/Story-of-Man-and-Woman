@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    tools:context=".view.activity.LoginActivity">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/write_background" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="@font/ridi_batang"
+                android:layout_marginTop="30dp"
+                android:text="사연남녀"
+                android:textColor="@color/black"
+                android:textSize="32sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="6dp"
+                android:background="@color/main_Accent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linearLayout"
+                android:layout_gravity="center"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="6dp"
+                android:fontFamily="@font/ridi_batang"
+                android:gravity="center"
+                android:text="어서오세요 반갑습니다."
+                android:textColor="@color/gray"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingLeft="32dp"
+            android:paddingRight="32dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ic_message"
+                    android:layout_marginRight="6dp"
+                    android:backgroundTint="@color/main_gray"></ImageView>
+
+                <EditText
+                    android:id="@+id/etv_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/main_gray"
+                    android:drawablePadding="16dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:hint="아이디 ( 이메일 )"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/gray"
+                    android:textSize="14sp"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ic_lock_empty"
+                    android:layout_marginRight="6dp"
+                    android:backgroundTint="@color/main_gray"></ImageView>
+
+                <EditText
+                    android:id="@+id/etv_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/main_gray"
+                    android:drawablePadding="16dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:hint="비밀번호 ( 7 ~ 24자 이내 영문/숫자/기호 가능 )"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/gray"
+                    android:textSize="14sp"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ic_lock_empty"
+                    android:layout_marginRight="6dp"
+                    android:backgroundTint="@color/main_gray"></ImageView>
+
+                <EditText
+                    android:id="@+id/etv_password_confirm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/main_gray"
+                    android:drawablePadding="16dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:hint="비밀번호 확인 "
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/gray"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ic_person"
+                    android:layout_marginRight="6dp"
+                    android:backgroundTint="@color/main_gray"></ImageView>
+
+                <EditText
+                    android:id="@+id/etv_nick_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="16dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:hint="닉네임 ( 2 ~ 24자 이내 한글/영문/숫자 가능 )"
+                    android:maxLines="1"
+                    android:backgroundTint="@color/main_gray"
+                    android:textColorHint="@color/gray"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:fontFamily="@font/ridi_batang"
+                android:text=" 성별을 선택해주세요."
+                android:maxLines="1"
+                android:textColor="@color/gray"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <CheckBox
+                    android:id="@+id/checked_man"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/background_signup_checked_man"
+                    android:button="@null"
+                    android:fontFamily="@font/roboto_regular"
+                    android:layout_margin="4dp"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                </CheckBox>
+                <CheckBox
+                    android:id="@+id/checked_woman"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/background_signup_checked_woman"
+                    android:button="@null"
+                    android:fontFamily="@font/roboto_regular"
+                    android:layout_margin="4dp"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                </CheckBox>
+
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:fontFamily="@font/ridi_batang"
+                android:text=" 나이를 선택해주세요."
+                android:maxLines="1"
+                android:textColor="@color/gray"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                >
+                <CheckBox
+                    android:id="@+id/checked_10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/background_signup_checked"
+                    android:button="@null"
+                    android:text="10 대"
+                    android:fontFamily="@font/roboto_regular"
+                    android:layout_margin="4dp"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                </CheckBox>
+                <CheckBox
+                    android:id="@+id/checked_20"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/background_signup_checked"
+                    android:button="@null"
+                    android:text="20 대"
+                    android:fontFamily="@font/roboto_regular"
+                    android:layout_margin="4dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                </CheckBox>
+                <CheckBox
+                    android:id="@+id/checked_30"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:background="@drawable/background_signup_checked"
+                    android:button="@null"
+                    android:text="30 대"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/roboto_regular"
+                    android:layout_margin="4dp"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                </CheckBox>
+                <CheckBox
+                    android:id="@+id/checked_40"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:background="@drawable/background_signup_checked"
+                    android:button="@null"
+                    android:text="40 대"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/roboto_regular"
+                    android:layout_margin="4dp"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                </CheckBox>
+                <CheckBox
+                    android:id="@+id/checked_50"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/background_signup_checked"
+                    android:button="@null"
+                    android:text="50 대"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/roboto_regular"
+                    android:layout_margin="4dp"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                </CheckBox>
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingLeft="32dp"
+            android:paddingRight="32dp"
+            android:layout_weight="2"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_signup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/buttonshapewhitebg"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="회원가입"
+                    android:textAllCaps="false"
+                    android:textColor="@color/black"
+                    android:textSize="16dp" />
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                >
+                <TextView
+                    android:id="@+id/cc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="아이디가 있으신가요?"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tv_login_activity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="  로그인하기"
+                    android:textAlignment="center"
+                    android:textColor="@color/main_Accent"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

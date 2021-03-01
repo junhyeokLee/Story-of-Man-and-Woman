@@ -23,12 +23,12 @@
             android:title="@string/boolean3_title"
             android:dependency="@string/pref_boolean1"
            />
-        <SwitchPreference
-            android:key="@string/pref_boolean4"
-            android:defaultValue="@bool/pref_boolean4_default"
-            android:title="@string/boolean4_title"
-            android:dependency="@string/pref_boolean1"
-        />
+<!--        <SwitchPreference-->
+<!--            android:key="@string/pref_boolean4"-->
+<!--            android:defaultValue="@bool/pref_boolean4_default"-->
+<!--            android:title="@string/boolean4_title"-->
+<!--            android:dependency="@string/pref_boolean1"-->
+<!--        />-->
         <SwitchPreference
             android:key="@string/pref_boolean5"
             android:defaultValue="@bool/pref_boolean5_default"

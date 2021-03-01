@@ -26,7 +26,6 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_my_messages.*
 import kotlinx.android.synthetic.main.adapter_latest_message_row.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.*
 import kotlin.collections.HashMap
 
 class MyMessageActivity  : AppCompatActivity() {

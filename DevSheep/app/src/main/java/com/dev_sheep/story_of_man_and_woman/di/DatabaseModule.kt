@@ -13,10 +13,10 @@ val databaseModule = module {
             androidApplication(),
             AppDatabase::class.java,
             androidApplication().baseContext.getString(R.string.app_name)
-        ).build()
+        ).fallbackToDestructiveMigration()
+        .build()
     }
-
     single {
-        get<AppDatabase>().testDAO()
+        get<AppDatabase>().searchDAO()
     }
 }

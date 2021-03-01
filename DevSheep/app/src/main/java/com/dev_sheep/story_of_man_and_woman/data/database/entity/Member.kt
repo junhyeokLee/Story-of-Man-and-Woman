@@ -27,4 +27,6 @@ data class Member( @PrimaryKey
                    @SerializedName("wdate")
                    var wdate: String?=null,
                    @SerializedName("memo")
-                   var memo: String?=null)
+                   var memo: String?=null,
+                   @SerializedName("last_index")
+                   var last_index: String? = null)

@@ -74,6 +74,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:transitionName="@string/profile_name"
+
                 />
             <LinearLayout
                 android:id="@+id/id_Profile_layout"
@@ -109,7 +110,7 @@
                     android:transitionName="@string/profile_name"
                     android:gravity="center"
                     android:text="null"
-                    android:fontFamily="@font/roboto_bold"
+                    android:fontFamily="@font/apple_sd_gothic_neo_b"
                     android:textColor="@color/black"
 
                     android:textSize="18sp"></TextView>
@@ -137,7 +138,7 @@
                             android:text="남"
                             android:textSize="12sp"
                             android:textColor="@color/blue_gray_light"
-                            android:fontFamily="@font/roboto_regular"
+                            android:fontFamily="@font/apple_sd_gothic_neo_t"
                             />
                         <TextView
                             android:layout_width="wrap_content"
@@ -158,7 +159,7 @@
                             android:text="20대"
                             android:textSize="12sp"
                             android:textColor="@color/blue_gray_light"
-                            android:fontFamily="@font/roboto_regular"
+                            android:fontFamily="@font/apple_sd_gothic_neo_t"
                             />
 
 
@@ -178,7 +179,7 @@
                     android:layout_gravity="center"
                     android:textColor="@color/black"
                     android:textSize="12sp"
-                    android:fontFamily="@font/roboto_regular"
+                    android:fontFamily="@font/apple_sd_gothic_neo_t"
                     />
 
                 <TextView
@@ -186,7 +187,7 @@
                     android:layout_width="120dp"
                     android:layout_height="40dp"
                     android:background="@drawable/background_edit_rounded"
-                    android:fontFamily="@font/roboto_regular"
+                    android:fontFamily="@font/apple_sd_gothic_neo_t"
                     android:layout_marginTop="12dp"
                     android:gravity="center"
                     android:text="편 집"
@@ -208,7 +209,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/roboto_regular"
+                            android:fontFamily="@font/apple_sd_gothic_neo_t"
                             android:textColor="@color/blue_gray_light"
                             android:textSize="11sp"
                             android:text="구독중" />
@@ -219,7 +220,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
                             android:gravity="center"
-                            android:fontFamily="@font/roboto_regular"
+                            android:fontFamily="@font/apple_sd_gothic_neo_t"
                             android:textColor="@color/black"
                             android:textSize="13sp"
                             android:text="0" />
@@ -240,7 +241,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/roboto_regular"
+                            android:fontFamily="@font/apple_sd_gothic_neo_t"
                             android:textColor="@color/blue_gray_light"
                             android:textSize="11sp"
                             android:text="구독자" />
@@ -251,7 +252,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
                             android:gravity="center"
-                            android:fontFamily="@font/roboto_regular"
+                            android:fontFamily="@font/apple_sd_gothic_neo_t"
                             android:textColor="@color/black"
                             android:textSize="13sp"
                             android:text="0" />
@@ -273,7 +274,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/roboto_regular"
+                            android:fontFamily="@font/apple_sd_gothic_neo_t"
                             android:textColor="@color/blue_gray_light"
                             android:textSize="11sp"
                             android:text="쪽지함" />
@@ -321,7 +322,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/roboto_regular"
+                            android:fontFamily="@font/apple_sd_gothic_neo_t"
                             android:textColor="@color/blue_gray_light"
                             android:textSize="11sp"
                             android:text="설정" />
@@ -390,14 +391,5 @@
 
     </androidx.viewpager.widget.ViewPager>
 
-
-
-    <ProgressBar
-        android:layout_gravity="center"
-        android:id="@+id/progressBar"
-        android:visibility="gone"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

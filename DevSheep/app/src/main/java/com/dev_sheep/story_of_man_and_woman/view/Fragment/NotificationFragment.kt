@@ -14,6 +14,7 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,6 +43,14 @@ class NotificationFragment :  Fragment()  {
     lateinit var mFeedAdapter: FeedAdapter
     lateinit var contexts: Context
     lateinit var m_seq : String
+    lateinit var mProgressBar: ProgressBar
+    private var visibleItemCount = 0
+    private var totalItemCount = 0
+    private var lastVisibleItemPosition = 0
+    private var limit: Int = 10
+    private var offset: Int = 0
+    private var mNestedScrollView : NestedScrollView? = null
+    private lateinit var linearLayoutManager: LinearLayoutManager // 태그 자동스크롤 위한 초기화 제한
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,7 +61,10 @@ class NotificationFragment :  Fragment()  {
         // ToolBar를 ActionBar로 설정해줘야 합니다.
 //        (activity as AppCompatActivity).setSupportActionBar(app_toolbar)
         contexts = view.context
+        mProgressBar = view.findViewById(R.id.progressBar_tag) as ProgressBar
         recyclerView = view.findViewById<View>(R.id.recyclerView) as RecyclerView?
+        mNestedScrollView = view.findViewById(R.id.nestedScrollView) as NestedScrollView
+
         empty = view.findViewById(R.id.empty) as LinearLayout
             initData()
 
@@ -62,6 +74,11 @@ class NotificationFragment :  Fragment()  {
 
     private fun initData(){
 
+
+        if(feedViewModel == null || memberViewModel == null){
+            return
+        }
+
         // my_m_seq 가져오기
         val preferences: SharedPreferences = context!!.getSharedPreferences(
             "m_seq",
@@ -70,7 +87,7 @@ class NotificationFragment :  Fragment()  {
         m_seq = preferences.getString("inputMseq", "")
 
 
-        val single = FEED_SERVICE.getListNotificationSubscribe(m_seq)
+        val single = FEED_SERVICE.getListNotificationSubscribe(m_seq,offset,limit)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -159,6 +176,17 @@ class NotificationFragment :  Fragment()  {
 
                             }
 
+                        },object :FeedAdapter.OnEndlessScrollListener{
+                            override fun OnEndless(boolean_value: Boolean) {
+                                if(boolean_value == false){
+                                    mProgressBar.visibility = View.VISIBLE
+                                    EndlessScroll(false)
+                                }else if(boolean_value == true){
+                                    mProgressBar.visibility = View.GONE
+                                    EndlessScroll(true)
+                                }
+                            }
+
                         })
 
                 recyclerView?.apply {
@@ -177,6 +205,54 @@ class NotificationFragment :  Fragment()  {
             }, {
                 Log.e("feed 보기 실패함", "" + it.message)
             })
+    }
+
+    fun EndlessScroll(isLoading : Boolean){
+        // 무한스크롤
+        mNestedScrollView!!.setOnScrollChangeListener(object :
+            NestedScrollView.OnScrollChangeListener {
+            override fun onScrollChange(
+                v: NestedScrollView?,
+                scrollX: Int,
+                scrollY: Int,
+                oldScrollX: Int,
+                oldScrollY: Int
+            ) {
+
+                if (v?.getChildAt(v.getChildCount() - 1) != null) {
+                    if (scrollY >= v.getChildAt(v.getChildCount() - 1)
+                            .getMeasuredHeight() - v.getMeasuredHeight() &&
+                        scrollY > oldScrollY
+                    ) {
+                        visibleItemCount = linearLayoutManager.getChildCount()
+                        totalItemCount = linearLayoutManager.getItemCount()
+                        lastVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition()
+//                        if (isLoadData()) {
+                        if (visibleItemCount + lastVisibleItemPosition >= totalItemCount) {
+
+                            if (isLoading == false) {
+
+                                mProgressBar.visibility = View.VISIBLE
+                                // 마지막 스크롤에 프로그래스바 보여주기 및 무한스크롤
+//                            LoadMoreData()
+                                val single = FEED_SERVICE.getListNotificationSubscribe(m_seq,offset, addLimit())
+                                single.subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe({
+                                        mFeedAdapter.updateList(it)
+
+                                    }, {
+                                        Log.d("Error MoreData", it.message.toString())
+                                    })
+                            } else if(isLoading == true){
+                                mProgressBar.visibility = View.GONE
+
+                            }
+                        }
+                    }
+                }
+            }
+        })
     }
     private fun showDeletePopup(feedViewmodel: FeedViewModel,feed_seq: Int) {
         val inflater =
@@ -215,4 +291,10 @@ class NotificationFragment :  Fragment()  {
         initData()
 
     }
+
+    private fun addLimit() : Int{
+        limit += 10
+        return limit
+    }
+
 }

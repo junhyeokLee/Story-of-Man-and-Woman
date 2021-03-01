@@ -15,4 +15,6 @@ data class BookMark( @PrimaryKey
                      @SerializedName("feed_seq")
                      var feed_seq: Int? = null,
                      @SerializedName("date")
-                     var date: String? = null)
+                     var date: String? = null,
+                     @SerializedName("last_index")
+                     var last_index: String? = null)

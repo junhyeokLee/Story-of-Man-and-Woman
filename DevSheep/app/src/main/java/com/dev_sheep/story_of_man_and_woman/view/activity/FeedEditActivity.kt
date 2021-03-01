@@ -28,7 +28,12 @@ import com.esafirm.imagepicker.model.Image
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_feed_edit.*
+import kotlinx.android.synthetic.main.activity_feed_edit.img_profile
 import kotlinx.android.synthetic.main.activity_feed_edit.richwysiwygeditor
+import kotlinx.android.synthetic.main.activity_feed_edit.tv_age
+import kotlinx.android.synthetic.main.activity_feed_edit.tv_creater
+import kotlinx.android.synthetic.main.activity_feed_edit.tv_gender
+import kotlinx.android.synthetic.main.activity_feed_write.*
 import kotlinx.android.synthetic.main.activity_feed_write.toolbar_write
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -45,6 +50,7 @@ class FeedEditActivity : AppCompatActivity() {
     lateinit var EMAIL : String
     lateinit var M_SEQ: String
     lateinit var TYPE: String
+    private var count: Int = 0
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,6 +117,10 @@ class FeedEditActivity : AppCompatActivity() {
 
     @SuppressLint("CheckResult")
     fun initData(){
+
+        // 글 작성할때는 이미지 클릭 제어
+        richwysiwygeditor.content.feedActivityType = 999
+
 
 
         val items = resources.getStringArray(R.array.date_public)
@@ -206,8 +216,9 @@ class FeedEditActivity : AppCompatActivity() {
                         stringBuffer.append(file.name).append("\n")
                         richwysiwygeditor.getContent().insertImage(
                             "http://www.storymaw.com/data/feed/" + EMAIL + "/" + file.name,
-                            "alt"
+                            ""+getCount()
                         )
+                        increaseCount()
                     }
                 }
                 override fun onFailure(
@@ -273,5 +284,14 @@ class FeedEditActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun getCount():Int{
+        return this.count
+    }
+    private fun increaseCount(){
+        this.count += 1
+
+
     }
 }

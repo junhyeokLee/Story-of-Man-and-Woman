@@ -11,9 +11,13 @@ import android.widget.CheckBox
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.dev_sheep.story_of_man_and_woman.R
+import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
+import com.dev_sheep.story_of_man_and_woman.data.remote.api.MemberService
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_sign_up.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.regex.Matcher
@@ -42,24 +46,28 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
         //처음에는 SharedPreferences에 아무런 정보도 없으므로 값을 저장할 키들을 생성한다.
         // getString의 첫 번째 인자는 저장될 키, 두 번쨰 인자는 값입니다.
         // 첨엔 값이 없으므로 키값은 원하는 것으로 하시고 값을 null을 줍니다.
-        //처음에는 SharedPreferences에 아무런 정보도 없으므로 값을 저장할 키들을 생성한다.
-        // getString의 첫 번째 인자는 저장될 키, 두 번쨰 인자는 값입니다.
-        // 첨엔 값이 없으므로 키값은 원하는 것으로 하시고 값을 null을 줍니다.
+
         var loginEmail = auto.getString("inputEmail", null)
         var loginPassword = auto.getString("inputPassword", null)
 
-        if (loginEmail != null && loginPassword != null) {
 
+        if (loginEmail != null && loginPassword != null) {
             Toast.makeText(this, loginEmail + "님 반갑습니다.", Toast.LENGTH_SHORT)
                 .show()
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("email",loginEmail)
             startActivity(intent)
             finish()
-
         }
+        // Profile 설정을 하지않았을때 프로필 설정페이지로 이동
+//        else if(loginEmail != null && loginPassword != null && gender == null){
+//            Toast.makeText(this, loginEmail + "님 반갑습니다.", Toast.LENGTH_SHORT)
+//                .show()
+//            val intent = Intent(this, SignUpStartActivity::class.java)
+//            startActivity(intent)
+//            finish()
+//        }
 
-        checkedListener()
         btn_signup.setOnClickListener(this)
         tv_login_activity.setOnClickListener(this)
 
@@ -86,52 +94,18 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
         moveTaskToBack(true)
     }
 
-    private fun checkedListener() {
-        checked_man.setOnClickListener(this)
-        checked_woman.setOnClickListener(this)
-        checked_10.setOnClickListener(this)
-        checked_20.setOnClickListener(this)
-        checked_30.setOnClickListener(this)
-        checked_40.setOnClickListener(this)
-        checked_50.setOnClickListener(this)
-    }
 
-    private fun checkedGenderMan(checkBoxMan: CheckBox, checkBoxWoman: CheckBox) : String{
-        if (checkBoxMan.isChecked == true) {
-            checkBoxMan.setTextColor(getResources().getColor(R.color.white))
-            checkBoxWoman.isChecked = false
-            checkBoxWoman.setTextColor(getResources().getColor(R.color.black))
-            selected_Gender = "남"
-        } else {
-            checkBoxMan.setTextColor(getResources().getColor(R.color.black))
-            selected_Gender = ""
-        }
-        return selected_Gender
-    }
-    private fun checkedGenderWoman(checkBoxWoman: CheckBox, checkBoxMan: CheckBox) : String{
-        if (checkBoxWoman.isChecked == true) {
-            checkBoxWoman.setTextColor(getResources().getColor(R.color.white))
-            checkBoxMan.isChecked = false
-            checkBoxMan.setTextColor(getResources().getColor(R.color.black))
-            selected_Gender = "여"
-        } else {
-            checkBoxWoman.setTextColor(getResources().getColor(R.color.black))
-            selected_Gender = ""
-        }
-        return selected_Gender
-    }
+
 
     private fun signUpChecked(
         Email: String,
         Password: String,
         Password_confirm: String,
-        Nick_name: String,
-        Gender: String,
-        Age: String
+        Nick_name: String
     ){
 
 
-        if(Email != "" && Password != "" && Password_confirm != "" && Nick_name != "" && Gender != "" && Age != ""){
+        if(Email != "" && Password != "" && Password_confirm != "" && Nick_name != "" ){
 
             if(isEmail(Email) == false){
                 Toast.makeText(applicationContext, "이메일 형식을 확인해주세요.", Toast.LENGTH_SHORT).show()
@@ -155,8 +129,6 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
                 Email,
                 Password,
                 Nick_name,
-                Gender,
-                Age,
                 this.applicationContext
             )
         }
@@ -182,14 +154,7 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
                 Toast.makeText(applicationContext, "닉네임을 체크해주세요.", Toast.LENGTH_SHORT).show()
                 return
             }
-            else if(Gender == ""){
-                Toast.makeText(applicationContext, "성별을 체크해주세요.", Toast.LENGTH_SHORT).show()
-                return
-            }
-            else if(Age == ""){
-                Toast.makeText(applicationContext, "나이를 체크해주세요.", Toast.LENGTH_SHORT).show()
-                return
-            }
+
         }
     }
     override fun onClick(v: View) {
@@ -200,8 +165,7 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
                     etv_email.text.toString(),
                     etv_password.text.toString(),
                     etv_password_confirm.text.toString(),
-                    etv_nick_name.text.toString(),
-                    selected_Gender, selected_Age
+                    etv_nick_name.text.toString()
                 )
             }
             R.id.tv_login_activity -> {
@@ -209,87 +173,7 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
                 startActivityForResult(intent, REQUEST_SIGNUP)
                 finish()
             }
-            R.id.checked_man -> {
-                checkedGenderMan(checked_man, checked_woman)
-            }
-            R.id.checked_woman -> {
-                checkedGenderWoman(checked_woman, checked_man)
-            }
-            R.id.checked_10 -> if (checked_10.isChecked == true) {
-                checked_10.setTextColor(getResources().getColor(R.color.white))
-                checked_20.isChecked = false
-                checked_20.setTextColor(getResources().getColor(R.color.black))
-                checked_30.isChecked = false
-                checked_30.setTextColor(getResources().getColor(R.color.black))
-                checked_40.isChecked = false
-                checked_40.setTextColor(getResources().getColor(R.color.black))
-                checked_50.isChecked = false
-                checked_50.setTextColor(getResources().getColor(R.color.black))
-                selected_Age = checked_10.text.toString()
-            } else {
-                checked_10.setTextColor(getResources().getColor(R.color.black))
-                selected_Age = "";
-            }
-            R.id.checked_20 -> if (checked_20.isChecked == true) {
-                checked_20.setTextColor(getResources().getColor(R.color.white))
-                checked_10.isChecked = false
-                checked_10.setTextColor(getResources().getColor(R.color.black))
-                checked_30.isChecked = false
-                checked_30.setTextColor(getResources().getColor(R.color.black))
-                checked_40.isChecked = false
-                checked_40.setTextColor(getResources().getColor(R.color.black))
-                checked_50.isChecked = false
-                checked_50.setTextColor(getResources().getColor(R.color.black))
-                selected_Age = checked_20.text.toString()
-            } else {
-                checked_20.setTextColor(getResources().getColor(R.color.black))
-                selected_Age = "";
-            }
-            R.id.checked_30 -> if (checked_30.isChecked == true) {
-                checked_30.setTextColor(getResources().getColor(R.color.white))
-                checked_10.isChecked = false
-                checked_10.setTextColor(getResources().getColor(R.color.black))
-                checked_20.isChecked = false
-                checked_20.setTextColor(getResources().getColor(R.color.black))
-                checked_40.isChecked = false
-                checked_40.setTextColor(getResources().getColor(R.color.black))
-                checked_50.isChecked = false
-                checked_50.setTextColor(getResources().getColor(R.color.black))
-                selected_Age = checked_30.text.toString()
-            } else {
-                checked_30.setTextColor(getResources().getColor(R.color.black))
-                selected_Age = "";
-            }
-            R.id.checked_40 -> if (checked_40.isChecked == true) {
-                checked_40.setTextColor(getResources().getColor(R.color.white))
-                checked_10.isChecked = false
-                checked_10.setTextColor(getResources().getColor(R.color.black))
-                checked_20.isChecked = false
-                checked_20.setTextColor(getResources().getColor(R.color.black))
-                checked_30.isChecked = false
-                checked_30.setTextColor(getResources().getColor(R.color.black))
-                checked_50.isChecked = false
-                checked_50.setTextColor(getResources().getColor(R.color.black))
-                selected_Age = checked_40.text.toString()
-            } else {
-                checked_40.setTextColor(getResources().getColor(R.color.black))
-                selected_Age = "";
-            }
-            R.id.checked_50 -> if (checked_50.isChecked == true) {
-                checked_50.setTextColor(getResources().getColor(R.color.white))
-                checked_10.isChecked = false
-                checked_10.setTextColor(getResources().getColor(R.color.black))
-                checked_20.isChecked = false
-                checked_20.setTextColor(getResources().getColor(R.color.black))
-                checked_30.isChecked = false
-                checked_30.setTextColor(getResources().getColor(R.color.black))
-                checked_40.isChecked = false
-                checked_40.setTextColor(getResources().getColor(R.color.black))
-                selected_Age = checked_50.text.toString()
-            } else {
-                checked_50.setTextColor(getResources().getColor(R.color.black))
-                selected_Age = "";
-            }
+
             else -> {
             }
         }

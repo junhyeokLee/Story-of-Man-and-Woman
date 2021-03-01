@@ -1,58 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:fitsSystemWindows="true"
-    android:background="@android:color/transparent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@android:color/black"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/modify_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/black"
+        android:background="@color/transparent"
         android:elevation="1dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-        <ImageButton
+        <LinearLayout
             android:id="@+id/im_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:gravity="center|left"
+            >
+        <ImageButton
+            android:id="@+id/im_back_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/ef_ic_arrow_back"
+            android:backgroundTint="@color/white"
             />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/text_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginLeft="16dp"
-            android:gravity="left"
-            android:fontFamily="@font/roboto_regular"
-            android:text="ImageUrl"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text=""
+            android:fontFamily="@font/roundwindregular"
             android:textColor="@color/white"
             android:textSize="16sp" />
 
 
     </androidx.appcompat.widget.Toolbar>
 
-    <ImageView
-        android:id="@+id/id_Profile_Image"
+    <technolifestyle.com.imageslider.FlipperLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/flipper_layout"
         android:layout_width="match_parent"
+        android:background="@color/transparent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:scaleType="fitXY"
-        android:src="@drawable/image"
-        tools:ignore="MissingConstraints">
+        tools:context=".MainActivity" />
 
-    </ImageView>
 
-    </LinearLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

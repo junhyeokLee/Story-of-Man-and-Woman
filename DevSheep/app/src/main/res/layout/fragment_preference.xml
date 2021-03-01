@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="32dp"
             android:text="설정"
-            android:fontFamily="@font/roboto_regular"
+            android:fontFamily="@font/apple_sd_gothic_neo_t"
             android:textColor="@color/black"
             android:textSize="16sp" />
 

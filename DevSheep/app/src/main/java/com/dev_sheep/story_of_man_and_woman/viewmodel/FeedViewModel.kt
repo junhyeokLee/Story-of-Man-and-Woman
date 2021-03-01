@@ -1,9 +1,11 @@
 package com.dev_sheep.story_of_man_and_woman.viewmodel
 
 import android.util.Log
+import android.widget.CheckBox
+import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.dev_sheep.story_of_man_and_woman.data.database.dao.TestDAO
+import com.dev_sheep.story_of_man_and_woman.data.database.dao.SearchDAO
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Search
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
@@ -17,40 +19,27 @@ import io.reactivex.schedulers.Schedulers
 import retrofit2.http.Field
 
 
-class FeedViewModel(private val testDAO: TestDAO, private val feedService: FeedService) :  ViewModel() {
+class FeedViewModel(private val searchDAO: SearchDAO, private val feedService: FeedService) :  ViewModel() {
 
 //    init {
 //        initNetworkRequest()
 //    }
 
 
+    fun deleteSearchAll(){
+        return searchDAO.deleteAllSearch()
+    }
+    fun deleteSearchId(id:Int){
+        return searchDAO.deleteSearch(id)
+    }
     fun addSearch(search_title: Search){
-        return testDAO.addSearch(search_title)
+        return searchDAO.addSearch(search_title)
     }
-
     fun getSearchList(): LiveData<List<Search>> {
-        return testDAO.getSearchList()
+        return searchDAO.getSearchList()
     }
-
-    fun deleteSearchAll() {
-        return testDAO.deleteAllSearch()
-    }
-    fun deleteSearch(id: Int) {
-        return testDAO.deleteSearch(id)
-    }
-
 
     private val disposable = CompositeDisposable()
-
-    fun getListPokemon(): LiveData<List<Test>> {
-        return testDAO.all()
-    }
-    fun getListFirst(limit: Int,offset: Int): LiveData<List<Test>>{
-        return testDAO.allList(limit,offset)
-    }
-    fun getListMore(limit: Int,offset: Int): LiveData<List<Test>>{
-        return testDAO.allList(limit,offset)
-    }
 
 
 
@@ -150,6 +139,21 @@ class FeedViewModel(private val testDAO: TestDAO, private val feedService: FeedS
 
             })
     }
+    fun onCheckedBookMark(m_seq: String,feed_seq: Int,bookmarkButton:CheckBox){
+        val single = feedService.checkedBookMark(m_seq,feed_seq)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.e("BookMark Checked = ",it)
+                if(it.equals("checked")){
+                    bookmarkButton.isChecked = true
+                }else{
+                    bookmarkButton.isChecked = false
+                }
+            },{
+
+            })
+    }
 
     fun addComment(writer: String,feed_seq: Int,comment:String){
         val single = feedService.addComment(writer,feed_seq,comment)
@@ -189,6 +193,17 @@ class FeedViewModel(private val testDAO: TestDAO, private val feedService: FeedS
             })
     }
 
+    fun getFeedTitle(feed_seq: Int,title:String){
+        val single = feedService.getFeedTitle(feed_seq)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+               it.toString()
+            },{
+                Log.d("get Feed Title Failed = ",it.message.toString())
+
+            })
+    }
 
     override fun onCleared() {
         disposable.clear()

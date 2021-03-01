@@ -25,6 +25,7 @@ import com.dev_sheep.story_of_man_and_woman.utils.RedDotImageView2
 import com.dev_sheep.story_of_man_and_woman.view.Fragment.SearchTitleFragment.Companion.TAG
 import com.dev_sheep.story_of_man_and_woman.view.activity.AlarmActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.MainActivity
+import com.dev_sheep.story_of_man_and_woman.view.activity.SignUpStartActivity
 import com.google.firebase.analytics.FirebaseAnalytics.Event.SEARCH
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -40,11 +41,9 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
         email: String,
         password: String,
         nick_name: String,
-        gender: String,
-        age: String,
         context: Context
     ){
-        val single = memberService.insertMember(email, password, nick_name, gender, age)
+        val single = memberService.insertMember(email, password, nick_name)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -52,8 +51,6 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
 
                     // 회원가입시 파이어베이스 DB에도 저장
                     performRegister(email,password,nick_name,context) // firebase 저장
-
-//                    saveUserToFirebaseDatabase(nick_name) //firebase 저장
 
                     // 회원가입시 자동로그인 하기위해 email,password 저장
                     val auto = context.getSharedPreferences("autoLogin", AppCompatActivity.MODE_PRIVATE)
@@ -65,7 +62,7 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
                     //꼭 commit()을 해줘야 값이 저장됩니다 ㅎㅎ
                     autoLogin.commit();
 
-                    val intent = Intent(context, MainActivity::class.java)
+                    val intent = Intent(context, SignUpStartActivity::class.java)
                     context.applicationContext.startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK))
                 } else if(it.toString() == "false") {
                     Toast.makeText(
@@ -85,6 +82,33 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
                 Log.d("실패함 Insert Member", "" + it.message)
             })
     }
+
+    fun insertMemberProfile(
+        email: String,
+        gender: String,
+        age: String,
+        context: Context
+    ){
+        val single = memberService.insertMemberProfile(email,gender,age)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+//                val auto = context.getSharedPreferences("autoLogin", AppCompatActivity.MODE_PRIVATE)
+//                val autoProfile : SharedPreferences.Editor = auto.edit()
+//                autoProfile.putString("inputProfile_age", age);
+//                autoProfile.putString("inputProfile_gender", gender);
+//                //꼭 commit()을 해줘야 값이 저장됩니다 ㅎㅎ
+//                autoProfile.commit();
+
+                    val intent = Intent(context, MainActivity::class.java)
+                    context.applicationContext.startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK))
+
+            }, {
+                Log.d("실패함 Insert Member Profile", "" + it.message)
+            })
+    }
+
+
 
     fun getMemberSeq(email: String,password: String,context: Context){
 
@@ -422,14 +446,14 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
         }
 
 
-        val single = memberService.getNotification(target_m_seq)
+        val single = memberService.getNotification(target_m_seq,0,100)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
 
                for(noti in it){
 
-                   if(noti.toString().contains("null")){
+                   if(noti.toString().contains("null") || noti.toString().isEmpty()){
                        Log.e("noti not null",""+noti.toString())
                        alarm.visibility = View.GONE
                        alarmDot.visibility = View.VISIBLE

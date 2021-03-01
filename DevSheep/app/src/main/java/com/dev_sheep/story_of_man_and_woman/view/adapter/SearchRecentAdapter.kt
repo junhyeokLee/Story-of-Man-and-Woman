@@ -54,7 +54,7 @@ class SearchRecentAdapter(
                 setOnClickListener {
                     // RoomDataBase MainThread 클래스 적용해서 서치목록 삭제
                     AppExecutors.getInstance().diskIO().execute(Runnable {
-                        feedViewModel.deleteSearch(item.id)
+                        feedViewModel.deleteSearchId(item.id)
                     })
                 }
             }

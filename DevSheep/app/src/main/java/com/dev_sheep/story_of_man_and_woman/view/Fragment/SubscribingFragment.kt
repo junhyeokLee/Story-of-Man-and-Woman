@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Member
+import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.MEMBER_SERVICE
 import com.dev_sheep.story_of_man_and_woman.view.activity.MainActivity
 import com.dev_sheep.story_of_man_and_woman.view.adapter.SubscribersAdapter
@@ -46,8 +47,6 @@ class SubscribingFragment(val m_seq: String): Fragment() {
     private var totalItemCount = 0
     private var lastVisibleItemPosition = 0
     private lateinit var linearLayoutManager: LinearLayoutManager
-    private var nestedScrollView: NestedScrollView? = null
-    private var progressBar : ProgressBar? = null
     private var shimmer_view_container_subscribing: ShimmerFrameLayout? = null
     private var empty : View? = null
     lateinit var tv_empty: TextView
@@ -65,8 +64,6 @@ class SubscribingFragment(val m_seq: String): Fragment() {
         empty = view.findViewById(R.id.empty)
         tv_empty = view.findViewById(R.id.emptyText) as TextView
         tv_empty.setText(R.string.empty)
-        nestedScrollView = view.findViewById(R.id.nestedScrollView_search)
-        progressBar = view.findViewById(R.id.progressBar)
         shimmer_view_container_subscribing = view.findViewById(R.id.shimmer_view_container_subscribing)
 //        (activity as AppCompatActivity).supportActionBar!!.setDisplayShowHomeEnabled(true)
 //        (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -84,6 +81,11 @@ class SubscribingFragment(val m_seq: String): Fragment() {
     }
 
     private fun initData(){
+
+        if(memberViewModel == null){
+            return
+        }
+
         val handlerFeed: Handler = Handler(Looper.myLooper())
         linearLayoutManager = LinearLayoutManager(contexts)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
@@ -124,6 +126,15 @@ class SubscribingFragment(val m_seq: String): Fragment() {
                             }
                         }
 
+                    },object :SubscribersAdapter.OnEndlessScrollListener{
+                        override fun OnEndless(boolean_value: Boolean) {
+                            if (boolean_value == false) {
+                                EndlessScroll(false)
+                            } else if (boolean_value == true) {
+                                EndlessScroll(true)
+                            }
+                        }
+
                     })
                     handlerFeed.postDelayed({
                         shimmer_view_container_subscribing?.stopShimmerAnimation()
@@ -144,88 +155,27 @@ class SubscribingFragment(val m_seq: String): Fragment() {
                 Log.d("실패 Get Member", "" + it.message)
             })
 
+    }
+
+
+    fun EndlessScroll(isLoading: Boolean){
         // 무한스크롤
-        nestedScrollView?.setOnScrollChangeListener(object: NestedScrollView.OnScrollChangeListener{
-            override fun onScrollChange(
-                v: NestedScrollView?,
-                scrollX: Int,
-                scrollY: Int,
-                oldScrollX: Int,
-                oldScrollY: Int
-            ) {
-                if (v?.getChildAt(v.getChildCount() - 1) != null) {
-                    progressBar?.visibility = View.VISIBLE
-
-                    if (scrollY >= v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight() && scrollY > oldScrollY) {
-                        visibleItemCount = linearLayoutManager.getChildCount()
-                        totalItemCount = linearLayoutManager.getItemCount()
-                        lastVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition()
-                        if (visibleItemCount + lastVisibleItemPosition >= totalItemCount) {
-//                                Handler().postDelayed({
-                            LoadMoreData()
-//                                },1000)
-
-                        }else{
-                            progressBar?.visibility = View.GONE
-                        }
+        rv_subscribers!!.setOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (!recyclerView.canScrollVertically(1)) {
+                    if (isLoading == false) {
+                        val single = MEMBER_SERVICE.getSubscribing(m_seq,offset,addLimit())
+                        single.subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe({
+                                mSubscribingAdapter.updateList(it)
+                            }, {
+                                Log.d("Error MoreData", it.message.toString())
+                            })
                     }
                 }
             }
-
         })
-    }
-
-    private fun LoadMoreData() {
-        linearLayoutManager = LinearLayoutManager(contexts)
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-        Handler().postDelayed({
-            val single = MEMBER_SERVICE.getSubscribing(m_seq,offset,addLimit())
-            single.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    mSubscribingAdapter = SubscribingAdapter(it, contexts, memberViewModel,m_seq,object :SubscribingAdapter.OnClickProfileListener{
-                        override fun OnClickProfile(member: Member, tv: TextView, iv: ImageView) {
-                            val trId = ViewCompat.getTransitionName(tv).toString()
-                            val trId1 = ViewCompat.getTransitionName(iv).toString()
-                            if (member.m_seq == m_seq) {
-                                activity?.supportFragmentManager
-                                    ?.beginTransaction()
-                                    ?.addSharedElement(tv, trId)
-                                    ?.addSharedElement(iv, trId1)
-                                    ?.addToBackStack("ProfileImg")
-                                    ?.replace(
-                                        R.id.frameLayout,
-                                        ProfileFragment.newInstanceMember(member, trId, trId1)
-                                    )
-                                    ?.commit()
-                            } else {
-                                activity?.supportFragmentManager
-                                    ?.beginTransaction()
-                                    ?.addSharedElement(tv, trId)
-                                    ?.addSharedElement(iv, trId1)
-                                    ?.addToBackStack("ProfileImg")
-                                    ?.replace(
-                                        R.id.frameLayout,
-                                        ProfileUsersFragment.newInstanceMember(member, trId, trId1)
-                                    )
-                                    ?.commit()
-                            }
-                        }
-
-                    })
-                    rv_subscribers?.apply {
-//                            var linearLayoutMnager = LinearLayoutManager(this.context)
-                        this.layoutManager = linearLayoutManager
-                        this.itemAnimator = DefaultItemAnimator()
-                        this.adapter = mSubscribingAdapter
-                    }
-
-
-                }, {
-                    Log.d("스크롤 보기 실패함", "" + it.message)
-                })
-            progressBar?.visibility = View.GONE
-        }, 1000)
     }
 
     override fun onResume() {

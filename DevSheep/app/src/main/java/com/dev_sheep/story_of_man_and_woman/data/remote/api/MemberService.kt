@@ -15,10 +15,17 @@ interface MemberService {
     fun insertMember(
         @Field("email") email: String,
         @Field("password") password: String,
-        @Field("nick_name") nick_name: String,
+        @Field("nick_name") nick_name: String
+    ): Single<String>
+
+    @FormUrlEncoded
+    @POST("member_profile_add.php")
+    fun insertMemberProfile(
+        @Field("email") email: String,
         @Field("gender") gender: String,
         @Field("age") age: String
     ): Single<String>
+
 
     @FormUrlEncoded
     @POST("member_get_m_seq.php")
@@ -33,7 +40,7 @@ interface MemberService {
     fun getMember(@Field("m_seq") m_seq: String): Single<Member>
 
     @GET("user_get_search.php")
-    fun getUserSearch(@Query("nick_name") nick_name: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<List<Member>>
+    fun getUserSearch(@Query("nick_name") nick_name: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Member>>
 
     //사용자가 프로필 이미지를 변경했을때 해당 이미지를 서버로 전송하는 통신
     @Multipart
@@ -65,11 +72,11 @@ interface MemberService {
 
     @FormUrlEncoded
     @POST("subscribers_get.php")
-    fun getSubsribers(@Field("m_seq") m_seq: String,@Field("offset") offset: Int,@Field("limit") limit: Int): Single<List<Member>>
+    fun getSubsribers(@Field("m_seq") m_seq: String,@Field("offset") offset: Int,@Field("limit") limit: Int): Single<MutableList<Member>>
 
     @FormUrlEncoded
     @POST("subscribing_get.php")
-    fun getSubscribing(@Field("m_seq") m_seq: String,@Field("offset") offset: Int,@Field("limit") limit: Int): Single<List<Member>>
+    fun getSubscribing(@Field("m_seq") m_seq: String,@Field("offset") offset: Int,@Field("limit") limit: Int): Single<MutableList<Member>>
 
 
     @GET("get_member_profile_img_from_nickname.php")
@@ -94,7 +101,8 @@ interface MemberService {
     ,@Field("noti_message") noti_message: String): Single<Notification>
 
     @GET("notification_get.php")
-    fun getNotification(@Query("target_m_seq") target_m_seq: String): Single<List<Notification>>
+    fun getNotification(@Query("target_m_seq") target_m_seq: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Notification>>
+
 
     @FormUrlEncoded
     @POST("notification_edit.php")

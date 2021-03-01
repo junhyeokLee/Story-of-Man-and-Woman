@@ -48,8 +48,8 @@ class SearchUserFragment(nick_name:String) : Fragment() {
     private var lastVisibleItemPosition = 0
     lateinit var contexts: Context
     private lateinit var linearLayoutManager: LinearLayoutManager
-    private var nestedScrollView: NestedScrollView? = null
-    private var progressBar : ProgressBar? = null
+    lateinit var mShimmerViewContainer: ShimmerFrameLayout
+
     var nick_name = nick_name
     lateinit var my_m_seq : String
 
@@ -68,8 +68,7 @@ class SearchUserFragment(nick_name:String) : Fragment() {
         empty = view.findViewById(R.id.empty)
         tv_empty = view.findViewById(R.id.emptyText) as TextView
         tv_empty.setText(R.string.empty)
-        nestedScrollView = view.findViewById(R.id.nestedScrollView_search)
-        progressBar = view.findViewById(R.id.progressBar)
+        mShimmerViewContainer = view.findViewById<View>(R.id.shimmer_view_container_search) as ShimmerFrameLayout
 
         // 저장된 m_seq 가져오기
         val preferences: SharedPreferences =
@@ -83,6 +82,11 @@ class SearchUserFragment(nick_name:String) : Fragment() {
 
 
     private fun initData() {
+
+        if(memberViewModel == null){
+            return
+        }
+
         val handlerFeed: Handler = Handler(Looper.myLooper())
         linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
@@ -122,9 +126,21 @@ class SearchUserFragment(nick_name:String) : Fragment() {
                             }
                         }
 
+                    },object :SubscribersAdapter.OnEndlessScrollListener{
+                        override fun OnEndless(boolean_value: Boolean) {
+                            if (boolean_value == false) {
+                                EndlessScroll(false)
+                            } else if (boolean_value == true) {
+                                EndlessScroll(true)
+                            }
+                        }
+
                     })
 
                     handlerFeed.postDelayed({
+                        mShimmerViewContainer.stopShimmerAnimation()
+                        mShimmerViewContainer.visibility = View.GONE
+
                         recyclerView?.apply {
                             this.layoutManager = linearLayoutManager
                             this.itemAnimator = DefaultItemAnimator()
@@ -133,103 +149,45 @@ class SearchUserFragment(nick_name:String) : Fragment() {
                     },1000)
                }
                 ,{
+                    mShimmerViewContainer?.visibility = View.GONE
+                    empty!!.visibility = View.VISIBLE
                     Log.e("실패 Get Member", "" + it.message)
 
                 })
 
+    }
+
+    fun EndlessScroll(isLoading: Boolean){
         // 무한스크롤
-        nestedScrollView?.setOnScrollChangeListener(object: NestedScrollView.OnScrollChangeListener{
-            override fun onScrollChange(
-                v: NestedScrollView?,
-                scrollX: Int,
-                scrollY: Int,
-                oldScrollX: Int,
-                oldScrollY: Int
-            ) {
-                if (v?.getChildAt(v.getChildCount() - 1) != null) {
-                    progressBar?.visibility = View.VISIBLE
-
-                    if (scrollY >= v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight() && scrollY > oldScrollY) {
-                        visibleItemCount = linearLayoutManager.getChildCount()
-                        totalItemCount = linearLayoutManager.getItemCount()
-                        lastVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition()
-                        if (visibleItemCount + lastVisibleItemPosition >= totalItemCount) {
-//                                Handler().postDelayed({
-                            LoadMoreData()
-//                                },1000)
-
-                        }else{
-                            progressBar?.visibility = View.GONE
-                        }
+        recyclerView!!.setOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (!recyclerView.canScrollVertically(1)) {
+                    if (isLoading == false) {
+                        val single = APIService.MEMBER_SERVICE.getUserSearch(nick_name,offset,addLimit())
+                        single.subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe({
+                                mUserAdapter.updateList(it)
+                            }, {
+                                Log.d("Error MoreData", it.message.toString())
+                            })
                     }
                 }
             }
-
         })
-
-    }
-    private fun LoadMoreData() {
-        linearLayoutManager = LinearLayoutManager(context)
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-        Handler().postDelayed({
-            val single = APIService.MEMBER_SERVICE.getUserSearch(nick_name,offset,addLimit())
-            single.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    mUserAdapter = SubscribersAdapter(it, view!!.context, memberViewModel,object :
-                        SubscribersAdapter.OnClickProfileListener{
-                        override fun OnClickProfile(member: Member, tv: TextView, iv: ImageView) {
-                            val trId = ViewCompat.getTransitionName(tv).toString()
-                            val trId1 = ViewCompat.getTransitionName(iv).toString()
-                            if (member.m_seq == my_m_seq) {
-                                activity?.supportFragmentManager
-                                    ?.beginTransaction()
-                                    ?.addSharedElement(tv, trId)
-                                    ?.addSharedElement(iv, trId1)
-                                    ?.addToBackStack("ProfileImg")
-                                    ?.replace(
-                                        R.id.frameLayout,
-                                        ProfileFragment.newInstanceMember(member, trId, trId1)
-                                    )
-                                    ?.commit()
-                            } else {
-                                activity?.supportFragmentManager
-                                    ?.beginTransaction()
-                                    ?.addSharedElement(tv, trId)
-                                    ?.addSharedElement(iv, trId1)
-                                    ?.addToBackStack("ProfileImg")
-                                    ?.replace(
-                                        R.id.frameLayout,
-                                        ProfileUsersFragment.newInstanceMember(member, trId, trId1)
-                                    )
-                                    ?.commit()
-                            }
-                        }
-
-                    })
-                    recyclerView?.apply {
-//                            var linearLayoutMnager = LinearLayoutManager(this.context)
-                        this.layoutManager = linearLayoutManager
-                        this.itemAnimator = DefaultItemAnimator()
-                        this.adapter = mUserAdapter
-                    }
-
-                }, {
-                    Log.d("스크롤 보기 실패함", "" + it.message)
-                })
-            progressBar?.visibility = View.GONE
-        }, 1000)
     }
 
     override fun onResume() {
         super.onResume()
         initData()
+        mShimmerViewContainer.startShimmerAnimation()
 
     }
 
     override fun onPause() {
         super.onPause()
         initData()
+        mShimmerViewContainer.startShimmerAnimation()
     }
 
     private fun addLimit() : Int{

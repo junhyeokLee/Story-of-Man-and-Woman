@@ -3,21 +3,16 @@ package com.dev_sheep.story_of_man_and_woman.view.activity
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatButton
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_login.btn_signup
 import kotlinx.android.synthetic.main.activity_login.etv_email
 import kotlinx.android.synthetic.main.activity_login.etv_password
-import kotlinx.android.synthetic.main.activity_sign_up.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class LoginActivity : AppCompatActivity() {

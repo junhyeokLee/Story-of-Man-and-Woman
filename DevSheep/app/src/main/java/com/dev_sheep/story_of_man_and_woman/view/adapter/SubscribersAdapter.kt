@@ -7,28 +7,106 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Member
+import com.dev_sheep.story_of_man_and_woman.utils.BaseDiffUtil
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import kotlinx.android.synthetic.main.adapter_subscribers.view.*
+import java.util.HashMap
 
 class SubscribersAdapter(
-    private val member: List<Member>,
+    private val member: MutableList<Member>,
     private val context: Context,
     private val memberViewModel: MemberViewModel,
-    private val onClickProfileListener: OnClickProfileListener
+    private val onClickProfileListener: OnClickProfileListener,
+    private val onEndlessScrollListener: OnEndlessScrollListener
 )
-    : RecyclerView.Adapter<SubscribersAdapter.ViewHolder>() {
+    : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    lateinit var mcontext: Context
+    private val VIEW_TYPE_LOADING = 0
+    private val VIEW_TYPE_ITEM = 1
+    private var isLoadingAdded = false
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        mcontext = parent.context
+        val view: View?
+        return when (viewType) {
+            VIEW_TYPE_LOADING ->{
+                view = LayoutInflater.from(parent.context).inflate(R.layout.progress_loading, parent, false)
+                LoadingViewHolder(view, isLoadingAdded)
+            }
+            VIEW_TYPE_ITEM -> { view = LayoutInflater.from(context).inflate(R.layout.adapter_subscribers, parent, false)
+                ViewHolder(view,isLoadingAdded,onEndlessScrollListener)
+            }
+            else -> throw RuntimeException("알 수 없는 뷰 타입 에러")
+        }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when(holder.itemViewType){
+
+            VIEW_TYPE_LOADING ->{
+                val viewHolder: FeedAdapter.LoadingViewHolder = holder as FeedAdapter.LoadingViewHolder
+                viewHolder.bindView()
+            }
+
+            VIEW_TYPE_ITEM -> {
+                val viewHolder: ViewHolder = holder as ViewHolder
+                val item = member[position]
+                var viewModel = memberViewModel
+                viewHolder.bindView(item, viewModel,onClickProfileListener)
+            }
+        }
+    }
+
+    fun updateList(members: MutableList<Member>) {
+        // diif util 리사이클러뷰 재활용 능력 향상시켜줌 깜빡임 현상없어짐
+        val diffUtil = BaseDiffUtil(members, this.member)
+        val diffResult = DiffUtil.calculateDiff(diffUtil)
+
+        this.member.clear()
+        this.member.addAll(members)
+        diffResult.dispatchUpdatesTo(this)
+
+    }
+    override fun getItemViewType(position: Int): Int {
+        return if(position == member.size ) VIEW_TYPE_LOADING
+        else {
+            VIEW_TYPE_ITEM
+        }
+    }
+
+    override fun getItemCount(): Int {
+        return if(member == null) 0
+        else member.size
+    }
+
+    class ViewHolder(itemView: View,
+                     isLoadingAdded: Boolean,
+                     onEndlessScrollListener: OnEndlessScrollListener) : RecyclerView.ViewHolder(itemView) {
         lateinit var my_m_seq : String
+        private var isLoadingAdded = isLoadingAdded
+        private val onEndlessScrollListener = onEndlessScrollListener
 
         fun bindView(item: Member, memberViewModel: MemberViewModel,onClickProfileListener: OnClickProfileListener) {
+
+            // 마지막 피드 인지 아닌지 체크
+            if(item.last_index.equals("true")){
+                isLoadingAdded = false
+                onEndlessScrollListener.OnEndless(true)
+            }else if(item.last_index.equals("false")) {
+                isLoadingAdded = true
+                onEndlessScrollListener.OnEndless(false)
+            }
+
             // my_m_seq 가져오기
             val preferences: SharedPreferences = itemView.context.getSharedPreferences(
                 "m_seq",
@@ -106,34 +184,29 @@ class SubscribersAdapter(
 //            }
 
         }
+    }
+
+    internal class LoadingViewHolder(itemView: View,isLoadingAdded:Boolean):RecyclerView.ViewHolder(itemView){
+        lateinit var mFeedCardAdater: FeedCardAdapter
+        private val progressBar: ProgressBar = itemView.findViewById(R.id.progress_bar)
+        private var isLoading = isLoadingAdded
+        fun bindView() {
+            if(isLoading == true){
+                progressBar.visibility = View.VISIBLE
+            }else{
+                progressBar.visibility = View.GONE
+            }
+        }
 
 
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.adapter_subscribers, parent, false)
-        Log.e("어답터실행됨", "실행")
-
-        return ViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = member[position]
-        var viewModel = memberViewModel
-        Log.e("어답터실행됨", "실행")
-        holder.bindView(item, viewModel,onClickProfileListener)
-
-
-    }
     interface OnClickProfileListener{
         fun OnClickProfile(member: Member, tv: TextView, iv: ImageView)
     }
-    override fun getItemCount(): Int {
-        Log.e("어답터실행됨", "실행")
 
-        return member.size   // 7개 까지만
+    interface OnEndlessScrollListener{
+        fun OnEndless(boolean_value: Boolean)
     }
-
-
 
 }

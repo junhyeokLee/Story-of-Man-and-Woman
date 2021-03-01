@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -19,7 +20,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
-import com.dev_sheep.story_of_man_and_woman.data.database.entity.Test
+import com.dev_sheep.story_of_man_and_woman.utils.BaseDiffUtil
 import com.victor.loading.rotate.RotateLoading
 import kotlinx.android.synthetic.main.adapter_feed.view.bookmark
 import kotlinx.android.synthetic.main.adapter_feed.view.favorite_btn
@@ -36,32 +37,24 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class FeedAdapterTag(
-    private val list: List<Feed>,
+    private val list: MutableList<Feed>,
     private var context: Context,
     private val onClickViewListener: OnClickViewListener,
     private val onClickLikeListener: OnClickLikeListener,
     private val onClickBookMarkListener: OnClickBookMarkListener,
-    private val onClickProfileListener: OnClickProfileListener
+    private val onClickProfileListener: OnClickProfileListener,
+    private val onEndlessScrollListener: OnEndlessScrollListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     lateinit var mcontext: Context
-    var mViewPagerState = HashMap<Int, Int>()
-    private val VIEW_TYPE_ITEM = 0
-    private val VIEW_TYPE_LOADING = 1
+    private val VIEW_TYPE_LOADING = 0
+    private val VIEW_TYPE_ITEM = 1
+    private var isLoadingAdded = false
 
 //    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         mcontext = parent.context
-
         val view: View?
-//        val viewHolder: RecyclerView.ViewHolder
-//        var viewHolder: RecyclerView.ViewHolder? = null
-
-        if(list == null){
-            VIEW_TYPE_LOADING
-        }else{
-            VIEW_TYPE_ITEM
-        }
 
         return when (viewType) {
             VIEW_TYPE_ITEM -> {
@@ -72,11 +65,12 @@ class FeedAdapterTag(
                 )
                 FeedHolder(
                     view,
-                    list,
+                    isLoadingAdded,
                     onClickViewListener,
                     onClickLikeListener,
                     onClickBookMarkListener,
-                    onClickProfileListener
+                    onClickProfileListener,
+                    onEndlessScrollListener
                 )
             }
             VIEW_TYPE_LOADING -> {
@@ -85,33 +79,13 @@ class FeedAdapterTag(
                     parent,
                     false
                 )
-                LoadingViewHolder(view)
+                FeedAdapterRank.LoadingViewHolder(view, isLoadingAdded)
             }
             else -> throw RuntimeException("알 수 없는 뷰 타입 에러")
         }
-
-
-//        if(viewType == VIEW_TYPE_ITEM) {
-//            val view =
-//                LayoutInflater.from(parent.context).inflate(R.layout.adapter_feed, parent, false)
-//            return FeedHolder(view)
-//        }
-//        else {
-//            val view =
-//                LayoutInflater.from(parent.context).inflate(R.layout.progress_loading, parent, false)
-//            return LoadingViewHolder(view)
-//        }
-
-        fun notification(){
-            this.notifyDataSetChanged()
-        }
     }
 
-
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int)  {
-
-
         when(holder.itemViewType){
             VIEW_TYPE_ITEM -> {
                 val viewHolder: FeedHolder = holder as FeedHolder
@@ -127,25 +101,29 @@ class FeedAdapterTag(
 
         }
 
+    }
 
-//        if(holder is FeedHolder){
-//            val list = list[position]
-//            holder.bindView(list)
-//        }
-//        else if(holder is LoadingViewHolder){
-//            val list = list[position]
-//            holder.bindView(list)
-//        }
+    fun updateList(feeds: MutableList<Feed>) {
+        // diif util 리사이클러뷰 재활용 능력 향상시켜줌 깜빡임 현상없어짐
+        val diffUtil = BaseDiffUtil(feeds, this.list)
+        val diffResult = DiffUtil.calculateDiff(diffUtil)
 
-//        val viewHolder: FeedHolder = holder as FeedHolder
-//        val item = list[position] // 배너에서 시작을 0 부터 했기때문에 피드가 1부터 시작하는걸 -1 시켜서 0부터 보여지게
-//        viewHolder.bindView(item)
-
+        this.list.clear()
+        this.list.addAll(feeds)
+        diffResult.dispatchUpdatesTo(this)
 
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return if(position == list.size ) VIEW_TYPE_LOADING
+        else {
+            VIEW_TYPE_ITEM
+        }
+    }
+
     override fun getItemCount(): Int {
-        return list.size
+        return if(list == null) 0
+        else list.size
     }
 
 
@@ -156,11 +134,12 @@ class FeedAdapterTag(
 
     internal class FeedHolder(
         itemView: View,
-        list: List<Feed>,
+        isLoadingAdded: Boolean,
         onClickViewListener: OnClickViewListener,
         onClickLikeListener: OnClickLikeListener,
         onClickBookMarkListener: OnClickBookMarkListener,
-        onClickProfileListener: OnClickProfileListener
+        onClickProfileListener: OnClickProfileListener,
+        onEndlessScrollListener: OnEndlessScrollListener
     ) :  RecyclerView.ViewHolder(itemView){
         private val feed_layout: RelativeLayout = itemView.findViewById(R.id.feed_layout)
         private var favoriteButton: CheckBox = itemView.findViewById(R.id.favorite_btn)
@@ -182,10 +161,19 @@ class FeedAdapterTag(
         private val onClickBookMark = onClickBookMarkListener
         private val onClickProfile = onClickProfileListener
         lateinit var m_seq : String
-        private val listImg = list
+        private var isLoadingAdded = isLoadingAdded
+        private val onEndlessScrollListener = onEndlessScrollListener
 
         @SuppressLint("Range")
         fun bindView(item: Feed, position: Int) {
+            // 마지막 피드 인지 아닌지 체크
+            if(item.last_index.equals("true")){
+                isLoadingAdded = false
+                onEndlessScrollListener.OnEndless(true)
+            }else if(item.last_index.equals("false")) {
+                isLoadingAdded = true
+                onEndlessScrollListener.OnEndless(false)
+            }
 
             ViewCompat.setTransitionName(itemView.tv_m_nick, position.toString() + "Text")
             ViewCompat.setTransitionName(itemView.img_profile, (position).toString() + "Img")
@@ -382,24 +370,22 @@ class FeedAdapterTag(
         }
 
     }
-
-    internal class LoadingViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
-        private val progressBar : RotateLoading = itemView.findViewById(R.id.rotateloading)
-
+    internal class LoadingViewHolder(itemView: View,isLoadingAdded:Boolean):RecyclerView.ViewHolder(itemView){
+        lateinit var mFeedCardAdater: FeedCardAdapter
+        private val progressBar: ProgressBar = itemView.findViewById(R.id.progress_bar)
+        private var isLoading = isLoadingAdded
         fun bindView() {
-            progressBar.start()
+            if(isLoading == true){
+                progressBar.visibility = View.VISIBLE
+            }else{
+                progressBar.visibility = View.GONE
+            }
         }
 
+
     }
 
 
-    fun addData(item: ArrayList<Test>) {
-
-        var size = item.size
-        item.addAll(item)
-        var sizeNew = item.size
-        notifyItemRangeChanged(size, sizeNew)
-    }
 
 
     // omeFragment에서 클릭시 뷰모델 사용하여 조회수 올리기위함
@@ -424,7 +410,9 @@ class FeedAdapterTag(
     interface OnClickProfileListener{
         fun OnClickProfile(feed: Feed, tv: TextView, iv: ImageView)
     }
-
+    interface OnEndlessScrollListener{
+        fun OnEndless(boolean_value: Boolean)
+    }
 
 }
 

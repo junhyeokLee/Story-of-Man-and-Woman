@@ -37,7 +37,7 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginLeft="6dp"
                 android:layout_toEndOf="@+id/hashtag"
-                android:fontFamily="@font/roundwindregular"
+                android:fontFamily="@font/apple_sd_gothic_neo_b"
                 android:padding="4dp"
                 android:text="NULL"
                 android:textColor="@color/black"

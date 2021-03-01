@@ -57,7 +57,7 @@
                     android:layout_gravity="center"
                     android:gravity="center|left"
                     android:ellipsize="end"
-                    android:fontFamily="@font/roundwindregular"
+                    android:fontFamily="@font/apple_sd_gothic_neo_b"
                     android:maxLines="1"
                     android:paddingRight="12dp"
                     android:layout_marginTop="6dp"
@@ -73,7 +73,7 @@
                     android:layout_gravity="center"
                     android:gravity="center|left"
                     android:ellipsize="end"
-                    android:fontFamily="@font/roboto_regular"
+                    android:fontFamily="@font/apple_sd_gothic_neo_t"
                     android:maxLines="2"
                     android:paddingRight="12dp"
                     android:textColor="@color/black"
@@ -111,7 +111,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="4dp"
-                            android:fontFamily="@font/roboto_regular"
+                            android:fontFamily="@font/apple_sd_gothic_neo_t"
                             android:gravity="left"
                             android:text="1"
                             android:textColor="@color/sub_Accent"
@@ -142,7 +142,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="4dp"
-                            android:fontFamily="@font/roboto_regular"
+                            android:fontFamily="@font/apple_sd_gothic_neo_t"
                             android:gravity="left"
                             android:text="1"
                             android:textColor="@color/sub_Accent"
@@ -173,7 +173,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="4dp"
-                            android:fontFamily="@font/roboto_regular"
+                            android:fontFamily="@font/apple_sd_gothic_neo_t"
                             android:gravity="left"
                             android:text="0"
                             android:textColor="@color/sub_Accent"
@@ -244,7 +244,7 @@
                             android:textColor="@color/black"
                             android:textSize="11sp"
                             android:transitionName="@string/profile_name"
-                            app:fontFamily="@font/roboto_regular" />
+                            app:fontFamily="@font/apple_sd_gothic_neo_t" />
 
                         <TextView
                             android:layout_width="3dp"
@@ -263,7 +263,7 @@
                             android:text="남"
                             android:textSize="11sp"
                             android:textColor="@color/blue_gray_light"
-                            android:fontFamily="@font/roboto_regular"
+                            android:fontFamily="@font/apple_sd_gothic_neo_t"
                             />
                         <TextView
                             android:layout_width="wrap_content"
@@ -284,7 +284,7 @@
                             android:text="20대"
                             android:textSize="11sp"
                             android:textColor="@color/blue_gray_light"
-                            android:fontFamily="@font/roboto_regular"
+                            android:fontFamily="@font/apple_sd_gothic_neo_t"
                             />
 
 

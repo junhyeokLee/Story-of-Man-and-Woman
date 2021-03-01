@@ -5,12 +5,15 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Base64
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import android.widget.*
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -51,8 +54,6 @@ class CommentActivity : AppCompatActivity(){
     lateinit var tv_empty: TextView
     private lateinit var linearLayoutManager: LinearLayoutManager
     private var shimmer_view_container_comment: ShimmerFrameLayout? = null
-    private var nestedScrollView: NestedScrollView? = null
-    private var progressBar : ProgressBar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,8 +75,6 @@ class CommentActivity : AppCompatActivity(){
 
         empty = findViewById(R.id.empty)
         tv_empty = findViewById(R.id.emptyText) as TextView
-        nestedScrollView = findViewById(R.id.nestedScrollView_comment)
-        progressBar = findViewById(R.id.progressBar)
         shimmer_view_container_comment = findViewById(R.id.shimmer_view_container_comment)
         tv_empty.setText(R.string.empty)
 
@@ -91,6 +90,7 @@ class CommentActivity : AppCompatActivity(){
             Context.MODE_PRIVATE
         )
         m_seq = preferences.getString("inputMseq", "")
+
 
 
         initData()
@@ -115,12 +115,15 @@ class CommentActivity : AppCompatActivity(){
                         feed_creater,
                         Integer.parseInt(feed_seq),
                         "댓글알림",
-                        "님이 '\'" + feed_title + " '\' 에 댓글을 남겼습니다."
+                        "님이 '\' " + feed_title + " '\' 에 댓글을 남겼습니다."+
+                                "  -  "+editText.text.toString()
                     )
-
+                    Log.e("이모지 데이터",""+editText.toString())
                     Toast.makeText(this, "댓글등록.", Toast.LENGTH_SHORT).show();
 
-                    this.onBackPressed()
+                    initData()
+                    editText.setText("")
+
                     return@OnTouchListener true
                 }
             }
@@ -140,13 +143,17 @@ class CommentActivity : AppCompatActivity(){
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 if(it.size > 0) {
-                    mCommentAdapter = CommentAdapter(it, this, feedViewModel,object :CommentAdapter.OnLastIndexListener{
+                    mCommentAdapter = CommentAdapter(it, this, feedViewModel,memberViewModel,object :CommentAdapter.OnLastIndexListener{
                         override fun OnLastIndex(last_index: Boolean) {
-                            InfinityScroll(last_index)
+                            if(last_index == false){
+                                EndlessScroll(false)
+                            }else if(last_index == true){
+                                EndlessScroll(true)
+                            }
+
                         }
 
                     })
-
                     handlerFeed.postDelayed({
                         shimmer_view_container_comment?.stopShimmerAnimation()
                         shimmer_view_container_comment?.visibility = View.GONE
@@ -157,7 +164,9 @@ class CommentActivity : AppCompatActivity(){
                             this.adapter = mCommentAdapter
                         }
                     },1000)
+
                 }else{
+                    shimmer_view_container_comment?.stopShimmerAnimation()
                     shimmer_view_container_comment?.visibility = View.GONE
                     empty!!.visibility = View.VISIBLE
                 }
@@ -176,68 +185,28 @@ class CommentActivity : AppCompatActivity(){
             }
         }
     }
-
-
-    private fun InfinityScroll(last_index:Boolean){
+    fun EndlessScroll(isLoading: Boolean){
         // 무한스크롤
-        nestedScrollView?.setOnScrollChangeListener(object: NestedScrollView.OnScrollChangeListener{
-            override fun onScrollChange(
-                v: NestedScrollView?,
-                scrollX: Int,
-                scrollY: Int,
-                oldScrollX: Int,
-                oldScrollY: Int
-            ) {
-                if (v?.getChildAt(v.getChildCount() - 1) != null) {
 
-                    if (scrollY >= v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight() && scrollY > oldScrollY
-                        && last_index == false) {
-                        visibleItemCount = linearLayoutManager.getChildCount()
-                        totalItemCount = linearLayoutManager.getItemCount()
-                        lastVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition()
-                        if (visibleItemCount + lastVisibleItemPosition >= totalItemCount)
-                        {
-                            progressBar?.visibility = View.VISIBLE
-                            LoadMoreData()
-
-                        }
-
-                    } else if(last_index == true){
-                        progressBar?.visibility = View.GONE
+        recyclerview_comments!!.setOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (!recyclerView.canScrollVertically(1)) {
+                    if (isLoading == false) {
+                        val single = APIService.FEED_SERVICE.getComment(Integer.parseInt(feed_seq),offset,addLimit())
+                        single.subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe({
+                                mCommentAdapter.updateList(it)
+                            }, {
+                                Log.d("Error MoreData", it.message.toString())
+                            })
                     }
                 }
             }
-
         })
     }
 
-    private fun LoadMoreData() {
-        linearLayoutManager = LinearLayoutManager(this)
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-        Handler().postDelayed({
-            val single = APIService.FEED_SERVICE.getComment(Integer.parseInt(feed_seq),offset,addLimit())
-            single.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
 
-                    mCommentAdapter = CommentAdapter(it, this, feedViewModel,object :CommentAdapter.OnLastIndexListener{
-                        override fun OnLastIndex(last_index: Boolean) {
-                            InfinityScroll(last_index)
-                        }
-                    })
-
-                    recyclerview_comments?.apply {
-                        this.layoutManager = linearLayoutManager
-                        this.itemAnimator = DefaultItemAnimator()
-                        this.adapter = mCommentAdapter
-                    }
-
-                }, {
-                    Log.d("스크롤 보기 실패함", "" + it.message)
-                })
-            progressBar?.visibility = View.GONE
-        }, 1000)
-    }
 
     override fun onResume() {
         super.onResume()

@@ -37,21 +37,31 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical">
 
-        <ImageView
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.jsibbold.zoomage.ZoomageView
             android:id="@+id/id_Profile_Image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:scaleType="centerInside"
-            android:src="@drawable/image">
+            android:src="@drawable/image"
+            app:zoomage_restrictBounds="false"
+            app:zoomage_animateOnReset="true"
+            app:zoomage_autoResetMode="UNDER"
+            app:zoomage_autoCenter="true"
+            app:zoomage_zoomable="true"
+            app:zoomage_translatable="true"
+            app:zoomage_minScale="0.6"
+            app:zoomage_maxScale="8"
+            />
+    </RelativeLayout>
 
-        </ImageView>
-    </LinearLayout>
+
 
 </LinearLayout>

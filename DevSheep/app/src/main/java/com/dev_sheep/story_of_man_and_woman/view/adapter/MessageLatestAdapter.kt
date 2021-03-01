@@ -27,6 +27,7 @@ import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.adapter_latest_message_row.view.*
 import java.text.SimpleDateFormat
+import java.util.*
 
 
 class MessageLatestAdapter(val FBChatMessage: FB_ChatMessage, val memberViewModel:MemberViewModel,val context: Context): Item<ViewHolder>() {
@@ -158,6 +159,41 @@ class MessageLatestAdapter(val FBChatMessage: FB_ChatMessage, val memberViewMode
 
     }
 
+  }
+
+  private object TIME_MAXIMUM {
+    const val SEC = 60
+    const val MIN = 60
+    const val HOUR = 24
+    const val DAY = 30
+    const val MONTH = 12
+  }
+
+  fun calculateTime(date: Date): String? {
+    val curTime = System.currentTimeMillis()
+    val regTime = date.time
+    var diffTime = (curTime - regTime) / 1000
+    var msg: String? = null
+    if (diffTime < TIME_MAXIMUM.SEC) {
+      // sec
+      msg = diffTime.toString() + " 초전"
+    } else if (TIME_MAXIMUM.SEC.let { diffTime /= it; diffTime } < TIME_MAXIMUM.MIN) {
+      // min
+      println(diffTime)
+      msg = diffTime.toString() + " 분전"
+    } else if (TIME_MAXIMUM.MIN.let { diffTime /= it; diffTime } < TIME_MAXIMUM.HOUR) {
+      // hour
+      msg = diffTime.toString() + " 시간전"
+    } else if (TIME_MAXIMUM.HOUR.let { diffTime /= it; diffTime } < TIME_MAXIMUM.DAY) {
+      // day
+      msg = diffTime.toString() + " 일전"
+    } else if (TIME_MAXIMUM.DAY.let { diffTime /= it; diffTime } < TIME_MAXIMUM.MONTH) {
+      // day
+      msg = diffTime.toString() + " 달전"
+    } else {
+      msg = diffTime.toString() + " 년전"
+    }
+    return msg
   }
 
 }

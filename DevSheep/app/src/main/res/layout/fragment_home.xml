@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:shimmer="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
+    android:background="@color/transparent"
     android:fitsSystemWindows="true">
 
     <LinearLayout
@@ -37,7 +37,7 @@
                     android:text="#사연남녀"
                     android:textColor="@color/black"
                     android:textSize="16sp"
-                    android:fontFamily="@font/roboto_regular"
+                    android:fontFamily="@font/apple_sd_gothic_neo_t"
                     />
             </LinearLayout>
             <LinearLayout
@@ -69,52 +69,9 @@
 
         </androidx.appcompat.widget.Toolbar>
 
-    </LinearLayout>
-
-    <!-- 상단바 -->
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="90dp"
-        android:background="@android:color/transparent"
-        android:fitsSystemWindows="false"
-        app:elevation="8dp">
 
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="false"
-            app:collapsedTitleTextAppearance="@style/AppTheme.Title.Collapsed"
-            app:expandedTitleTextAppearance="@style/AppTheme.Title.Expanded"
-            app:layout_scrollFlags="scroll|enterAlways|exitUntilCollapsed">
 
-            <androidx.appcompat.widget.Toolbar
-                android:layout_width="match_parent"
-                android:layout_height="42dp"
-                android:layout_gravity="bottom|end"
-                app:contentInsetStart="0dp"
-                app:layout_collapseMode="pin"
-                >
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView_tag"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/buttonstyle"
-                    android:scrollbars="vertical"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    app:layoutManager="GridLayoutManager"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                    tools:itemCount="7"
-                    tools:listitem="@layout/adpater_tag"
-                    tools:spanCount="4"></androidx.recyclerview.widget.RecyclerView>
-
-            </androidx.appcompat.widget.Toolbar>
-
-
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
-    </com.google.android.material.appbar.AppBarLayout>
 
 
     <LinearLayout
@@ -130,6 +87,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:orientation="vertical"
+            android:visibility="visible"
             shimmer:duration="800">
 
             <!-- Adding 3 rows of placeholders -->
@@ -138,12 +96,11 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <include layout="@layout/feed_placeholder_item_adv" />
-
                 <include layout="@layout/feed_placeholder_item_card" />
 
                 <include layout="@layout/feed_placeholder_item" />
-
+                <include layout="@layout/feed_placeholder_item" />
+                <include layout="@layout/feed_placeholder_item" />
                 <include layout="@layout/feed_placeholder_item" />
 
 
@@ -155,82 +112,31 @@
             android:id="@+id/sr_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <!-- 스크롤뷰 , 리싸이클러뷰 이중스크롤 방 -->
-            <androidx.core.widget.NestedScrollView
-                android:id="@+id/nestedScrollView"
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" >
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:paddingBottom="32dp" />
+        </LinearLayout>
 
 
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="134dp"
-                        android:background="@android:color/transparent"
-                        >
-
-                        <androidx.viewpager.widget.ViewPager
-                            android:id="@+id/vp"
-                            android:layout_width="match_parent"
-                            android:background="@color/white"
-                            android:layout_height="match_parent" >
-
-                        </androidx.viewpager.widget.ViewPager>
-
-                        <me.relex.circleindicator.CircleIndicator
-                            android:id="@+id/indicator"
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:layout_gravity="center|top"
-                            android:layout_marginTop="8dp"
-                            android:background="@android:color/transparent"
-                            app:ci_drawable="@drawable/black_radius"
-                            app:ci_height="4dp"
-                            app:ci_margin="4dp"
-                            app:ci_width="4dp" />
-
-                    </FrameLayout>
 
 
-                    <androidx.viewpager.widget.ViewPager
-                        android:id="@+id/vp_feed_card"
-                        android:layout_width="match_parent"
-                        android:layout_height="300dp"
-                        android:layout_centerInParent="true"
-                        android:background="@color/white"
-                        android:clipToPadding="false"
-                        android:foregroundGravity="center"
-                        android:overScrollMode="never">
 
-                    </androidx.viewpager.widget.ViewPager>
-
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerView"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:background="@color/main_lightGray"
-                        app:layoutManager="GridLayoutManager"
-                        tools:itemCount="20"
-                        tools:listitem="@layout/adapter_feed"
-                        tools:spanCount="1"
-                        />
-
-                    <ProgressBar
-                        android:id="@+id/progressBar"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_gravity="bottom|center"
-                        android:visibility="visible" />
-                </LinearLayout>
-            </androidx.core.widget.NestedScrollView>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </LinearLayout>
 
 
-
+    </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

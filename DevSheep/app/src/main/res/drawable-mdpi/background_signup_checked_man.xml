@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:state_checked="true" android:drawable="@drawable/ic_man">
+    <item android:state_checked="true" android:drawable="@drawable/ic_gender_male">
         <shape android:shape="rectangle" >
             <stroke
                 android:width="1dp"
@@ -12,7 +12,7 @@
         </shape>
     </item>
 
-    <item android:state_checked="false"  android:drawable="@drawable/ic_man_empty">
+    <item android:state_checked="false"  android:drawable="@drawable/ic_gender_male_empty">
         <shape android:shape="rectangle" >
             <stroke
                 android:width="1dp"

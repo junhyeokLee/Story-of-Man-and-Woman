@@ -149,6 +149,8 @@ class ProfileFragment: Fragment(),View.OnClickListener {
     lateinit var layout_subscribing: LinearLayout
     lateinit var profileMessageDot : RedDotImageView
     lateinit var profileMessageEmpty : ImageView
+    lateinit var contexts : Context
+
 
 
 
@@ -207,6 +209,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         profileMessageDot = view.findViewById(R.id.preferecnes_message)
         profileMessageEmpty = view.findViewById(R.id.preferecnes_message_empty)
 
+        contexts = view.context
 
 
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
@@ -287,12 +290,18 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             tv_profile_nick.transitionName = arguments?.getString("trId")
             id_Profile_Image.transitionName = arguments?.getString("trId1")
         }
+
         initData()
 
 
     }
 
     private fun initData(){
+
+        if(memberViewModel == null){
+            return
+        }
+
         if(get_creater_img != "null" && get_creater_nick_name != "null") {
 
             profile_img = get_creater_img

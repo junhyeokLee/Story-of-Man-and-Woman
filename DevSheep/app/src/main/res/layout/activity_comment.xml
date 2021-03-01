@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
@@ -39,7 +40,7 @@
                 android:text="댓글"
                 android:textSize="18sp"
                 android:textColor="@color/black"
-                android:fontFamily="@font/roboto_regular"
+                android:fontFamily="@font/apple_sd_gothic_neo_t"
                 android:layout_marginLeft="16dp"
                 />
 
@@ -47,21 +48,19 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrollView_comment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+
+
         <LinearLayout
-            android:descendantFocusability="blocksDescendants"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            >
+
             <com.facebook.shimmer.ShimmerFrameLayout
                 android:id="@+id/shimmer_view_container_comment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="?attr/actionBarSize"
                 android:layout_gravity="center"
                 android:orientation="vertical"
                 android:visibility="visible"
@@ -88,29 +87,16 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerview_comments"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="?attr/actionBarSize"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:paddingBottom="78dp"
                 >
 
             </androidx.recyclerview.widget.RecyclerView>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:background="@color/white"
-                android:layout_gravity="bottom|center"
-                android:gravity="bottom|center"
-                android:layout_marginBottom="100dp"
-                >
-                <ProgressBar
-                    android:id="@+id/progressBar"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="bottom|center"
-                    android:visibility="gone"
 
-                    />
-            </LinearLayout>
+
+        </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/empty"
@@ -133,7 +119,7 @@
                         android:layout_marginLeft="16dp"
                         android:layout_marginTop="12dp"
                         android:layout_marginRight="16dp"
-                        android:fontFamily="@font/roboto_regular"
+                        android:fontFamily="@font/apple_sd_gothic_neo_t"
                         android:gravity="center"
                         android:textAlignment="center"
                         android:textColor="@color/gray"
@@ -163,9 +149,6 @@
 
             </LinearLayout>
 
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -191,7 +174,7 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_margin="8dp"
-                    android:background="@drawable/ic_camera"
+                    android:background="@drawable/ic_chat"
                     android:backgroundTint="@color/gray"
                     />
                 <LinearLayout
@@ -206,7 +189,7 @@
                         android:id="@+id/et_comment"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:fontFamily="@font/roboto_regular"
+                        android:fontFamily="@font/apple_sd_gothic_neo_t"
                         android:textStyle="bold"
                         android:layout_weight="1"
                         android:hint="어떻게 생각하세요?"

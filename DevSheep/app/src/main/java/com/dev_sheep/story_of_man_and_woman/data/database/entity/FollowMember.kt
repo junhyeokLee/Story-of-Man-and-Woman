@@ -19,4 +19,6 @@ data class FollowMember( @PrimaryKey
                    @SerializedName("status")
                    var status: String? = null,
                      @SerializedName("members")
-                     var members: List<Member>? = null)
+                     var members: List<Member>? = null,
+                         @SerializedName("last_index")
+                         var last_index: String? = null)

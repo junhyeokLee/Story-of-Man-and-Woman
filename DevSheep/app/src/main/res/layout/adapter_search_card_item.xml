@@ -33,7 +33,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="center|left"
                             android:ellipsize="end"
-                            android:fontFamily="@font/roboto_bold"
+                            android:fontFamily="@font/apple_sd_gothic_neo_b"
                             android:maxLines="1"
                             android:textColor="@color/black"
                             android:textSize="16sp"
@@ -72,7 +72,7 @@
                                         android:maxLines="1"
                                         android:ellipsize="end"
                                         android:textColor="@color/dark_gray"
-                                        android:fontFamily="@font/roboto_regular"
+                                        android:fontFamily="@font/apple_sd_gothic_neo_t"
 
                                         >
                                     </TextView>

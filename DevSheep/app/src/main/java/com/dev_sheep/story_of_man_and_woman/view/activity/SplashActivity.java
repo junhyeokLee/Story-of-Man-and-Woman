@@ -2,27 +2,14 @@ package com.dev_sheep.story_of_man_and_woman.view.activity;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
-import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import com.dev_sheep.story_of_man_and_woman.BuildConfig;
-import com.dev_sheep.story_of_man_and_woman.R;
-import com.google.gson.Gson;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 

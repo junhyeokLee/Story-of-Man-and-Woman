@@ -80,8 +80,6 @@
         android:paddingRight="32dp">
 
 
-
-
         <EditText
             android:id="@+id/etv_email"
             android:layout_width="match_parent"
@@ -130,11 +128,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:background="@drawable/buttonshapewhitebg"
-                android:fontFamily="@font/roboto_regular"
+                android:fontFamily="@font/apple_sd_gothic_neo_t"
                 android:text="회원가입"
                 android:layout_weight="1"
                 android:textAllCaps="false"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="16dp"
                 android:textStyle="bold" />
 
@@ -146,10 +144,10 @@
                 android:layout_marginLeft="16dp"
                 android:layout_weight="1"
                 android:background="@drawable/buttonshapewhitebg"
-                android:fontFamily="@font/roboto_regular"
+                android:fontFamily="@font/apple_sd_gothic_neo_t"
                 android:text="로그인"
                 android:textAllCaps="false"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="16dp"
                 android:textStyle="bold" />
 

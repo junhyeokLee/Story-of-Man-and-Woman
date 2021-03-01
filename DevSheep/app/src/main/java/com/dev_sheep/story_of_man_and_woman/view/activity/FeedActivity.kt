@@ -3,10 +3,13 @@ package com.dev_sheep.story_of_man_and_woman.view.activity
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.preference.PreferenceManager
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.webkit.JavascriptInterface
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
@@ -15,21 +18,20 @@ import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
 import com.dev_sheep.story_of_man_and_woman.view.adapter.CommentAdapter
+import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedAdapter
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_feed.*
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
+import org.jsoup.safety.Whitelist
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class FeedActivity : AppCompatActivity() ,View.OnClickListener{
-
-
-    companion object {
-        const val EXTRA_POSITION = "extra_position"
-        const val DEFAULT_POSITION = -1
-    }
 
     private val feedViewModel: FeedViewModel by viewModel()
     private val memberViewModel: MemberViewModel by viewModel()
@@ -45,6 +47,15 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
     lateinit var type : String
     private var limit: Int = 5
     private var offset: Int = 0
+
+    companion object {
+
+        const val EXTRA_POSITION = "extra_position"
+        const val DEFAULT_POSITION = -1
+         var FEED_SEQ =  1
+
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,6 +98,9 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
         layout_more_comment.setOnClickListener(this)
     }
 
+
+
+
     fun getIntents(){
         if(intent.hasExtra("creater_seq")) {
             m_seq = intent.getStringExtra("creater_seq")
@@ -97,10 +111,11 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
 
         if(intent.hasExtra("feed_seq")) {
             feed_seq = intent.getIntExtra("feed_seq", 0)
+            FEED_SEQ = intent.getIntExtra("feed_seq", 0)
         }
 
-        if(intent.hasExtra("feed_creater")) {
-            feed_creater = intent.getStringExtra("feed_creater")
+        if(intent.hasExtra("creater_seq")) {
+            feed_creater = intent.getStringExtra("creater_seq")
         }
         if(intent.hasExtra("feed_title")) {
             feed_title = intent.getStringExtra("feed_title")
@@ -143,7 +158,8 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         val editor = preferences.edit()
 
-
+        var url = write_content.getmFeedUrl()
+        Log.e("FeedUrl Click Value = "," "+url)
         val single = FEED_SERVICE.getFeed(feed_seq!!)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -163,6 +179,10 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                 comment_count.text = it.comment_no.toString()
                 tv_comment_count.text = it.comment_no.toString() + " 개"
 
+//                var dqw = write_content.imageClick()
+//                Log.e("dqwdq",""+dqw)
+//               var feedUrl = getFeedUrl(it.content)
+
                 // 더보기
                 if(it.comment_no!! >= 5){
                     layout_more_comment.visibility = View.VISIBLE
@@ -173,13 +193,16 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                 type = it.type.toString()
 
                 img_profile.transitionName = position.toString()
-                Glide.with(this)
-                    .load(it.creater_image_url)
-                    .apply(RequestOptions().circleCrop())
-                    .placeholder(android.R.color.transparent)
-                    .error(R.drawable.error_loading)
-                    .into(img_profile)
 
+
+            if(!this.isFinishing()) {
+                    Glide.with(this)
+                        .load(it.creater_image_url)
+                        .apply(RequestOptions().circleCrop())
+                        .placeholder(R.drawable.user)
+                        .error(R.drawable.error_loading)
+                        .into(img_profile)
+                }
                 with(favorite_btn) {
                     this.isChecked = checked!!
 
@@ -260,7 +283,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                 recyclerview_comments?.layoutManager = layoutManager
 
                 if(it.size > 0) {
-                    mCommentAdapter = CommentAdapter(it, this,feedViewModel,object: CommentAdapter.OnLastIndexListener{
+                    mCommentAdapter = CommentAdapter(it, this,feedViewModel,memberViewModel,object: CommentAdapter.OnLastIndexListener{
                         override fun OnLastIndex(last_index: Boolean) {
                         }
                     })
@@ -285,9 +308,9 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
 
                     val intent = Intent(applicationContext, CommentActivity::class.java)
                     intent.putExtra("feed_seq",feed_seq.toString())
-                    intent.putExtra("feed_creater",m_seq)
+                    intent.putExtra("feed_creater",feed_creater)
                     intent.putExtra("feed_title",feed_title)
-                    intent.putExtra("CommentFragment", true)
+//                    intent.putExtra("CommentFragment", true)
                     startActivity(intent)
                     overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
                 }
@@ -354,7 +377,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
             R.id.layout_bottom_comments -> {
                 val intent = Intent(applicationContext, CommentActivity::class.java)
                 intent.putExtra("feed_seq",feed_seq.toString())
-                intent.putExtra("feed_creater",m_seq)
+                intent.putExtra("feed_creater",feed_creater)
                 intent.putExtra("feed_title",feed_title)
 //                intent.putExtra("CommentFragment", true)
                 startActivity(intent)
@@ -364,7 +387,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
             R.id.layout_comments -> {
                 val intent = Intent(applicationContext, CommentActivity::class.java)
                 intent.putExtra("feed_seq",feed_seq.toString())
-                intent.putExtra("feed_creater",m_seq)
+                intent.putExtra("feed_creater",feed_creater)
                 intent.putExtra("feed_title",feed_title)
 //                intent.putExtra("CommentFragment", true)
                 startActivity(intent)
@@ -374,7 +397,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
             R.id.layout_more_comment -> {
                 val intent = Intent(applicationContext, CommentActivity::class.java)
                 intent.putExtra("feed_seq",feed_seq.toString())
-                intent.putExtra("feed_creater",m_seq)
+                intent.putExtra("feed_creater",feed_creater)
                 intent.putExtra("feed_title",feed_title)
 //                intent.putExtra("CommentFragment", true)
                 startActivity(intent)
@@ -382,6 +405,28 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
             }
 
         }
+    }
+
+    // html get Img
+    fun getFeedUrl(html: String?): String? {
+
+        var images = ""
+
+        if (html == null) return html
+        val document: Document = Jsoup.parse(html)
+        val mElementDatas = document.select(".feed_img")
+        for(Element in  mElementDatas){
+             images = Element.attr("src")
+        }
+        return images
+//            document.select("p").prepend("\n\n")
+//        val s: String = document.html().replace("\\\n", "\n")
+//        return Jsoup.clean(
+//            s,
+//            "",
+//            Whitelist.none(),
+//            Document.OutputSettings().prettyPrint(false)
+//        )
     }
 
     override fun onResume() {
@@ -393,5 +438,11 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
         finish()
         Toast.makeText(this, "Feed data not available", Toast.LENGTH_SHORT).show()
     }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+    }
+
+
 
 }
