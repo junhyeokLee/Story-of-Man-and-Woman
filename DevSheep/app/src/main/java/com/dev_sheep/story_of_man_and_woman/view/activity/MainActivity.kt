@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
                 if(intent.hasExtra("m_seq")){
 
-                    var m_seq = intent.getStringExtra("m_seq");
+                    var m_seq = intent.getStringExtra("m_seq")
                     val arguments = Bundle()
                     arguments.putString("feed_activity_m_seq", m_seq)
                     userProfileFragment.arguments = arguments

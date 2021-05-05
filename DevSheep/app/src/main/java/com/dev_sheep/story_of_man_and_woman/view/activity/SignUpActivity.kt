@@ -52,12 +52,12 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
 
 
         if (loginEmail != null && loginPassword != null) {
-            Toast.makeText(this, loginEmail + "님 반갑습니다.", Toast.LENGTH_SHORT)
-                .show()
+
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("email",loginEmail)
             startActivity(intent)
             finish()
+
         }
         // Profile 설정을 하지않았을때 프로필 설정페이지로 이동
 //        else if(loginEmail != null && loginPassword != null && gender == null){

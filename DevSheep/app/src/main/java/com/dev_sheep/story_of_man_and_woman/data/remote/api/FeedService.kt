@@ -47,6 +47,20 @@ interface FeedService {
     ): Completable // 특정값을 반환할 필요없음
 
     @FormUrlEncoded
+    @POST("feed_delete_member.php")
+    fun deleteFeedMember(@Field("m_seq") m_seq: String): Completable
+
+    @FormUrlEncoded
+    @POST("feed_delete_member_comment.php")
+    fun deleteFeedMemberComment(@Field("m_seq") m_seq: String): Completable
+    @FormUrlEncoded
+    @POST("feed_delete_member_bookmark.php")
+    fun deleteFeedMemberBookMark(@Field("m_seq") m_seq: String): Completable
+    @FormUrlEncoded
+    @POST("feed_delete_member_notification.php")
+    fun deleteFeedMemberNotification(@Field("m_seq") m_seq: String): Completable
+
+    @FormUrlEncoded
     @POST("feed_edit_view_count.php")
     fun edit_feed_view_count(@Field("feed_seq") feed_seq: Int): Completable // 특정값을 반환할 필요없음
 
@@ -91,13 +105,28 @@ interface FeedService {
     fun getBestList(): Observable<List<Feed>>
 
     @GET("feed_get_week.php")
-    fun getWeekList(): Observable<List<Feed>>
+    fun getWeekList(@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
 
-    @GET("feed_get_man_age_recommend.php")
-    fun getAgeManRecommendList(@Query("age") age: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
+    @GET("feed_get_man_rank.php")
+    fun getManRankList(@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
 
-    @GET("feed_get_woman_age_recommend.php")
-    fun getAgeWomanRecommendList(@Query("age") age: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
+    @GET("feed_get_10_age.php")
+    fun get10AgeList(@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
+
+    @GET("feed_get_20_age.php")
+    fun get20AgeList(@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
+
+    @GET("feed_get_30_age.php")
+    fun get30AgeList(@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
+
+    @GET("feed_get_40_age.php")
+    fun get40AgeList(@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
+
+    @GET("feed_get_50_age.php")
+    fun get50AgeList(@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
+
+    @GET("feed_get_woman_rank.php")
+    fun getWomanRankList(@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>
 
     @GET("feed_get_view_recommend.php")
     fun getViewRecommendList(@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Feed>>

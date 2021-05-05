@@ -22,6 +22,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.view.activity.LoginActivity
+import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
@@ -54,6 +55,8 @@ class PreferenceFragment : Fragment(),View.OnClickListener {
         SharedPreferences.OnSharedPreferenceChangeListener {
         lateinit var my_m_seq : String
         private val memberViewModel: MemberViewModel by viewModel()
+        private val feedViewModel: FeedViewModel by viewModel()
+
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             addPreferencesFromResource(R.xml.preferences_ui)
 //            findPreference(getString(R.string.pref_show_values)).onPreferenceClickListener =
@@ -159,6 +162,11 @@ class PreferenceFragment : Fragment(),View.OnClickListener {
                     editor.clear()
                     editor.commit()
                     memberViewModel.deleteMember(my_m_seq)
+                    memberViewModel.deleteFollowMember(my_m_seq)
+                    feedViewModel.deleteFeedMember(my_m_seq)
+                    feedViewModel.deleteFeedMemberComment(my_m_seq)
+                    feedViewModel.deleteFeedMemberBookMark(my_m_seq)
+                    feedViewModel.deleteFeedMemberNotification(my_m_seq)
                     FirebaseAuth.getInstance().currentUser!!.delete().addOnCompleteListener { task ->
                         if(task.isSuccessful){
                             Toast.makeText(context, "아이디 삭제가 완료되었습니다", Toast.LENGTH_LONG).show()

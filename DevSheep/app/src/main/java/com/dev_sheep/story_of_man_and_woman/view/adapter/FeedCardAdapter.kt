@@ -105,7 +105,7 @@ class FeedCardAdapter(
             tv_content.text = my_Age+" 여성들이 좋아하는"
             tv_content.setTextColor(Color.parseColor("#ec6674"))
 
-            val single = FEED_SERVICE.getAgeWomanRecommendList(my_Age,0,10)
+            val single = FEED_SERVICE.getWomanRankList(0,10)
             single.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
@@ -125,7 +125,7 @@ class FeedCardAdapter(
             tv_content.text = my_Age+" 남성들이 좋아하는"
 //            tv_content.setTextColor(R.color.main_Accent)8446CC
             tv_content.setTextColor(Color.parseColor("#7A5DC7"))
-            val single = FEED_SERVICE.getAgeManRecommendList(my_Age,0,10)
+            val single = FEED_SERVICE.getManRankList(0,10)
             single.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({

@@ -123,6 +123,20 @@ class FeedViewModel(private val searchDAO: SearchDAO, private val feedService: F
     fun deleteFeed(feed_seq: Int){
         feedRepository.deleteFeed(feed_seq)
     }
+    // 계정삭제시 해당 회원 피드 삭제
+    fun deleteFeedMember(m_seq: String){
+        feedRepository.deleteFeedMember(m_seq)
+    }
+    // 계정삭제시 코멘트 전체 삭제
+    fun deleteFeedMemberComment(m_seq: String){
+        feedRepository.deleteFeedMemberComment(m_seq)
+    }
+    fun deleteFeedMemberBookMark(m_seq: String){
+        feedRepository.deleteFeedMemberBookMark(m_seq)
+    }
+    fun deleteFeedMemberNotification(m_seq: String){
+        feedRepository.deleteFeedMemberNotification(m_seq)
+    }
     // 뷰 카운트 증가
     fun increaseViewCount(feed_seq: Int){
         feedRepository.increaseViewCount(feed_seq)

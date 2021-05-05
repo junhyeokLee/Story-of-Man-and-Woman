@@ -89,7 +89,10 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
     fun deleteMember(m_seq: String){
         memberRepository.deleteMember(m_seq)
     }
-
+    // 회원follow삭제
+    fun deleteFollowMember(m_seq: String){
+        memberRepository.deleteFollowMember(m_seq)
+    }
     // 회원가져오기
     fun getMemberSeq(email: String,password: String,context: Context){
         memberRepository.getMemberSeq(email,password,context)

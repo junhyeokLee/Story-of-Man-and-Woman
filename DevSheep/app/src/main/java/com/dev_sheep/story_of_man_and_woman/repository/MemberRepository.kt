@@ -24,6 +24,7 @@ import com.dev_sheep.story_of_man_and_woman.utils.RedDotImageView
 import com.dev_sheep.story_of_man_and_woman.utils.RedDotImageView2
 import com.dev_sheep.story_of_man_and_woman.view.Fragment.SearchTitleFragment
 import com.dev_sheep.story_of_man_and_woman.view.activity.AlarmActivity
+import com.dev_sheep.story_of_man_and_woman.view.activity.LoginActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.MainActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.SignUpStartActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -68,6 +69,13 @@ class MemberRepository(private val memberService: MemberService) {
 
     fun deleteMember(m_seq: String){
         val single = memberService.deleteMember(m_seq)
+        single.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+    }
+
+    fun deleteFollowMember(m_seq: String){
+        val single = memberService.deleteFollowMember(m_seq)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe()
@@ -174,6 +182,7 @@ class MemberRepository(private val memberService: MemberService) {
     }
 
     fun getMemberCheck(email: String, password: String, context: Context){
+
         val single = memberService.getMemberCheck(email, password)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -192,6 +201,8 @@ class MemberRepository(private val memberService: MemberService) {
                     context.applicationContext.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                 } else {
                     Toast.makeText(context.applicationContext, "email 또는 password를 확인해주세요.", Toast.LENGTH_SHORT).show()
+//                    val intent = Intent(context, LoginActivity::class.java)
+//                    context.applicationContext.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                   }
             }, {
                 Log.d("실패함 Insert Member", "" + it.message)

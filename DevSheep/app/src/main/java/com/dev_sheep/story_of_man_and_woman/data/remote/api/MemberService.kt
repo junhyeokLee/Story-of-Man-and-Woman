@@ -38,6 +38,10 @@ interface MemberService {
     fun deleteMember(@Field("m_seq") m_seq:String) : Completable
 
     @FormUrlEncoded
+    @POST("delete_follow_member.php")
+    fun deleteFollowMember(@Field("m_seq") m_seq:String) : Completable
+
+    @FormUrlEncoded
     @POST("login_check.php")
     fun getMemberCheck(@Field("email") email: String, @Field("password") password: String): Single<String>
 

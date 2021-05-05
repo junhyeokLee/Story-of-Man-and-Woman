@@ -184,7 +184,7 @@ val feedTagListLiveData = MutableLiveData<MutableList<Tag>>()
             })
     }
     fun getListSecert(m_seq:String,offset:Int,limit:Int){
-        val single = feedService.getListMystory(m_seq,offset,limit)
+        val single = feedService.getListSecert(m_seq,offset,limit)
         single.subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -279,6 +279,24 @@ val feedTagListLiveData = MutableLiveData<MutableList<Tag>>()
 
     fun deleteFeed(feed_seq:Int){
         val single = feedService.deleteFeed(feed_seq)
+        single.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe()
+    }
+
+    fun deleteFeedMember(m_seq:String){
+        val single = feedService.deleteFeedMember(m_seq)
+        single.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe()
+    }
+
+    fun deleteFeedMemberComment(m_seq:String){
+        val single = feedService.deleteFeedMemberComment(m_seq)
+        single.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe()
+    }
+    fun deleteFeedMemberBookMark(m_seq:String){
+        val single = feedService.deleteFeedMemberBookMark(m_seq)
+        single.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe()
+    }
+    fun deleteFeedMemberNotification(m_seq:String){
+        val single = feedService.deleteFeedMemberNotification(m_seq)
         single.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe()
     }
 

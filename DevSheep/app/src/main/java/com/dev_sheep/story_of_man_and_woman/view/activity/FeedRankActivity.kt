@@ -12,10 +12,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
@@ -43,7 +40,8 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.math.sign
 
-class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener{
+class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener,
+    CompoundButton.OnCheckedChangeListener {
 
     //    lateinit var tag_seq: String
     lateinit var tv_name: String
@@ -56,20 +54,14 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
     private var offset: Int = 0
     private lateinit var linearLayoutManager: LinearLayoutManager
 
-    var CHECKED_TAG_SEQ = ""
-    var CHECKED_TAG_NAME = ""
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feed_rank)
         setSupportActionBar(toolbar)
         supportActionBar?.title = ""
         getSupportActionBar()?.setDisplayHomeAsUpEnabled(true);
-
         sr_refresh.setOnRefreshListener(this)
-        sr_refresh.setColorSchemeResources(
-            R.color.main_Accent
-        )
+        sr_refresh.setColorSchemeResources(R.color.main_Accent)
         // my_m_seq 가져오기
         val preferences: SharedPreferences = this!!.getSharedPreferences(
             "m_seq",
@@ -78,79 +70,69 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
         m_seq = preferences.getString("inputMseq", "")
         my_Age = preferences.getString("inputAge", "")
 
-        if(intent.hasExtra("now")) {
-            tv_name = intent.getStringExtra("now")
-            tv_tag_rank_name.text = tv_name
-        }
-
         initData()
     }
 
     @SuppressLint("CheckResult")
     private fun initData(){
 
+        if(intent.hasExtra("now")) {
+            tv_name = intent.getStringExtra("now")
+            tv_tag_rank_name.text = tv_name
+            cb_now.isChecked = true
+            cb_now.setTextColor(resources.getColor(R.color.white))
+            tagSelectList("지금,")
+        }
 
-//        val layoutManager_Tag = GridLayoutManager(this, 11)
-//        layoutManager_Tag.setSpanSizeLookup(object : GridLayoutManager.SpanSizeLookup() {
-//            override fun getSpanSize(position: Int): Int {
-//                val gridPosition = position % 5
-//                when (gridPosition) {
-//                    0, 1, 2 -> return 4
-//                    3, 4 -> return 5
-//                }
-//                return 0
-//            }
-//        })
-//        recyclerView_tag.layoutManager = layoutManager_Tag
-//        feedViewModel.getTagList()
-//        //라이브데이터
-//        feedViewModel.listTagOfFeed.observe(this, Observer(function = fun(tagList: MutableList<Tag>?) {
-//            tagList?.let {
-//                if (it.isNotEmpty()) {
-//                    recyclerView_tag.layoutManager = layoutManager_Tag
-//                    recyclerView_tag.adapter = Tag_Select_Adapter(
-//                        it,
-//                        this,
-//                        object : Tag_Select_Adapter.OnTagCheckedSeq {
-//                            override fun getTagCheckedSeq(tag_seq: String, tag_name: String) {
-//                                CHECKED_TAG_SEQ = tag_seq
-//                                CHECKED_TAG_NAME = tag_name
-//                            }
-//
-//                        })
-//                } else {
-////                        progressBar_tag.visibility = View.VISIBLE
-//                }
-//            }
-//        }))
 
+        cb_now.setOnCheckedChangeListener(this)
+        cb_week.setOnCheckedChangeListener(this)
+        cb_woman.setOnCheckedChangeListener(this)
+        cb_man.setOnCheckedChangeListener(this)
+        cb_10.setOnCheckedChangeListener(this)
+        cb_20.setOnCheckedChangeListener(this)
+        cb_30.setOnCheckedChangeListener(this)
+        cb_40.setOnCheckedChangeListener(this)
+        cb_50.setOnCheckedChangeListener(this)
+
+    }
+
+
+    fun tagSelectList(tagName:String){
 
         // display loading indicator
         val handlerFeed: Handler = Handler(Looper.myLooper())
         linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-        // tag_search
-        Log.e("tv_name",""+tv_name)
 
-//        if(tv_name.equals("지금,")) {
-//            single = FEED_SERVICE.getTodayList(offset,limit)
-//        } else if(tv_name.equals(my_Age+" 여성들이 좋아하는")) {
-//         single = FEED_SERVICE.getAgeWomanRecommendList(my_Age,offset,limit)
-//        } else if(tv_name.equals(my_Age+" 남성들이 좋아하는")) {
-//        single = FEED_SERVICE.getAgeManRecommendList(my_Age,offset,limit)
-//        } else if(tv_name.equals("가장 많이 읽은 카드")) {
-//            single = FEED_SERVICE.getViewRecommendList(offset,limit)
-//        } else if(tv_name.equals("가장 많이 좋아한 카드")) {
-//            single = FEED_SERVICE.getLikeRecommendList(offset,limit)
-//        }
+        if(tagName.equals("지금,")){
         single = FEED_SERVICE.getTodayList(offset,limit)
+        }else if(tagName.equals("이번 주,")){
+        single = FEED_SERVICE.getWeekList(offset,limit)
+        }else if(tagName.equals("여자들의,")){
+        single = FEED_SERVICE.getWomanRankList(offset,limit)
+        }else if(tagName.equals("남자들의,")){
+        single = FEED_SERVICE.getManRankList(offset,limit)
+        }else if(tagName.equals("10 대,")){
+        single = FEED_SERVICE.get10AgeList(offset,limit)
+        }else if(tagName.equals("20 대,")){
+        single = FEED_SERVICE.get20AgeList(offset,limit)
+        }else if(tagName.equals("30 대,")){
+        single = FEED_SERVICE.get30AgeList(offset,limit)
+        }else if(tagName.equals("40 대,")){
+        single = FEED_SERVICE.get40AgeList(offset,limit)
+        }else if(tagName.equals("50 대,")){
+        single = FEED_SERVICE.get50AgeList(offset,limit)
+        }
+
+        shimmer_view_container.startShimmerAnimation()
+        shimmer_view_container.visibility = View.VISIBLE
+
         single?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
-                if (it.size == 0) {
-                    shimmer_view_container?.visibility = View.GONE
-                } else {
-                    Log.e("FeedList", "" + it.toString())
+                if (it.size > 0) {
+           Log.e("FeedList", "" + it.toString())
 
                     mFeedAdapterRank = FeedAdapterRank(it, this, object : FeedAdapterRank.OnClickViewListener {
                         override fun OnClickFeed(
@@ -194,9 +176,9 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
                     },object :FeedAdapterRank.OnEndlessScrollListener{
                         override fun OnEndless(boolean_value: Boolean) {
                             if (boolean_value == false) {
-                                EndlessScroll(false)
+                                EndlessScroll(false,tagName)
                             } else if (boolean_value == true) {
-                                EndlessScroll(true)
+                                EndlessScroll(true,tagName)
                             }
                         }
 
@@ -214,27 +196,42 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
 
                         }
                     }, 1000)
+                }else {
+                    recyclerView.adapter = null
+                    shimmer_view_container?.visibility = View.GONE
+                    Toast.makeText(applicationContext, "이번주 "+tagName+" 피드가 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
                 }
 
             }, {
-                Log.e("feed 보기 실패함", "" + it.message)
+                recyclerView.adapter = null
+                shimmer_view_container?.visibility = View.GONE
+                Toast.makeText(applicationContext, "이번주 "+tagName+" 피드가 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
+
             })
 
+        }
 
-    }
-
-    fun EndlessScroll(isLoading: Boolean){
+    fun EndlessScroll(isLoading: Boolean,tagName: String){
         // 무한스크롤
-        if(tv_name.equals("오늘의 관심사")) {
+
+        if(tagName.equals("지금,")) {
             single = FEED_SERVICE.getTodayList(offset,addLimit())
-        } else if(tv_name.equals(my_Age+" 여성들이 좋아하는")) {
-            single = FEED_SERVICE.getAgeWomanRecommendList(my_Age,offset,addLimit())
-        } else if(tv_name.equals(my_Age+" 남성들이 좋아하는")) {
-            single = FEED_SERVICE.getAgeManRecommendList(my_Age,offset,addLimit())
-        } else if(tv_name.equals("가장 많이 읽은 카드")) {
-            single = FEED_SERVICE.getViewRecommendList(offset,addLimit())
-        } else if(tv_name.equals("가장 많이 좋아한 카드")) {
-            single = FEED_SERVICE.getLikeRecommendList(offset,addLimit())
+        } else if(tagName.equals("이번 주,")) {
+            single = FEED_SERVICE.getWeekList(offset,addLimit())
+        } else if(tagName.equals("여자들의,")) {
+            single = FEED_SERVICE.getWomanRankList(offset,addLimit())
+        } else if(tagName.equals("남자들의,")) {
+            single = FEED_SERVICE.getManRankList(offset,addLimit())
+        } else if(tagName.equals("10 대,")) {
+            single = FEED_SERVICE.get10AgeList(offset,addLimit())
+        } else if(tagName.equals("20 대,")) {
+            single = FEED_SERVICE.get20AgeList(offset,addLimit())
+        } else if(tagName.equals("30 대,")) {
+            single = FEED_SERVICE.get30AgeList(offset,addLimit())
+        } else if(tagName.equals("40 대,")) {
+            single = FEED_SERVICE.get40AgeList(offset,addLimit())
+        } else if(tagName.equals("50 대,")) {
+            single = FEED_SERVICE.get50AgeList(offset,addLimit())
         }
 
         recyclerView!!.setOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -279,8 +276,8 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
 
     override fun onPause() {
         super.onPause()
-        initData()
         shimmer_view_container.stopShimmerAnimation()
+        shimmer_view_container.visibility = View.GONE
     }
 
     private fun addLimit() : Int{
@@ -291,6 +288,181 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
     private fun addOffset(): Int{
         offset += 10
         return offset
+    }
+
+    override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
+        if(buttonView?.id == R.id.cb_now){
+            if(isChecked){
+                tagSelectList("지금,")
+                tv_tag_rank_name.text = "지금,"
+                tv_rank_name.text = "지금,"
+                cb_now.setTextColor(resources.getColor(R.color.white))
+                cb_week.isChecked = false
+                cb_woman.isChecked = false
+                cb_man.isChecked = false
+                cb_10.isChecked = false
+                cb_20.isChecked = false
+                cb_30.isChecked = false
+                cb_40.isChecked = false
+                cb_50.isChecked = false
+            }else{
+                cb_now.setTextColor(resources.getColor(R.color.black))
+
+            }
+        }else if(buttonView?.id == R.id.cb_week){
+            if(isChecked){
+                tagSelectList("이번 주,")
+                tv_tag_rank_name.text = "이번 주,"
+                tv_rank_name.text = "이번 주,"
+                cb_week.setTextColor(resources.getColor(R.color.white))
+                cb_now.isChecked = false
+                cb_woman.isChecked = false
+                cb_man.isChecked = false
+                cb_10.isChecked = false
+                cb_20.isChecked = false
+                cb_30.isChecked = false
+                cb_40.isChecked = false
+                cb_50.isChecked = false
+            }else{
+                cb_week.setTextColor(resources.getColor(R.color.black))
+
+            }
+        }else if(buttonView?.id == R.id.cb_woman){
+            if(isChecked){
+                tagSelectList("여자들의,")
+                tv_tag_rank_name.text = "여자들의,"
+                tv_rank_name.text = "여자들의,"
+
+                cb_woman.setTextColor(resources.getColor(R.color.white))
+                cb_now.isChecked = false
+                cb_week.isChecked = false
+                cb_man.isChecked = false
+                cb_10.isChecked = false
+                cb_20.isChecked = false
+                cb_30.isChecked = false
+                cb_40.isChecked = false
+                cb_50.isChecked = false
+            }else{
+                cb_woman.setTextColor(resources.getColor(R.color.black))
+
+            }
+        }else if(buttonView?.id == R.id.cb_man){
+            if(isChecked){
+                tagSelectList("남자들의,")
+                tv_tag_rank_name.text = "남자들의,"
+                tv_rank_name.text = "남자들의,"
+
+                cb_man.setTextColor(resources.getColor(R.color.white))
+                cb_now.isChecked = false
+                cb_week.isChecked = false
+                cb_woman.isChecked = false
+                cb_10.isChecked = false
+                cb_20.isChecked = false
+                cb_30.isChecked = false
+                cb_40.isChecked = false
+                cb_50.isChecked = false
+            }else{
+                cb_man.setTextColor(resources.getColor(R.color.black))
+
+            }
+        }else if(buttonView?.id == R.id.cb_10){
+            if(isChecked){
+                tagSelectList("10 대,")
+                tv_tag_rank_name.text = "10 대,"
+                tv_rank_name.text = "10 대,"
+
+                cb_10.setTextColor(resources.getColor(R.color.white))
+
+                cb_now.isChecked = false
+                cb_week.isChecked = false
+                cb_woman.isChecked = false
+                cb_man.isChecked = false
+                cb_20.isChecked = false
+                cb_30.isChecked = false
+                cb_40.isChecked = false
+                cb_50.isChecked = false
+            }else{
+                cb_10.setTextColor(resources.getColor(R.color.black))
+
+            }
+        }else if(buttonView?.id == R.id.cb_20){
+            if(isChecked){
+                tagSelectList("20 대,")
+                tv_tag_rank_name.text = "20 대,"
+                tv_rank_name.text = "20 대,"
+
+                cb_20.setTextColor(resources.getColor(R.color.white))
+
+                cb_now.isChecked = false
+                cb_week.isChecked = false
+                cb_woman.isChecked = false
+                cb_man.isChecked = false
+                cb_10.isChecked = false
+                cb_30.isChecked = false
+                cb_40.isChecked = false
+                cb_50.isChecked = false
+            }else{
+                cb_20.setTextColor(resources.getColor(R.color.black))
+
+            }
+        }else if(buttonView?.id == R.id.cb_30){
+            if(isChecked){
+                tagSelectList("30 대,")
+                tv_tag_rank_name.text = "30 대,"
+                tv_rank_name.text = "30 대,"
+                cb_30.setTextColor(resources.getColor(R.color.white))
+
+                cb_now.isChecked = false
+                cb_week.isChecked = false
+                cb_woman.isChecked = false
+                cb_man.isChecked = false
+                cb_10.isChecked = false
+                cb_20.isChecked = false
+                cb_40.isChecked = false
+                cb_50.isChecked = false
+            }else{
+                cb_30.setTextColor(resources.getColor(R.color.black))
+
+            }
+        }else if(buttonView?.id == R.id.cb_40){
+            if(isChecked){
+                tagSelectList("40 대,")
+                tv_tag_rank_name.text = "40 대,"
+                tv_rank_name.text = "40 대,"
+                cb_40.setTextColor(resources.getColor(R.color.white))
+
+                cb_now.isChecked = false
+                cb_week.isChecked = false
+                cb_woman.isChecked = false
+                cb_man.isChecked = false
+                cb_10.isChecked = false
+                cb_20.isChecked = false
+                cb_30.isChecked = false
+                cb_50.isChecked = false
+            }else{
+                cb_40.setTextColor(resources.getColor(R.color.black))
+
+            }
+        }else if(buttonView?.id == R.id.cb_50){
+            if(isChecked){
+                tagSelectList("50 대,")
+                tv_tag_rank_name.text = "50 대,"
+                tv_rank_name.text = "50 대,"
+                cb_50.setTextColor(resources.getColor(R.color.white))
+
+                cb_now.isChecked = false
+                cb_week.isChecked = false
+                cb_woman.isChecked = false
+                cb_man.isChecked = false
+                cb_10.isChecked = false
+                cb_20.isChecked = false
+                cb_30.isChecked = false
+                cb_40.isChecked = false
+            }else{
+                cb_50.setTextColor(resources.getColor(R.color.black))
+
+            }
+        }
     }
 
 //    fun getLoad(): Boolean{

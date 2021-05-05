@@ -202,21 +202,11 @@ class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshList
         })
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        super.onCreateOptionsMenu(menu)
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.menu_search, menu)
-        return true
-    }
+
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         super.onOptionsItemSelected(item)
         when(item?.itemId){
-            R.id.filter -> {
-                val dialog = FilterDialog()
-                dialog.show(supportFragmentManager, dialog.tag)
-
-            }
             android.R.id.home ->{
                 finish()
                 return true

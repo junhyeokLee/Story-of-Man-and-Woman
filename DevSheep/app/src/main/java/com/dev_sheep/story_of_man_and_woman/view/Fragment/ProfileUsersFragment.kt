@@ -181,7 +181,7 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
             viewPagerAdapter =
                 ProfileUserViewpagerAdapter(childFragmentManager, tablayout!!.tabCount, feed_activity_m_seq)
             followChecked.apply {
-                memberViewModel.memberSubscribeChecked(feed_activity_m_seq,my_m_seq,"checked",this,context);
+                memberViewModel.memberSubscribeChecked2(feed_activity_m_seq,my_m_seq,"checked",this,context);
                 memberViewModel.memberMySubscribeCount(feed_activity_m_seq,followCount)
                 memberViewModel.memberUserSubscribeCount(feed_activity_m_seq,followerCount)
             }
@@ -189,7 +189,7 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
             viewPagerAdapter =
                 ProfileUserViewpagerAdapter(childFragmentManager, tablayout!!.tabCount, m_seq)
             followChecked.apply {
-                memberViewModel.memberSubscribeChecked(m_seq,my_m_seq,"checked",this,context);
+                memberViewModel.memberSubscribeChecked2(m_seq,my_m_seq,"checked",this,context);
                 memberViewModel.memberMySubscribeCount(m_seq,followCount)
                 memberViewModel.memberUserSubscribeCount(m_seq,followerCount)
 
