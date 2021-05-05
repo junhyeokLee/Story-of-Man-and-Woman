@@ -4,64 +4,69 @@
 
     <PreferenceCategory android:title="알림설정">
 
-
         <SwitchPreference
-                android:key="@string/pref_boolean1"
-                android:defaultValue="@bool/pref_boolean1_default"
-                android:title="@string/boolean1_title"
-            android:icon="@drawable/ic_repo"
-            android:summary="@string/boolean1_desc"/>
+            android:key="@string/pref_boolean1"
+            android:defaultValue="@bool/pref_boolean1_default"
+            android:title="@string/boolean1_title"
+            />
         <SwitchPreference
-                android:key="@string/pref_boolean2"
-                android:defaultValue="@bool/pref_boolean2_default"
-                android:title="@string/boolean2_title"
-                android:dependency="@string/pref_boolean1"
-               />
+            android:key="@string/pref_boolean2"
+            android:defaultValue="@bool/pref_boolean2_default"
+            android:title="@string/boolean2_title"
+            />
         <SwitchPreference
             android:key="@string/pref_boolean3"
             android:defaultValue="@bool/pref_boolean3_default"
             android:title="@string/boolean3_title"
-            android:dependency="@string/pref_boolean1"
-           />
-<!--        <SwitchPreference-->
-<!--            android:key="@string/pref_boolean4"-->
-<!--            android:defaultValue="@bool/pref_boolean4_default"-->
-<!--            android:title="@string/boolean4_title"-->
-<!--            android:dependency="@string/pref_boolean1"-->
-<!--        />-->
+            />
+
+        <SwitchPreference
+            android:key="@string/pref_boolean4"
+            android:defaultValue="@bool/pref_boolean4_default"
+            android:title="@string/boolean4_title"
+            />
         <SwitchPreference
             android:key="@string/pref_boolean5"
             android:defaultValue="@bool/pref_boolean5_default"
             android:title="@string/boolean5_title"
-            android:dependency="@string/pref_boolean1"
-            />
-        <SwitchPreference
-            android:key="@string/pref_boolean6"
-            android:defaultValue="@bool/pref_boolean6_default"
-            android:title="@string/boolean6_title"
-            android:dependency="@string/pref_boolean1"
             />
     </PreferenceCategory>
     <PreferenceCategory android:title="회원설정">
 
         <Preference
+            android:key="profile"
+            android:title="프로필"></Preference>
+
+        <Preference
             android:key="logout"
-            android:icon="@drawable/ic_person_empty"
             android:title="로그아웃">
         </Preference>
 
-<!--        <EditTextPreference-->
-<!--                android:key="@string/pref_string1"-->
-<!--                android:defaultValue="@string/pref_string1_default"-->
-<!--                android:title="@string/string1_title"-->
-<!--                android:icon="@drawable/ic_one"-->
-<!--                android:summary="@string/string1_desc"/>-->
-<!--        <EditTextPreference-->
-<!--                android:key="@string/pref_string2"-->
-<!--                android:defaultValue="@string/pref_string2_default"-->
-<!--                android:title="@string/string2_title"-->
-<!--                android:icon="@drawable/ic_two"-->
-<!--                android:summary="@string/string2_desc"/>-->
+        <Preference
+            android:key="delete"
+            android:title="계정삭제">
+        </Preference>
+
+        <Preference>
+        </Preference>
+
+        <Preference
+            android:key="email_supprot"
+            android:title="문의하기">
+        </Preference>
+
+        <!--        <EditTextPreference-->
+        <!--                android:key="@string/pref_string1"-->
+        <!--                android:defaultValue="@string/pref_string1_default"-->
+        <!--                android:title="@string/string1_title"-->
+        <!--                android:icon="@drawable/ic_one"-->
+        <!--                android:summary="@string/string1_desc"/>-->
+        <!--        <EditTextPreference-->
+        <!--                android:key="@string/pref_string2"-->
+        <!--                android:defaultValue="@string/pref_string2_default"-->
+        <!--                android:title="@string/string2_title"-->
+        <!--                android:icon="@drawable/ic_two"-->
+        <!--                android:summary="@string/string2_desc"/>-->
     </PreferenceCategory>
 
 </PreferenceScreen>

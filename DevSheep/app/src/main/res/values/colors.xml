@@ -2,18 +2,28 @@
 <resources>
     <color name="colorPrimary">@color/backgroundLight</color>
     <color name="colorPrimaryDark">#00574B</color>
-    <color name="color_Accent">#ed207b</color>
+    <color name="color_Accent">#49216D</color>
 
-    <color name="main_Accent">#ec6674</color>
+    <color name="lovely_purple">#7A5DC7</color>
+    <color name="puple">#BE35EF</color>
+    <color name="aztech_puple">#893BFF</color>
+    <color name="puple2">#8B00FF</color>
+    <color name="puple3">#512DA8</color>
+    <color name="puple4">#7122FA</color>
+
+    <color name="main_Accent">#49216D</color>
     <color name="main_Accent2">#f0925f</color>
-    <color name="main_Accent3">#8446CC</color>
+    <color name="main_Accent3">#49216D</color>
     <color name="sub_Accent">#d7dfea</color>
     <color name="main_Accent_translate">#99FA6555</color>
     <color name="main_Primary">#0aaab4</color>
-    <color name="main_lightGray">#f8fbff</color>
+    <color name="main_lightGray">#F6F6F6</color>
     <color name="textInputLayout">#96ffffff</color>
     <color name="whitegray">#9affffff</color>
-    <color name="main_gray">#e6ebef</color>
+    <color name="main_gray">#EEEEEE</color>
+    <color name="title_color">#99000000</color>
+    <color name="line_color">#1F000000</color>
+    <color name="text_subscrib_color">#779FFF</color>
 
     <color name="facebook_color">#4267B2</color>
     <color name="facebook_color2">#3360ff</color>
@@ -31,8 +41,8 @@
     <color name="brown">#B1736C</color>
     <color name="grey">#303943</color>
     <color name="darkgray">#514d4d</color>
-    <color name="gray">#b5b5b5</color>
-    <color name="gray2">#808080</color>
+    <color name="gray">#DE888888</color>
+    <color name="gray2">#888888</color>
     <color name="indigo">#6C79DB</color>
     <color name="lightBlue">#58ABF6</color>
     <color name="lightBrown">#CA8179</color>
@@ -78,10 +88,4 @@
     <color name="book_loading_book">#ff33b5e5</color>
     <color name="book_loading_page">#ffffff</color>
 
-    <color name="lovely_purple">#7A5DC7</color>
-    <color name="puple">#BE35EF</color>
-    <color name="aztech_puple">#893BFF</color>
-    <color name="puple2">#8B00FF</color>
-    <color name="puple3">#512DA8</color>
-    <color name="puple4">#7122FA</color>
 </resources>

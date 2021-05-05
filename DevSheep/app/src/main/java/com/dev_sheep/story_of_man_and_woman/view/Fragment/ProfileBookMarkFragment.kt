@@ -17,6 +17,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -41,7 +42,7 @@ class ProfileBookMarkFragment: Fragment() {
     lateinit var mFeedAdapter: FeedAdapter
     lateinit var contexts: Context
     private var empty : View? = null
-    private var limit: Int = 10
+    private var limit: Int = 50
     private var offset: Int = 0
     private var visibleItemCount = 0
     private var totalItemCount = 0
@@ -65,30 +66,25 @@ class ProfileBookMarkFragment: Fragment() {
         tv_empty.setText(R.string.empty)
 
         // 저장된 m_seq 가져오기
-        val preferences: SharedPreferences =
-            context!!.getSharedPreferences("m_seq", Context.MODE_PRIVATE)
+        val preferences: SharedPreferences = context!!.getSharedPreferences("m_seq", Context.MODE_PRIVATE)
         m_seq = preferences.getString("inputMseq", "")
-
-
         initData()
         return view
     }
 
     private fun initData() {
 
-        if(feedViewModel == null || memberViewModel == null){
-            return
-        }
+        if(feedViewModel == null || memberViewModel == null) return
 
         val handlerFeed: Handler = Handler(Looper.myLooper())
         linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 
-        // 전체보기
-        val single = FEED_SERVICE.getBookMark(m_seq,offset,limit)
-        single.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
+
+        feedViewModel.getBookMark(m_seq,offset,limit)
+        //라이브 데이터
+        feedViewModel.listOfFeeds.observe(this, Observer(function = fun(feedList: MutableList<Feed>?) {
+            feedList?.let {
                 if (it.size > 0) {
                     empty!!.visibility = View.GONE
                     mFeedAdapter = FeedAdapter(
@@ -124,7 +120,7 @@ class ProfileBookMarkFragment: Fragment() {
                             }
                         },
                         object : FeedAdapter.OnClickLikeListener {
-                                               override fun OnClickFeed(feed: Feed, boolean_value: String) {
+                            override fun OnClickFeed(feed: Feed, boolean_value: String) {
                                 feedViewModel.increaseLikeCount(feed.feed_seq, boolean_value)
                                 if(boolean_value.equals("true")) {
                                     memberViewModel.addNotifiaction(
@@ -137,7 +133,7 @@ class ProfileBookMarkFragment: Fragment() {
                                                 " '\' 를 좋아합니다."
                                     )
                                 }
-                                }
+                            }
 
                         }, object : FeedAdapter.OnClickBookMarkListener {
                             override fun OnClickBookMark(
@@ -192,7 +188,6 @@ class ProfileBookMarkFragment: Fragment() {
                                     EndlessScroll(true)
                                 }
                             }
-
                         })
                     handlerFeed.postDelayed({
                         shimmer_view_container_profile_feed?.stopShimmerAnimation()
@@ -204,19 +199,12 @@ class ProfileBookMarkFragment: Fragment() {
                             this.adapter = mFeedAdapter
                         }
                     },1000)
-                }else{
+                } else{
                     shimmer_view_container_profile_feed?.visibility = View.GONE
                     empty!!.visibility = View.VISIBLE
-
                 }
-
-            }, {
-                shimmer_view_container_profile_feed?.visibility = View.GONE
-                empty!!.visibility = View.VISIBLE
-                Log.e("feed 보기 실패함", "" + it.message)
-            })
-
-
+            }
+        }))
     }
 
     fun EndlessScroll(isLoading: Boolean){
@@ -295,7 +283,7 @@ class ProfileBookMarkFragment: Fragment() {
     }
 
     private fun addLimit() : Int{
-        limit += 10
+        limit += 50
         return limit
     }
 }

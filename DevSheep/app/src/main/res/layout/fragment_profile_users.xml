@@ -81,8 +81,8 @@
                     android:text="null"
                     android:transitionName="@string/profile_name"
                     android:textColor="@color/black"
-                    android:fontFamily="@font/apple_sd_gothic_neo_b"
-                    android:textSize="18sp"></TextView>
+                    android:fontFamily="@font/apple_sd_gothic_neo_l"
+                    android:textSize="16sp"></TextView>
 
                 <LinearLayout
                     android:id="@+id/profile_layout"
@@ -106,8 +106,8 @@
                             android:gravity="center"
                             android:text="남"
                             android:textSize="12sp"
-                            android:textColor="@color/blue_gray_light"
-                            android:fontFamily="@font/apple_sd_gothic_neo_t"
+                            android:textColor="@color/gray"
+                            android:fontFamily="@font/apple_sd_gothic_neo_l"
                             />
                         <TextView
                             android:layout_width="wrap_content"
@@ -116,7 +116,7 @@
                             android:layout_marginRight="4dp"
                             android:gravity="center"
                             android:layout_gravity="center"
-                            android:textColor="@color/blue_gray_light"
+                            android:textColor="@color/gray"
                             android:textSize="11sp"
                             android:text="/"
                             />
@@ -127,8 +127,8 @@
                             android:gravity="center"
                             android:text="20대"
                             android:textSize="12sp"
-                            android:textColor="@color/blue_gray_light"
-                            android:fontFamily="@font/apple_sd_gothic_neo_t"
+                            android:textColor="@color/gray"
+                            android:fontFamily="@font/apple_sd_gothic_neo_l"
                             />
                     </LinearLayout>
                 </LinearLayout>
@@ -142,9 +142,9 @@
                     android:text="소개"
                     android:gravity="center"
                     android:layout_gravity="center"
-                    android:textColor="@color/black"
+                    android:textColor="@color/title_color"
                     android:textSize="12sp"
-                    android:fontFamily="@font/apple_sd_gothic_neo_t"
+                    android:fontFamily="@font/apple_sd_gothic_neo_l"
                     />
 
                 <CheckBox
@@ -154,7 +154,7 @@
                     android:layout_marginTop="12dp"
                     android:background="@drawable/background_follow_rounded"
                     android:button="@null"
-                    android:fontFamily="@font/apple_sd_gothic_neo_t"
+                    android:fontFamily="@font/apple_sd_gothic_neo_l"
                     android:text="구독하기"
                     android:textColor="@color/black"
                     android:textSize="12sp"
@@ -177,7 +177,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/ridi_batang"
+                            android:fontFamily="@font/apple_sd_gothic_neo_l"
                             android:textColor="@color/gray"
                             android:textSize="11sp"
                             android:text="구독중" />
@@ -188,9 +188,9 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
                             android:gravity="center"
-                            android:fontFamily="@font/apple_sd_gothic_neo_t"
+                            android:fontFamily="@font/apple_sd_gothic_neo_l"
                             android:textColor="@color/black"
-                            android:textSize="13sp"
+                            android:textSize="12sp"
                             android:text="0" />
 
                     </LinearLayout>
@@ -209,7 +209,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/ridi_batang"
+                            android:fontFamily="@font/apple_sd_gothic_neo_l"
                             android:textColor="@color/gray"
                             android:textSize="11sp"
                             android:text="구독자" />
@@ -220,9 +220,9 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
                             android:gravity="center"
-                            android:fontFamily="@font/apple_sd_gothic_neo_t"
+                            android:fontFamily="@font/apple_sd_gothic_neo_l"
                             android:textColor="@color/black"
-                            android:textSize="13sp"
+                            android:textSize="12sp"
                             android:text="0" />
                     </LinearLayout>
 
@@ -242,7 +242,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/ridi_batang"
+                            android:fontFamily="@font/apple_sd_gothic_neo_l"
                             android:textColor="@color/gray"
                             android:textSize="11sp"
                             android:text="쪽지 보내기" />
@@ -293,9 +293,9 @@
             app:tabGravity="fill"
             app:tabMode="fixed"
             app:tabIndicatorColor="@color/main_Accent"
-            app:tabTextColor="@color/sub_Accent"
-            app:tabIconTint="@color/sub_Accent"
-            app:tabSelectedTextColor="@color/sub_Accent"
+            app:tabTextColor="@color/gray"
+            app:tabIconTint="@color/gray"
+            app:tabSelectedTextColor="@color/gray"
             >
 
         </com.google.android.material.tabs.TabLayout>

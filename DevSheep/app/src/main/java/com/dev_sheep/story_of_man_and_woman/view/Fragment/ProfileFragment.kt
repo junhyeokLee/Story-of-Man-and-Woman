@@ -322,81 +322,66 @@ class ProfileFragment: Fragment(),View.OnClickListener {
 
             profileNickname.text = get_creater_nick_name
 
-            val single = MEMBER_SERVICE.getMember(my_m_seq)
-            single.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    nickname = it.nick_name.toString()
-                    email = it.email.toString()
-                    m_nick_name = it.nick_name.toString()
-                    gender.text = it.gender.toString()
-                    age.text = it.age.toString()
-                   if(it.memo.toString().equals("null")){
+            memberViewModel.getMember(my_m_seq)
+            memberViewModel.memberLivedata.observe(this, androidx.lifecycle.Observer {
+                nickname = it.nick_name.toString()
+                email = it.email.toString()
+                m_nick_name = it.nick_name.toString()
+                gender.text = it.gender.toString()
+                age.text = it.age.toString()
+                if(it.memo.toString().equals("null")){
                     intro.text = ""
                 }else{
                     intro.text = it.memo.toString()
                 }
-                    if (it.background_img != null) {
-                        Glide.with(activity!!)
-                            .load(it.background_img)
-                            .placeholder(android.R.color.transparent)
-                            .into(profileBackground)
-                    }
-
-                }, {
-                    Log.d("실패 Get Member", "" + it.message)
-                })
-
-
+                if (it.background_img != null) {
+                    Glide.with(activity!!)
+                        .load(it.background_img)
+                        .placeholder(android.R.color.transparent)
+                        .into(profileBackground)
+                }
+            })
         }else{
-            val single = MEMBER_SERVICE.getMember(my_m_seq)
-            single.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-
-                    if(it.profile_img == null && context != null){
-                        profile_img = "http://storymaw.com/data/member/user.png"
+            memberViewModel.getMember(my_m_seq)
+            memberViewModel.memberLivedata.observe(this, androidx.lifecycle.Observer {
+                if(it.profile_img == null && context != null){
+                    profile_img = "http://storymaw.com/data/member/user.png"
+                    Glide.with(context!!)
+                        .load(profile_img)
+                        .apply(RequestOptions().circleCrop())
+                        .placeholder(android.R.color.transparent)
+                        .into(profileImage)
+                }else {
+                    if(context != null) {
+                        profile_img = it.profile_img!!
                         Glide.with(context!!)
                             .load(profile_img)
                             .apply(RequestOptions().circleCrop())
                             .placeholder(android.R.color.transparent)
                             .into(profileImage)
-                    }else {
-                        if(context != null) {
-                            profile_img = it.profile_img!!
-                            Glide.with(context!!)
-                                .load(profile_img)
-                                .apply(RequestOptions().circleCrop())
-                                .placeholder(android.R.color.transparent)
-                                .into(profileImage)
-                        }
                     }
-                    profileNickname.text = it.nick_name
-                    nickname = it.nick_name.toString()
-                    email = it.email.toString()
-                    m_nick_name = it.nick_name.toString()
-                    gender.text = it.gender.toString()
-                    age.text = it.age.toString()
+                }
+                profileNickname.text = it.nick_name
+                nickname = it.nick_name.toString()
+                email = it.email.toString()
+                m_nick_name = it.nick_name.toString()
+                gender.text = it.gender.toString()
+                age.text = it.age.toString()
                 if(it.memo.toString().equals("null")){
                     intro.text = ""
                 }else{
                     intro.text = it.memo.toString()
                 }
 
-                    if (it.background_img != null && context != null) {
-                        Glide.with(context!!)
-                            .load(it.background_img)
-                            .placeholder(android.R.color.transparent)
-                            .into(profileBackground)
-                    }
-
-                }, {
-                    Log.d("실패 Get Member", "" + it.message)
-                })
+                if (it.background_img != null && context != null) {
+                    Glide.with(context!!)
+                        .load(it.background_img)
+                        .placeholder(android.R.color.transparent)
+                        .into(profileBackground)
+                }
+            })
         }
-
         listenForMessages()
-
     }
 
     private fun listenForMessages() {
@@ -406,37 +391,22 @@ class ProfileFragment: Fragment(),View.OnClickListener {
         ref.addChildEventListener(object: ChildEventListener {
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val chatMessage = p0.getValue(FB_ChatMessage::class.java)
-
 //                RedDotImageView(context,chatMessage?.readUsers as Boolean)
-
-                if(chatMessage?.readUsers == false){
+                if(chatMessage?.readUsers == false) {
                     profileMessageDot.visibility = View.VISIBLE
                     profileMessageEmpty.visibility = View.GONE
-                 }
-
-
+                }
             }
-
             override fun onCancelled(p0: DatabaseError) {
-
             }
-
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-
             }
-
             override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-
             }
-
             override fun onChildRemoved(p0: DataSnapshot) {
-
             }
-
         })
-
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -445,7 +415,6 @@ class ProfileFragment: Fragment(),View.OnClickListener {
 
     override fun onPause() {
         super.onPause()
-        initData()
     }
 
     private fun collapsingToolbarInit(){
@@ -618,11 +587,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                     val requestFile: RequestBody =
                         RequestBody.create(MediaType.parse("multipart/form-data"), albumFile)
                     val profile_img =
-                        MultipartBody.Part.createFormData(
-                            "uploaded_file",
-                            albumFile?.name.toString(),
-                            requestFile
-                        )
+                        MultipartBody.Part.createFormData("uploaded_file", albumFile?.name.toString(), requestFile)
 
                     val resultCall: Call<Member> = MEMBER_SERVICE.uploadProfile(
                         email,

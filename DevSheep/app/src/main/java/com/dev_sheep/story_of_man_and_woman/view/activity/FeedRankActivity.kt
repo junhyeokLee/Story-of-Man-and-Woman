@@ -5,34 +5,40 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.NestedScrollView
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Tag
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
 import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedAdapterRank
+import com.dev_sheep.story_of_man_and_woman.view.adapter.Tag_Select_Adapter
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_feed_rank.*
-import kotlinx.android.synthetic.main.activity_feed_search.recyclerView
-import kotlinx.android.synthetic.main.activity_feed_search.shimmer_view_container
-import kotlinx.android.synthetic.main.activity_feed_search.sr_refresh
-import kotlinx.android.synthetic.main.activity_feed_search.toolbar
+import kotlinx.android.synthetic.main.activity_feed_rank.sr_refresh
+import kotlinx.android.synthetic.main.activity_feed_rank.toolbar
+import kotlinx.android.synthetic.main.activity_feed_rank.shimmer_view_container
+import kotlinx.android.synthetic.main.activity_feed_rank.recyclerView
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.math.sign
@@ -46,16 +52,12 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
     private lateinit var m_seq : String
     private lateinit var my_Age : String
     private var single : Single<MutableList<Feed>>? = null
-    private var limit: Int = 10
+    private var limit: Int = 50
     private var offset: Int = 0
-    private var visibleItemCount = 0
-    private var totalItemCount = 0
-    private var lastVisibleItemPosition = 0
     private lateinit var linearLayoutManager: LinearLayoutManager
-//    private var isLoading = false
-    private var isFirstTime = true
 
-
+    var CHECKED_TAG_SEQ = ""
+    var CHECKED_TAG_NAME = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,8 +78,8 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
         m_seq = preferences.getString("inputMseq", "")
         my_Age = preferences.getString("inputAge", "")
 
-        if(intent.hasExtra("tv_title")) {
-            tv_name = intent.getStringExtra("tv_title")
+        if(intent.hasExtra("now")) {
+            tv_name = intent.getStringExtra("now")
             tv_tag_rank_name.text = tv_name
         }
 
@@ -88,6 +90,41 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
     private fun initData(){
 
 
+//        val layoutManager_Tag = GridLayoutManager(this, 11)
+//        layoutManager_Tag.setSpanSizeLookup(object : GridLayoutManager.SpanSizeLookup() {
+//            override fun getSpanSize(position: Int): Int {
+//                val gridPosition = position % 5
+//                when (gridPosition) {
+//                    0, 1, 2 -> return 4
+//                    3, 4 -> return 5
+//                }
+//                return 0
+//            }
+//        })
+//        recyclerView_tag.layoutManager = layoutManager_Tag
+//        feedViewModel.getTagList()
+//        //라이브데이터
+//        feedViewModel.listTagOfFeed.observe(this, Observer(function = fun(tagList: MutableList<Tag>?) {
+//            tagList?.let {
+//                if (it.isNotEmpty()) {
+//                    recyclerView_tag.layoutManager = layoutManager_Tag
+//                    recyclerView_tag.adapter = Tag_Select_Adapter(
+//                        it,
+//                        this,
+//                        object : Tag_Select_Adapter.OnTagCheckedSeq {
+//                            override fun getTagCheckedSeq(tag_seq: String, tag_name: String) {
+//                                CHECKED_TAG_SEQ = tag_seq
+//                                CHECKED_TAG_NAME = tag_name
+//                            }
+//
+//                        })
+//                } else {
+////                        progressBar_tag.visibility = View.VISIBLE
+//                }
+//            }
+//        }))
+
+
         // display loading indicator
         val handlerFeed: Handler = Handler(Looper.myLooper())
         linearLayoutManager = LinearLayoutManager(this)
@@ -95,25 +132,25 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
         // tag_search
         Log.e("tv_name",""+tv_name)
 
-        if(tv_name.equals("오늘의 관심사")) {
-            single = FEED_SERVICE.getTodayList(offset,limit)
-        } else if(tv_name.equals(my_Age+" 여성들이 좋아하는")) {
-         single = FEED_SERVICE.getAgeWomanRecommendList(my_Age,offset,limit)
-        } else if(tv_name.equals(my_Age+" 남성들이 좋아하는")) {
-        single = FEED_SERVICE.getAgeManRecommendList(my_Age,offset,limit)
-        } else if(tv_name.equals("가장 많이 읽은 카드")) {
-            single = FEED_SERVICE.getViewRecommendList(offset,limit)
-        } else if(tv_name.equals("가장 많이 좋아한 카드")) {
-            single = FEED_SERVICE.getLikeRecommendList(offset,limit)
-        }
-
+//        if(tv_name.equals("지금,")) {
+//            single = FEED_SERVICE.getTodayList(offset,limit)
+//        } else if(tv_name.equals(my_Age+" 여성들이 좋아하는")) {
+//         single = FEED_SERVICE.getAgeWomanRecommendList(my_Age,offset,limit)
+//        } else if(tv_name.equals(my_Age+" 남성들이 좋아하는")) {
+//        single = FEED_SERVICE.getAgeManRecommendList(my_Age,offset,limit)
+//        } else if(tv_name.equals("가장 많이 읽은 카드")) {
+//            single = FEED_SERVICE.getViewRecommendList(offset,limit)
+//        } else if(tv_name.equals("가장 많이 좋아한 카드")) {
+//            single = FEED_SERVICE.getLikeRecommendList(offset,limit)
+//        }
+        single = FEED_SERVICE.getTodayList(offset,limit)
         single?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
                 if (it.size == 0) {
                     shimmer_view_container?.visibility = View.GONE
                 } else {
-                    Log.e("FeedList", "" + it.get(0).content)
+                    Log.e("FeedList", "" + it.toString())
 
                     mFeedAdapterRank = FeedAdapterRank(it, this, object : FeedAdapterRank.OnClickViewListener {
                         override fun OnClickFeed(
@@ -170,7 +207,7 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
                         shimmer_view_container.stopShimmerAnimation()
                         shimmer_view_container.visibility = View.GONE
                         recyclerView?.apply {
-//                            linearLayoutManager = LinearLayoutManager(this.context)
+                            linearLayoutManager = LinearLayoutManager(this.context)
                             this.layoutManager = linearLayoutManager
                             this.itemAnimator = DefaultItemAnimator()
                             this.adapter = mFeedAdapterRank
@@ -247,7 +284,7 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
     }
 
     private fun addLimit() : Int{
-        limit += 10
+        limit += 50
         return limit
     }
 

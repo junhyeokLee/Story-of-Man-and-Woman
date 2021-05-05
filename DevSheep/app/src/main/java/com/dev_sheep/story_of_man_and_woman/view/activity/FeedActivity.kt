@@ -1,24 +1,22 @@
 package com.dev_sheep.story_of_man_and_woman.view.activity
 
-import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.preference.PreferenceManager
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import android.webkit.JavascriptInterface
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Comment
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
-import com.dev_sheep.story_of_man_and_woman.view.adapter.CommentAdapter
-import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedAdapter
+import com.dev_sheep.story_of_man_and_woman.view.adapter.CommentAdapterFeed
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -26,9 +24,9 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_feed.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
-import org.jsoup.safety.Whitelist
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class FeedActivity : AppCompatActivity() ,View.OnClickListener{
@@ -37,7 +35,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
     private val memberViewModel: MemberViewModel by viewModel()
     lateinit var m_seq : String
     lateinit var my_m_seq: String
-    lateinit var mCommentAdapter : CommentAdapter
+    lateinit var mCommentAdapter : CommentAdapterFeed
     var position : Int? = null
     var checked : Boolean? = false
     var checked_bookmark: Boolean? = false
@@ -47,6 +45,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
     lateinit var type : String
     private var limit: Int = 5
     private var offset: Int = 0
+    private var sdf : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
     companion object {
 
@@ -56,12 +55,13 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
 
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feed)
 
-
+//        check_follow.setTextColor(
+//            resources.getColorStateList(R.color.text_my_checked,resources.newTheme())
+//        )
         position = intent.getIntExtra(
             EXTRA_POSITION, DEFAULT_POSITION
         )
@@ -90,10 +90,10 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
         getIntents()
         getFeed()
 
+
         check_follow.setOnClickListener(this)
         check_edit.setOnClickListener(this)
         img_profile.setOnClickListener(this)
-        layout_bottom_comments.setOnClickListener(this)
         layout_comments.setOnClickListener(this)
         layout_more_comment.setOnClickListener(this)
     }
@@ -143,6 +143,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                 this.visibility = View.VISIBLE
                 check_edit.visibility = View.GONE
 
+
                 memberViewModel.memberSubscribeChecked(
                     m_seq,
                     my_m_seq,
@@ -168,15 +169,16 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                 progressbar_layout.visibility = View.GONE
             }
             .subscribe({
-
+                tv_nickname.text = it.creater
+                tv_creater_gender.text = it.creater_gender
+                tv_creater_age.text = it.creater_age
                 tv_creater.text = it.creater
                 tv_tag_name.text = "# " + it.tag_name
                 write_headline.text = it.title
                 write_content.html = it.content
-                tv_feed_date.text = it.feed_date!!.substring(0, 10);
+                tv_feed_date.text = calculateTime(sdf.parse(it.feed_date!!))
                 view_count.text = it.view_no.toString()
                 like_count.text = it.like_no.toString()
-                comment_count.text = it.comment_no.toString()
                 tv_comment_count.text = it.comment_no.toString() + " 개"
 
 //                var dqw = write_content.imageClick()
@@ -275,32 +277,26 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                 })
 
 
-        val single_comment = FEED_SERVICE.getComment(feed_seq!!,offset,limit)
-        single_comment.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                val layoutManager = GridLayoutManager(this, 1)
-                recyclerview_comments?.layoutManager = layoutManager
+        feedViewModel.getComment(feed_seq!!,offset,limit)
+        //라이브데이터
+        feedViewModel.listCommentOfFeed.observe(this, Observer(function = fun(commentList: MutableList<Comment>?) {
+            commentList?.let {
+                if (it.size > 0) {
+                    val layoutManager = GridLayoutManager(this, 1)
+                    recyclerview_comments?.layoutManager = layoutManager
 
-                if(it.size > 0) {
-                    mCommentAdapter = CommentAdapter(it, this,feedViewModel,memberViewModel,object: CommentAdapter.OnLastIndexListener{
-                        override fun OnLastIndex(last_index: Boolean) {
+                    if(it.size > 0) {
+                        mCommentAdapter = CommentAdapterFeed(it, this,feedViewModel,memberViewModel,object: CommentAdapterFeed.OnLastIndexListener{
+                            override fun OnLastIndex(last_index: Boolean) {
+                            }
+                        })
+                        recyclerview_comments.apply {
+                            this.adapter = mCommentAdapter
                         }
-                    })
-//                Log.e("get comment feed_seq = ",it.get(1).comment)
-
-                    recyclerview_comments.apply {
-                        this.adapter = mCommentAdapter
+                    }
                     }
                 }
-
-            },{
-                Log.e("get comment 실패 = ",it.message.toString())
-
-            })
-
-
-
+            }))
 
         et_comment.setOnTouchListener(object: View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
@@ -326,16 +322,16 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.check_follow -> {
+//                check_follow.setTextColor(resources.getColor(R.color.text_subscrib_color))
                 if (check_follow.isChecked == true) {
 
-                    check_follow.setTextColor(resources.getColor(R.color.white))
                     check_follow.text = "구독취소"
                     memberViewModel.memberSubscribe(m_seq, my_m_seq, "true", check_follow)
                     memberViewModel.addNotifiaction(my_m_seq,m_seq,0,"구독알림","님이 구독중 입니다.")
                 } else {
-                    check_follow.setTextColor(resources.getColor(R.color.black))
                     check_follow.text = "구독하기"
                     memberViewModel.memberSubscribe(m_seq, my_m_seq, "false", check_follow)
+
                 }
             }
             R.id.check_edit -> {
@@ -374,15 +370,6 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
 
             }
 
-            R.id.layout_bottom_comments -> {
-                val intent = Intent(applicationContext, CommentActivity::class.java)
-                intent.putExtra("feed_seq",feed_seq.toString())
-                intent.putExtra("feed_creater",feed_creater)
-                intent.putExtra("feed_title",feed_title)
-//                intent.putExtra("CommentFragment", true)
-                startActivity(intent)
-                overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
-            }
 
             R.id.layout_comments -> {
                 val intent = Intent(applicationContext, CommentActivity::class.java)
@@ -427,6 +414,41 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
 //            Whitelist.none(),
 //            Document.OutputSettings().prettyPrint(false)
 //        )
+    }
+
+    private object TIME_MAXIMUM {
+        const val SEC = 60
+        const val MIN = 60
+        const val HOUR = 24
+        const val DAY = 30
+        const val MONTH = 12
+    }
+
+    fun calculateTime(date: Date): String? {
+        val curTime = System.currentTimeMillis()
+        val regTime = date.time
+        var diffTime = (curTime - regTime) / 1000
+        var msg: String? = null
+        if (diffTime < TIME_MAXIMUM.SEC) {
+            // sec
+            msg = diffTime.toString() + " 초전"
+        } else if (TIME_MAXIMUM.SEC.let { diffTime /= it; diffTime } < TIME_MAXIMUM.MIN) {
+            // min
+            println(diffTime)
+            msg = diffTime.toString() + " 분전"
+        } else if (TIME_MAXIMUM.MIN.let { diffTime /= it; diffTime } < TIME_MAXIMUM.HOUR) {
+            // hour
+            msg = diffTime.toString() + " 시간전"
+        } else if (TIME_MAXIMUM.HOUR.let { diffTime /= it; diffTime } < TIME_MAXIMUM.DAY) {
+            // day
+            msg = diffTime.toString() + " 일전"
+        } else if (TIME_MAXIMUM.DAY.let { diffTime /= it; diffTime } < TIME_MAXIMUM.MONTH) {
+            // day
+            msg = diffTime.toString() + " 달전"
+        } else {
+            msg = diffTime.toString() + " 년전"
+        }
+        return msg
     }
 
     override fun onResume() {

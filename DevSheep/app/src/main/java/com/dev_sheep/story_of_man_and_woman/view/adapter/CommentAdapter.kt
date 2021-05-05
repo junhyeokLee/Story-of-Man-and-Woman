@@ -77,20 +77,24 @@ class CommentAdapter(private val commentList: MutableList<Comment>,
                 val viewHolder: ViewHolder = holder as ViewHolder
                 val item = commentList[position]
                 val viewModel = feedViewModel
-                viewHolder.bindView(item,viewModel,memberViewModel,context)
+                viewHolder.bindView(item,viewModel,memberViewModel,context,position)
             }
 
         }
     }
 
     fun updateList(comments: MutableList<Comment>) {
-        // diif util 리사이클러뷰 재활용 능력 향상시켜줌 깜빡임 현상없어짐
-        val diffUtil = BaseDiffUtil(comments, this.commentList)
-        val diffResult = DiffUtil.calculateDiff(diffUtil)
-
         this.commentList.clear()
         this.commentList.addAll(comments)
-        diffResult.dispatchUpdatesTo(this)
+        notifyItemInserted(this.commentList.size)
+
+        // diif util 리사이클러뷰 재활용 능력 향상시켜줌 깜빡임 현상없어짐
+//        val diffUtil = BaseDiffUtil(comments, this.commentList)
+//        val diffResult = DiffUtil.calculateDiff(diffUtil)
+//
+//        this.commentList.clear()
+//        this.commentList.addAll(comments)
+//        diffResult.dispatchUpdatesTo(this)
 
     }
 
@@ -114,7 +118,7 @@ class CommentAdapter(private val commentList: MutableList<Comment>,
         private val onLastIndexListener = onLastIndexListener
         private var isLoadingAdded = isLoadingAdded
 
-        fun bindView(item: Comment,feedViewModel:FeedViewModel,memberViewModel: MemberViewModel,context: Context) {
+        fun bindView(item: Comment,feedViewModel:FeedViewModel,memberViewModel: MemberViewModel,context: Context,position: Int) {
 
             if (item.last_index == "true"){
                 isLoadingAdded = false
@@ -128,76 +132,30 @@ class CommentAdapter(private val commentList: MutableList<Comment>,
             val getM_seq = context.getSharedPreferences("m_seq", AppCompatActivity.MODE_PRIVATE)
             my_m_seq = getM_seq.getString("inputMseq", null)
 
-            itemView.tv_m_nick.text = item.writer
-            itemView.tv_comment.text = item.comment
-            itemView.tv_age.text = item.writer_age
-            itemView.tv_gender.text = item.writer_gender
-            itemView.tv_feed_date.text = calculateTime(sdf.parse(item.comment_date))
-            itemView.like_count.text = item.like_no.toString()
-
-            val handlerFeed: Handler = Handler(Looper.myLooper())
-            linearLayoutManager = LinearLayoutManager(context)
-            linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-
-            val single_recomment = FEED_SERVICE.getReComment(Integer.parseInt(item.feed_seq!!),item.group_seq!!,0,4)
-            single_recomment.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-
-                    if(it.size > 0) {
-
-                        if(it.size >= 3){
-                            itemView.layout_more_comment.visibility = View.VISIBLE
-                            // 답글 갯수 가져오기
-                            var single_recomment_count = FEED_SERVICE.getReCommentCount(Integer.parseInt(item.feed_seq!!),item.group_seq!!)
-                                single_recomment_count.subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe({
-                                        itemView.tv_more_comment.text = ""+it.toString()
-                                    },{
-                                        Log.d("get comment 실패 = ",it.message.toString())
-                                    })
-
-                        }else{
-                            itemView.layout_more_comment.visibility = View.GONE
-                        }
-
-                        mCommentReAdapter = CommentReAdapter(it, context!!, feedViewModel,object :CommentReAdapter.OnLastIndexListener{
-                            override fun OnLastIndex(last_index: Boolean) {
-                            }
-
-                        }, object :CommentReAdapter.OnClickViewListener{
-                            override fun onClickView(comment: Comment) {
-                                val lintent = Intent(context, ReCommentActivity::class.java)
-                                lintent.putExtra("comment_seq" , item.comment_seq.toString())
-//                                    lintent.putExtra("comment_writer_seq" , item.writer_seq.toString())
-                                lintent.putExtra("feed_seq",comment.feed_seq.toString())
-                                lintent.putExtra("re_comment_seq",comment.comment_seq.toString())
-                                lintent.putExtra("re_comment_writer",comment.writer.toString())
-                                lintent.putExtra("re_comment_writer_seq",comment.writer_seq.toString())
-                                lintent.putExtra("re_comment_text",comment.comment.toString())
-
-                                (context as Activity).startActivity(lintent)
-                                (context as Activity).overridePendingTransition(
-                                    R.anim.fragment_fade_in,
-                                    R.anim.fragment_fade_out
-                                )
-                            }
-                        })
-
-                        itemView.rv_recomment.apply {
-                            this.layoutManager = linearLayoutManager
-//                            this.itemAnimator = DefaultItemAnimator()
-                            this.adapter = mCommentReAdapter
-
-                        }
-
-
-                }
-
-                },{
-                    Log.d("get comment 실패 = ",it.message.toString())
-                })
+            // 댓글 일때
+            if(item.depth!!.equals(0)) {
+                itemView.layout_re_comments.visibility = View.GONE
+                itemView.tv_m_nick.text = item.writer
+                itemView.tv_comment.text = item.comment
+                itemView.tv_age.text = item.writer_age
+                itemView.tv_gender.text = item.writer_gender
+                itemView.tv_feed_date.text = calculateTime(sdf.parse(item.comment_date))
+                itemView.like_count.text = item.like_no.toString()
+                linearLayoutManager = LinearLayoutManager(context)
+                linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+            }
+            // 대댓글 일때
+            else{
+                itemView.layout_re_comments.visibility = View.VISIBLE
+                itemView.tv_m_nick.text = item.writer
+                itemView.tv_comment.text = item.comment
+                itemView.tv_age.text = item.writer_age
+                itemView.tv_gender.text = item.writer_gender
+                itemView.tv_feed_date.text = calculateTime(sdf.parse(item.comment_date))
+                itemView.like_count.text = item.like_no.toString()
+                linearLayoutManager = LinearLayoutManager(context)
+                linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+            }
 
 
             with(itemView.layout_nick){

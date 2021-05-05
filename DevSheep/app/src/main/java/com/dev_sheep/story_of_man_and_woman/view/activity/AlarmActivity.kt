@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,7 +34,7 @@ class AlarmActivity : AppCompatActivity() {
     lateinit var m_seq : String // 자신의 seq
     lateinit var context: Context
     private lateinit var linearLayoutManager: LinearLayoutManager
-    private var limit: Int = 10
+    private var limit: Int = 100
     private var offset: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,80 +66,74 @@ class AlarmActivity : AppCompatActivity() {
         var likeCheck: Boolean? = null
         var bookMarkCheck: Boolean? = null
 
-        val single = MEMBER_SERVICE.getNotification(m_seq,offset,limit)
-        single.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                    mNotificationAdapter = NotificationAdapter(it,this,memberViewModel,object :NotificationAdapter.OnClickSubscribeListener{
-                        override fun OnClickSubscribe(m_seq: String) {
-                            val intent = Intent(context, MainActivity::class.java)
-                            intent.putExtra("m_seq", m_seq)
-                            intent.putExtra("ProfileUsersFragment", true)
+        memberViewModel.getNotification(m_seq,offset,limit)
+        memberViewModel.memberListNotiLiveData.observe(this, Observer {
+            mNotificationAdapter = NotificationAdapter(it,this,memberViewModel,object :NotificationAdapter.OnClickSubscribeListener{
+                override fun OnClickSubscribe(m_seq: String) {
+                    val intent = Intent(context, MainActivity::class.java)
+                    intent.putExtra("m_seq", m_seq)
+                    intent.putExtra("ProfileUsersFragment", true)
+                    startActivity(intent)
+                    overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+                    finish()
+                }
+            },object : NotificationAdapter.OnClickFeedViewListener{
+                override fun OnClickFeedView(feed_seq: Int) {
+                    // 피드 좋아요 및 북마크 체크
+                    if (preferences_like_check.contains("checked" + feed_seq) && preferences_like_check.getBoolean("checked" + feed_seq, false) == true) {
+                        likeCheck = true
+                    } else {
+                        likeCheck = false
+                    }
+                    if (preferences_like_check.contains("bookmark_checked" + feed_seq) && preferences_like_check.getBoolean("bookmark_checked" + feed_seq, false) == true) {
+                        bookMarkCheck = true
+                    } else {
+                        bookMarkCheck = false
+                    }
+                    // 피드 조회수 증가
+                    feedViewModel.increaseViewCount(feed_seq)
+                    // 피드 타이틀 가져와서 넘겨주기
+                    FEED_SERVICE.getFeedTitle(feed_seq)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            var feed_title: String
+                            feed_title = it.toString()
+                            val intent = Intent(context, FeedActivity::class.java)
+                            intent.putExtra("feed_seq", feed_seq)
+                            intent.putExtra("feed_title",feed_title)
+                            intent.putExtra("creater_seq", m_seq)
+                            intent.putExtra("checked" + feed_seq, likeCheck!!)
+                            intent.putExtra("bookmark_checked" + feed_seq, bookMarkCheck!!)
+                            intent.putExtra(FeedActivity.EXTRA_POSITION, 0)
                             startActivity(intent)
                             overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
                             finish()
-                        }
-                    },object : NotificationAdapter.OnClickFeedViewListener{
-                        override fun OnClickFeedView(feed_seq: Int) {
-                            // 피드 좋아요 및 북마크 체크
-                            if (preferences_like_check.contains("checked" + feed_seq) && preferences_like_check.getBoolean("checked" + feed_seq, false) == true) {
-                                likeCheck = true
-                            } else {
-                                likeCheck = false
-                            }
-                            if (preferences_like_check.contains("bookmark_checked" + feed_seq) && preferences_like_check.getBoolean("bookmark_checked" + feed_seq, false) == true) {
-                                bookMarkCheck = true
-                            } else {
-                                bookMarkCheck = false
-                            }
-                            // 피드 조회수 증가
-                            feedViewModel.increaseViewCount(feed_seq)
-                            // 피드 타이틀 가져와서 넘겨주기
-                            FEED_SERVICE.getFeedTitle(feed_seq)
-                            .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe({
-                                    var feed_title: String
-                                    feed_title = it.toString()
-                                    val intent = Intent(context, FeedActivity::class.java)
-                                    intent.putExtra("feed_seq", feed_seq)
-                                    intent.putExtra("feed_title",feed_title)
-                                    intent.putExtra("creater_seq", m_seq)
-                                    intent.putExtra("checked" + feed_seq, likeCheck!!)
-                                    intent.putExtra("bookmark_checked" + feed_seq, bookMarkCheck!!)
-                                    intent.putExtra(FeedActivity.EXTRA_POSITION, 0)
-                                    startActivity(intent)
-                                    overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
-                                    finish()
-                                },{
-                                    Log.d("get Feed Title Failed = ",it.message.toString())
+                        },{
+                            Log.d("get Feed Title Failed = ",it.message.toString())
 
-                                })
+                        })
 
 
-                        }
+                }
 
-                    }, object : NotificationAdapter.OnEndlessScrollListener {
-                        override fun OnEndless(boolean_value: Boolean) {
-                            if (boolean_value == false) {
-                                EndlessScroll(false)
-                            } else if (boolean_value == true) {
-                                EndlessScroll(true)
-                            }
-                        }
-
-                    })
-
-                    recyclerview_alarm?.apply {
-                        this.layoutManager = linearLayoutManager
-                        this.itemAnimator = DefaultItemAnimator()
-                        this.adapter = mNotificationAdapter
+            }, object : NotificationAdapter.OnEndlessScrollListener {
+                override fun OnEndless(boolean_value: Boolean) {
+                    if (boolean_value == false) {
+                        EndlessScroll(false)
+                    } else if (boolean_value == true) {
+                        EndlessScroll(true)
                     }
+                }
 
-            },{
-                Log.e("Notification 보기 실패함", "" + it.message)
             })
 
+            recyclerview_alarm?.apply {
+                this.layoutManager = linearLayoutManager
+                this.itemAnimator = DefaultItemAnimator()
+                this.adapter = mNotificationAdapter
+            }
+        })
     }
 
     fun EndlessScroll(isLoading: Boolean){
@@ -163,7 +158,7 @@ class AlarmActivity : AppCompatActivity() {
 
 
     private fun addLimit() : Int{
-        limit += 10
+        limit += 100
         return limit
     }
 }

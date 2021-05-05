@@ -17,6 +17,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,7 +38,7 @@ class ProfileFeedFragment: Fragment() {
     private val memberViewModel: MemberViewModel by viewModel()
     private var recyclerView: RecyclerView? = null
     lateinit var mFeedAdapter: FeedAdapter
-    private var limit: Int = 10
+    private var limit: Int = 50
     private var offset: Int = 0
     private var visibleItemCount = 0
     private var totalItemCount = 0
@@ -71,20 +72,17 @@ class ProfileFeedFragment: Fragment() {
     }
 
     private fun initData() {
-        if(feedViewModel == null || memberViewModel == null){
-            return
-        }
+        if(feedViewModel == null || memberViewModel == null) return
 
         val handlerFeed: Handler = Handler(Looper.myLooper())
         linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 
-        // 전체보기
-        val single = FEED_SERVICE.getListMystory(m_seq, offset, limit)
-        single.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                if (it.size > 0 && context != null) {
+        feedViewModel.getListMystory(m_seq,offset,limit)
+        //라이브 데이터
+        feedViewModel.listOfFeeds.observe(this, Observer(function = fun(feedList: MutableList<Feed>?) {
+            feedList?.let {
+                if (it.size > 0) {
                     empty!!.visibility = View.GONE
                     mFeedAdapter = FeedAdapter(
                         it,
@@ -188,9 +186,7 @@ class ProfileFeedFragment: Fragment() {
                                     EndlessScroll(true)
                                 }
                             }
-
                         })
-
                     handlerFeed.postDelayed({
                         shimmer_view_container_profile_feed?.stopShimmerAnimation()
                         shimmer_view_container_profile_feed?.visibility = View.GONE
@@ -201,16 +197,12 @@ class ProfileFeedFragment: Fragment() {
                             this.adapter = mFeedAdapter
                         }
                     }, 1000)
-                } else {
+                }else{
                     shimmer_view_container_profile_feed?.visibility = View.GONE
                     empty!!.visibility = View.VISIBLE
                 }
-
-            }, {
-                shimmer_view_container_profile_feed?.visibility = View.GONE
-                empty!!.visibility = View.VISIBLE
-                Log.d("feed 보기 실패함", "" + it.message)
-            })
+            }
+        }))
     }
 
 
@@ -290,7 +282,7 @@ class ProfileFeedFragment: Fragment() {
     }
 
     private fun addLimit() : Int{
-        limit += 10
+        limit += 50
         return limit
     }
 }

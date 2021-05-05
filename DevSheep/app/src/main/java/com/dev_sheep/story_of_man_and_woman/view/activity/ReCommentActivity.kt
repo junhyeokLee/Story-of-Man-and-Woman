@@ -62,7 +62,7 @@ class ReCommentActivity : AppCompatActivity() {
     lateinit var mCommentAdapter : CommentReAdapter
     lateinit var iv_back : ImageView
     lateinit var mShimmerViewContainer: ShimmerFrameLayout
-    private var limit: Int = 10
+    private var limit: Int = 50
     private var offset: Int = 0
     private var visibleItemCount = 0
     private var totalItemCount = 0
@@ -127,103 +127,75 @@ class ReCommentActivity : AppCompatActivity() {
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         var sdf : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
+        feedViewModel.getCommentItem(Integer.parseInt(comment_seq))
+        //라이브데이터
+        feedViewModel.commentOfFeed.observe(this, androidx.lifecycle.Observer {
+            tv_m_nick.text = it.writer
+            tv_comment.text = it.comment
+            tv_age.text = it.writer_age
+            tv_gender.text = it.writer_gender
+            tv_feed_date.text = calculateTime(sdf.parse(it.comment_date))
+            like_count.text = it.like_no.toString()
+            if(re_comment_seq == null || re_comment_writer == null || re_comment_writer_seq == null) {
+                editText.setText("@" + it.writer + " ")
+                getEditText(it.comment_seq.toString(),it.feed_seq.toString()!!,it.writer_seq!!,it.comment!!)
 
-        val single = APIService.FEED_SERVICE.getCommentItem(Integer.parseInt(comment_seq))
-        single.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
+            }else{
+                editText.setText("@" + re_comment_writer + " ")
+                getEditText(re_comment_seq.toString(),feed_seq.toString()!!,re_comment_writer_seq!!,re_comment_text!!)
 
-                tv_m_nick.text = it.writer
-                tv_comment.text = it.comment
-                tv_age.text = it.writer_age
-                tv_gender.text = it.writer_gender
-                tv_feed_date.text = calculateTime(sdf.parse(it.comment_date))
-                like_count.text = it.like_no.toString()
-                if(re_comment_seq == null || re_comment_writer == null || re_comment_writer_seq == null) {
-                    editText.setText("@" + it.writer + " ")
-                    getEditText(it.comment_seq.toString(),it.feed_seq.toString()!!,it.writer_seq!!,it.comment!!)
+            }
+            editText.setSelection(et_comment.text.length)
+            feed_seq = it.feed_seq
+            group_seq = it.group_seq
+            depth= it.depth
 
-                }else{
-                    editText.setText("@" + re_comment_writer + " ")
-                    getEditText(re_comment_seq.toString(),feed_seq.toString()!!,re_comment_writer_seq!!,re_comment_text!!)
+            if(!this.isFinishing()) {
+                Glide.with(this)
+                    .load(it.writer_img)
+                    .apply(RequestOptions().circleCrop())
+                    .placeholder(getDrawable(R.drawable.user))
+                    .into(img_profile)
+            }
 
-                }
-                editText.setSelection(et_comment.text.length)
-
-                group_seq = it.group_seq
-                depth= it.depth
-
-                if(!this.isFinishing()) {
-                    Glide.with(this)
-                        .load(it.writer_img)
-                        .apply(RequestOptions().circleCrop())
-                        .placeholder(getDrawable(R.drawable.user))
-                        .into(img_profile)
-                }
-
-                val single_recomment = APIService.FEED_SERVICE.getReComment(Integer.parseInt(feed_seq),it.group_seq!!,offset,limit)
-                single_recomment.subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({
-
-                        if(it.size > 0) {
-                            mCommentAdapter = CommentReAdapter(it, this, feedViewModel,object : CommentReAdapter.OnLastIndexListener{
-                                override fun OnLastIndex(last_index: Boolean) {
-                                    if(last_index == false){
-                                        EndlessScroll(false,group_seq!!)
-                                    }else if(last_index == true){
-                                        EndlessScroll(true,group_seq!!)
-                                    }
-                                }
-
-                            },object : CommentReAdapter.OnClickViewListener{
-                                override fun onClickView(comment: Comment) {
-//                                    val lintent = Intent(contexts, ReCommentActivity::class.java)
-//                                    lintent.putExtra("comment_seq" , comment_seq.toString())
-//                                    lintent.putExtra("feed_seq",comment.feed_seq.toString())
-//                                    lintent.putExtra("re_comment_seq",comment.comment_seq.toString())
-//                                    lintent.putExtra("re_comment_writer",comment.writer.toString())
-//                                    lintent.putExtra("re_comment_writer_seq",comment.writer_seq.toString())
-//                                    lintent.putExtra("re_comment_text",comment.comment.toString())
-//
-//                                    startActivity(lintent)
-//                                    overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
-                                    editText.setText("@" + comment.writer + " ")
-                                    editText.setSelection(et_comment.text.length)
-
-                                    getEditText(comment.comment_seq.toString(),comment.feed_seq.toString(),comment.writer_seq.toString(),comment.comment.toString())
-
-
-                                }
-                            })
-
-                            handlerFeed.postDelayed({
-                                // stop animating Shimmer and hide the layout
-                                mShimmerViewContainer.stopShimmerAnimation()
-                                mShimmerViewContainer.visibility = View.GONE
-
-                                recyclerview_recomments.apply {
-                                    this.layoutManager = linearLayoutManager
-                                    this.itemAnimator = DefaultItemAnimator()
-                                    this.adapter = mCommentAdapter
-                                }
-                            }, 1000)
-                        }else{
-                            mShimmerViewContainer.stopShimmerAnimation()
-                            mShimmerViewContainer.visibility = View.GONE
+            feedViewModel.getReComment(Integer.parseInt(it.feed_seq)!!,it.group_seq!!,offset,limit)
+            //라이브데이터
+            feedViewModel.listCommentOfFeed.observe(this, androidx.lifecycle.Observer(function = fun(commentList:MutableList<Comment>) {
+                if(commentList.size > 0) {
+                    mCommentAdapter = CommentReAdapter(commentList, this, feedViewModel,object : CommentReAdapter.OnLastIndexListener{
+                        override fun OnLastIndex(last_index: Boolean) {
+                            if(last_index == false){
+                                EndlessScroll(false,group_seq!!)
+                            }else if(last_index == true){
+                                EndlessScroll(true,group_seq!!)
+                            }
                         }
 
-                    },{
-                        mShimmerViewContainer.visibility = View.GONE
-                        Log.e("get comment 실패 = ",it.message.toString())
-
+                    },object : CommentReAdapter.OnClickViewListener{
+                        override fun onClickView(comment: Comment) {
+                            editText.setText("@" + comment.writer + " ")
+                            editText.setSelection(et_comment.text.length)
+                            getEditText(comment.comment_seq.toString(),comment.feed_seq.toString(),comment.writer_seq.toString(),comment.comment.toString())
+                        }
                     })
+                    handlerFeed.postDelayed({
+                        // stop animating Shimmer and hide the layout
+                        mShimmerViewContainer.stopShimmerAnimation()
+                        mShimmerViewContainer.visibility = View.GONE
 
-            },{
-                mShimmerViewContainer.visibility = View.GONE
-                Log.e("get comment 실패 = ",it.message.toString())
+                        recyclerview_recomments.apply {
+                            this.layoutManager = linearLayoutManager
+                            this.itemAnimator = DefaultItemAnimator()
+                            this.adapter = mCommentAdapter
+                        }
+                    }, 1000)
+                }else{
+                    mShimmerViewContainer.stopShimmerAnimation()
+                    mShimmerViewContainer.visibility = View.GONE
+                }
+            }))
 
-            })
+        })
 
         iv_back.apply {
             setOnClickListener {
@@ -296,19 +268,18 @@ class ReCommentActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        initData()
+//        initData()
         mShimmerViewContainer?.startShimmerAnimation()
 
     }
 
     override fun onPause() {
         super.onPause()
-        initData()
         mShimmerViewContainer?.startShimmerAnimation()
     }
 
     private fun addLimit() : Int{
-        limit += 15
+        limit += 50
         return limit
     }
 

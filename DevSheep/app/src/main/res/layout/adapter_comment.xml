@@ -9,10 +9,28 @@
     >
 
     <LinearLayout
+        android:id="@+id/layout_comments"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         tools:ignore="MissingConstraints">
+
+    <LinearLayout
+        android:id="@+id/layout_re_comments"
+        android:layout_width="55dp"
+        android:visibility="gone"
+        android:gravity="right"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" - "
+            android:textStyle="bold"
+            android:textColor="@color/gray"
+            android:textSize="24sp"
+            >
+        </TextView>
+    </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -51,7 +69,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:layout_marginLeft="8dp"
-                        android:fontFamily="@font/apple_sd_gothic_neo_t"
+                        android:fontFamily="@font/apple_sd_gothic_neo_l"
                         android:gravity="center|left"
                         android:maxLines="1"
                         android:text="null"
@@ -72,11 +90,11 @@
                         android:id="@+id/tv_gender"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/ridi_batang"
+                        android:fontFamily="@font/apple_sd_gothic_neo_l"
                         android:gravity="center"
                         android:text="남"
-                        android:textColor="@color/blue_gray_light"
-                        android:textSize="13sp" />
+                        android:textColor="@color/gray"
+                        android:textSize="12sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -94,11 +112,11 @@
                         android:id="@+id/tv_age"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/apple_sd_gothic_neo_t"
+                        android:fontFamily="@font/apple_sd_gothic_neo_l"
                         android:gravity="center"
                         android:text="20대"
-                        android:textColor="@color/blue_gray_light"
-                        android:textSize="13sp" />
+                        android:textColor="@color/gray"
+                        android:textSize="12sp" />
 
                 </LinearLayout>
 
@@ -116,8 +134,8 @@
                         android:layout_marginTop="6dp"
                         android:layout_marginBottom="6dp"
                         android:layout_weight="1"
-                        android:fontFamily="@font/apple_sd_gothic_neo_t"
-                        android:textSize="14sp"
+                        android:fontFamily="@font/apple_sd_gothic_neo_l"
+                        android:textSize="12sp"
                         android:textColor="@color/black"
                         android:text="댓글" />
                 </LinearLayout>
@@ -135,8 +153,9 @@
                         android:layout_alignParentStart="true"
                         android:gravity="center|left"
                         android:layout_marginLeft="8dp"
-                        android:textSize="13sp"
-                        android:textColor="@color/blue_gray_light"
+                        android:fontFamily="@font/apple_sd_gothic_neo_l"
+                        android:textSize="11sp"
+                        android:textColor="@color/gray"
                         android:text="시간 전" />
 
                     <TextView
@@ -154,9 +173,9 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="답글 달기"
-                        android:textSize="12sp"
-                        android:textColor="@color/gray2"
-                        android:fontFamily="@font/apple_sd_gothic_neo_t"
+                        android:textSize="11sp"
+                        android:textColor="@color/gray"
+                        android:fontFamily="@font/apple_sd_gothic_neo_l"
                         />
 
                     <LinearLayout
@@ -188,12 +207,12 @@
                             android:id="@+id/like_count"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:fontFamily="@font/apple_sd_gothic_neo_t"
+                            android:fontFamily="@font/apple_sd_gothic_neo_l"
                             android:gravity="center"
-                            android:textColor="@color/sub_Accent"
-                            android:layout_marginLeft="12dp"
+                            android:textColor="@color/gray"
+                            android:layout_marginLeft="4dp"
                             android:text="0"
-                            android:textSize="14sp" />
+                            android:textSize="12sp" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -242,11 +261,13 @@
             </TextView>
         </LinearLayout>
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_recomment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="42dp"
+            android:visibility="gone"
             android:layout_marginTop="12dp"
             >
         </androidx.recyclerview.widget.RecyclerView>

@@ -13,7 +13,7 @@
         />
     <item
         android:id="@+id/menuWrite"
-        android:icon="@drawable/ic_plus3" />
+        android:icon="@drawable/ic_plus4" />
     <item
         android:id="@+id/menuFavorite"
         android:icon="@drawable/ic_heart" />

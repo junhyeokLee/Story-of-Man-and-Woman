@@ -8,13 +8,18 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.dev_sheep.story_of_man_and_woman.R
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Comment
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Tag
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
 import com.dev_sheep.story_of_man_and_woman.view.adapter.Tag_Select_Adapter
+import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_tag_select.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SelectTagActivity : AppCompatActivity(){
 
@@ -27,6 +32,7 @@ class SelectTagActivity : AppCompatActivity(){
     var CHECKED_TAG_NAME = ""
 
     lateinit var mAdapter : Tag_Select_Adapter
+    private val feedViewModel: FeedViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,33 +57,28 @@ class SelectTagActivity : AppCompatActivity(){
         })
         recyclerView_tag.layoutManager = layoutManager_Tag
 
-        val single_tag = APIService.FEED_SERVICE.getTagList()
-        single_tag.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
+        feedViewModel.getTagList()
+        //라이브데이터
+        feedViewModel.listTagOfFeed.observe(this, Observer(function = fun(tagList: MutableList<Tag>?) {
+            tagList?.let {
+                    if (it.isNotEmpty()) {
+                        recyclerView_tag.layoutManager = layoutManager_Tag
+                        recyclerView_tag.adapter = Tag_Select_Adapter(
+                            it,
+                            this,
+                            object : Tag_Select_Adapter.OnTagCheckedSeq {
+                                override fun getTagCheckedSeq(tag_seq: String, tag_name: String) {
+                                    CHECKED_TAG_SEQ = tag_seq
+                                    CHECKED_TAG_NAME = tag_name
+                                }
 
-                if (it.isNotEmpty()) {
-                    recyclerView_tag.layoutManager = layoutManager_Tag
-                    recyclerView_tag.adapter = Tag_Select_Adapter(
-                        it,
-                        this,
-                        object : Tag_Select_Adapter.OnTagCheckedSeq {
-                            override fun getTagCheckedSeq(tag_seq: String, tag_name: String) {
-                                CHECKED_TAG_SEQ = tag_seq
-                                CHECKED_TAG_NAME = tag_name
-                            }
+                            })
+                    } else {
+//                        progressBar_tag.visibility = View.VISIBLE
+                    }
+            }
+        }))
 
-                        })
-                } else {
-                    progressBar_tag.visibility = View.VISIBLE
-                }
-//                recyclerViewTag?.layoutManager = layoutManager_Tag
-//                recyclerViewTag?.adapter = Test_Searchtag_Adapter(it,view.context)
-//                mTagAdapter = object : Test_tag_Adapter(it,contexts)
-
-            }, {
-
-            })
 
         if (intent.hasExtra("type")) {
             TYPE_VALUE = intent.getStringExtra("type")

@@ -188,7 +188,7 @@
                 android:textStyle="bold"
                 android:textColor="@color/white"
                 android:fontFamily="@font/roboto_bold"
-                android:backgroundTint="@color/gray"
+                android:backgroundTint="@color/main_Accent3"
                 android:layout_gravity="bottom"
                 >
 

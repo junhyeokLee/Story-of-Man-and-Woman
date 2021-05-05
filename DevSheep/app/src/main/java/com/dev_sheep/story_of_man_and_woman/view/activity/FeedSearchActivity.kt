@@ -16,11 +16,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dev_sheep.story_of_man_and_woman.R
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Comment
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
@@ -42,7 +44,7 @@ class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshList
     lateinit var mFeedAdapterTag: FeedAdapterTag
     private val feedViewModel: FeedViewModel by viewModel()
     private lateinit var m_seq : String
-    private var limit: Int = 10
+    private var limit: Int = 50
     private var offset: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,26 +85,15 @@ class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshList
         // display loading indicator
         val handlerFeed: Handler = Handler(Looper.myLooper())
         // tag_search
-        val single = FEED_SERVICE.getTagSearch(Integer.parseInt(tag_seq),offset,limit)
-        single.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
+        feedViewModel.getTagSearch(Integer.parseInt(tag_seq),offset,limit)
+        //라이브데이터
+        feedViewModel.listOfFeeds.observe(this, Observer(function = fun(feedList: MutableList<Feed>?) {
+            feedList?.let {
                 if (it.size > 0) {
-
-                    Log.e(TAG+"dat", it.toString())
-
-
                     mFeedAdapterTag = FeedAdapterTag(it, this, object : FeedAdapterTag.OnClickViewListener {
-                        override fun OnClickFeed(
-                            feed: Feed,
-                            tv: TextView,
-                            iv: ImageView,
-                            cb: CheckBox,
-                            cb2: CheckBox,
-                            position: Int
-                        ) {
-                            feedViewModel.increaseViewCount(feed.feed_seq)
+                        override fun OnClickFeed(feed: Feed, tv: TextView, iv: ImageView, cb: CheckBox, cb2: CheckBox, position: Int) {
 
+                            feedViewModel.increaseViewCount(feed.feed_seq)
                             val lintent = Intent(applicationContext, FeedActivity::class.java)
                             lintent.putExtra("feed_seq", feed.feed_seq)
                             lintent.putExtra("checked" + feed.feed_seq, cb.isChecked)
@@ -111,10 +102,7 @@ class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshList
                             lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
 //                        context.transitionName = position.toString()
                             startActivity(lintent)
-                            overridePendingTransition(
-                                R.anim.fragment_fade_in,
-                                R.anim.fragment_fade_out
-                            )
+                            overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
 
                         }
                     }, object : FeedAdapterTag.OnClickLikeListener {
@@ -189,11 +177,8 @@ class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshList
                     shimmer_view_container.stopShimmerAnimation()
                     shimmer_view_container.visibility = View.GONE
                 }
-
-            }, {
-                Log.e("feed 보기 실패함", "" + it.message)
-            })
-
+            }
+        }))
     }
 
     fun EndlessScroll(isLoading: Boolean){
@@ -263,7 +248,7 @@ class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshList
     }
 
     private fun addLimit() : Int{
-        limit += 10
+        limit += 50
         return limit
     }
 }

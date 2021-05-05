@@ -82,9 +82,9 @@
                                     android:maxLines="1"
                                     android:text="null"
                                     android:textColor="@color/black"
-                                    android:textSize="11sp"
+                                    android:textSize="12sp"
                                     android:transitionName="@string/profile_name"
-                                    app:fontFamily="@font/apple_sd_gothic_neo_t" />
+                                    app:fontFamily="@font/apple_sd_gothic_neo_l" />
                                 <TextView
                                     android:layout_width="3dp"
                                     android:layout_height="3dp"
@@ -100,9 +100,9 @@
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
                                     android:text="남"
-                                    android:textSize="11sp"
-                                    android:textColor="@color/blue_gray_light"
-                                    android:fontFamily="@font/apple_sd_gothic_neo_t"
+                                    android:textSize="12sp"
+                                    android:textColor="@color/gray"
+                                    android:fontFamily="@font/apple_sd_gothic_neo_l"
                                     />
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -111,8 +111,8 @@
                                     android:layout_marginRight="2dp"
                                     android:gravity="center"
                                     android:layout_gravity="center"
-                                    android:textColor="@color/blue_gray_light"
-                                    android:textSize="11sp"
+                                    android:textColor="@color/gray"
+                                    android:textSize="12sp"
                                     android:text="/"
                                     />
                                 <TextView
@@ -121,9 +121,9 @@
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
                                     android:text="20대"
-                                    android:textSize="11sp"
-                                    android:textColor="@color/blue_gray_light"
-                                    android:fontFamily="@font/apple_sd_gothic_neo_t"
+                                    android:textSize="12sp"
+                                    android:textColor="@color/gray"
+                                    android:fontFamily="@font/apple_sd_gothic_neo_l"
                                     />
 
 
@@ -140,11 +140,10 @@
                             android:gravity="center|left"
                             android:layout_marginTop="6dp"
                             android:ellipsize="end"
-                            android:fontFamily="@font/apple_sd_gothic_neo_b"
+                            android:fontFamily="@font/apple_sd_gothic_neo_l"
                             android:maxLines="1"
                             android:textColor="@color/black"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
+                            android:textSize="14sp"
                             tools:text="Title" />
 
 
@@ -175,8 +174,8 @@
                                         android:layout_height="wrap_content"
                                         android:text="조회수"
                                         android:textSize="11sp"
-                                        android:textColor="@color/blue_gray_light"
-                                        android:fontFamily="@font/apple_sd_gothic_neo_t"
+                                        android:textColor="@color/gray"
+                                        android:fontFamily="@font/apple_sd_gothic_neo_l"
 
                                         >
                                     </TextView>
@@ -185,10 +184,10 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="match_parent"
                                         android:layout_marginLeft="4dp"
-                                        android:fontFamily="@font/apple_sd_gothic_neo_t"
+                                        android:fontFamily="@font/apple_sd_gothic_neo_l"
                                         android:gravity="left"
                                         android:text="1"
-                                        android:textColor="@color/blue_gray_light"
+                                        android:textColor="@color/gray"
                                         android:textSize="11sp" />
 
                                 </LinearLayout>
@@ -206,8 +205,8 @@
                                         android:layout_height="wrap_content"
                                         android:text="댓글"
                                         android:textSize="11sp"
-                                        android:textColor="@color/blue_gray_light"
-                                        android:fontFamily="@font/apple_sd_gothic_neo_t"
+                                        android:textColor="@color/gray"
+                                        android:fontFamily="@font/apple_sd_gothic_neo_l"
                                         >
                                     </TextView>
 
@@ -216,10 +215,10 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="match_parent"
                                         android:layout_marginLeft="4dp"
-                                        android:fontFamily="@font/apple_sd_gothic_neo_t"
+                                        android:fontFamily="@font/apple_sd_gothic_neo_l"
                                         android:gravity="left"
                                         android:text="1"
-                                        android:textColor="@color/blue_gray_light"
+                                        android:textColor="@color/gray"
                                         android:textSize="11sp" />
 
                                 </LinearLayout>
@@ -244,8 +243,7 @@
             android:id="@+id/iv_feed_card"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginRight="16dp"
-            >
+            android:layout_marginRight="16dp">
 
         </ImageView>
 

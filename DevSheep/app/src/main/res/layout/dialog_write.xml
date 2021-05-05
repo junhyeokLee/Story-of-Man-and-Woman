@@ -42,7 +42,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_write_empty"
-                    android:tint="@color/main_gray" />
+                    android:tint="@color/gray" />
             </LinearLayout>
 
             <LinearLayout
@@ -58,7 +58,7 @@
                     android:text=" 나의 이야기 "
                     android:textColor="@color/black"
                     android:textSize="14sp"
-                    android:fontFamily="@font/roundwindregular"
+                    android:fontFamily="@font/apple_sd_gothic_neo_l"
                     />
 
                 <TextView
@@ -70,7 +70,7 @@
                     android:text="- 전체공개"
                     android:textColor="@color/gray"
                     android:textSize="12sp"
-                    app:fontFamily="@font/roboto_regular" />
+                    app:fontFamily="@font/apple_sd_gothic_neo_l" />
             </LinearLayout>
 
         </LinearLayout>
@@ -113,7 +113,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_heart_empty"
-                    android:tint="@color/main_gray" />
+                    android:tint="@color/gray" />
             </LinearLayout>
 
             <LinearLayout
@@ -129,7 +129,7 @@
                     android:text="구독하는 사람들에게"
                     android:textColor="@color/black"
                     android:textSize="14sp"
-                    android:fontFamily="@font/roundwindregular"
+                    android:fontFamily="@font/apple_sd_gothic_neo_l"
                     />
 
                 <TextView
@@ -141,7 +141,7 @@
                     android:text="- 구독자 공개 "
                     android:textColor="@color/gray"
                     android:textSize="12sp"
-                    app:fontFamily="@font/roboto_regular" />
+                    app:fontFamily="@font/apple_sd_gothic_neo_l" />
             </LinearLayout>
 
         </LinearLayout>
@@ -184,7 +184,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_lock_empty"
-                    android:tint="@color/main_gray"
+                    android:tint="@color/gray"
                     />
             </LinearLayout>
 
@@ -201,7 +201,7 @@
                     android:text="비밀 이야기"
                     android:textColor="@color/black"
                     android:textSize="14sp"
-                    android:fontFamily="@font/roundwindregular"
+                    android:fontFamily="@font/apple_sd_gothic_neo_l"
                     />
 
                 <TextView
@@ -214,7 +214,7 @@
                     android:text="- 비공개"
                     android:textColor="@color/gray"
                     android:textSize="12sp"
-                    app:fontFamily="@font/roboto_regular" />
+                    app:fontFamily="@font/apple_sd_gothic_neo_l" />
             </LinearLayout>
 
         </LinearLayout>

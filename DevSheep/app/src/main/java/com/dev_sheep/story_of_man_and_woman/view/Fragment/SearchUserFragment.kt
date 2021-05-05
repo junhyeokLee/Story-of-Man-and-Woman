@@ -16,6 +16,7 @@ import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -41,11 +42,8 @@ class SearchUserFragment(nick_name:String) : Fragment() {
     lateinit var mUserAdapter: SubscribersAdapter
     private var empty : View? = null
     lateinit var tv_empty: TextView
-    private var limit: Int = 20
+    private var limit: Int = 50
     private var offset: Int = 0
-    private var visibleItemCount = 0
-    private var totalItemCount = 0
-    private var lastVisibleItemPosition = 0
     lateinit var contexts: Context
     private lateinit var linearLayoutManager: LinearLayoutManager
     lateinit var mShimmerViewContainer: ShimmerFrameLayout
@@ -83,78 +81,68 @@ class SearchUserFragment(nick_name:String) : Fragment() {
 
     private fun initData() {
 
-        if(memberViewModel == null){
-            return
-        }
+        if(memberViewModel == null) return
 
         val handlerFeed: Handler = Handler(Looper.myLooper())
         linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 
+        memberViewModel.getUserSearch(nick_name,offset,limit)
+        // UserSearch LiveData
         // 전체보기
-        val single = APIService.MEMBER_SERVICE.getUserSearch(nick_name,offset,limit)
-        single.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                    mUserAdapter = SubscribersAdapter(it, contexts, memberViewModel,object :
-                        SubscribersAdapter.OnClickProfileListener{
-                        override fun OnClickProfile(member: Member, tv: TextView, iv: ImageView) {
-                            val trId = ViewCompat.getTransitionName(tv).toString()
-                            val trId1 = ViewCompat.getTransitionName(iv).toString()
-                            if (member.m_seq == my_m_seq) {
-                                activity?.supportFragmentManager
-                                    ?.beginTransaction()
-                                    ?.addSharedElement(tv, trId)
-                                    ?.addSharedElement(iv, trId1)
-                                    ?.addToBackStack("ProfileImg")
-                                    ?.replace(
-                                        R.id.frameLayout,
-                                        ProfileFragment.newInstanceMember(member, trId, trId1)
-                                    )
-                                    ?.commit()
-                            } else {
-                                activity?.supportFragmentManager
-                                    ?.beginTransaction()
-                                    ?.addSharedElement(tv, trId)
-                                    ?.addSharedElement(iv, trId1)
-                                    ?.addToBackStack("ProfileImg")
-                                    ?.replace(
-                                        R.id.frameLayout,
-                                        ProfileUsersFragment.newInstanceMember(member, trId, trId1)
-                                    )
-                                    ?.commit()
-                            }
-                        }
+        memberViewModel.memberListLivedata.observe(this, Observer {
+            mUserAdapter = SubscribersAdapter(it, contexts, memberViewModel,object :
+                SubscribersAdapter.OnClickProfileListener{
+                override fun OnClickProfile(member: Member, tv: TextView, iv: ImageView) {
+                    val trId = ViewCompat.getTransitionName(tv).toString()
+                    val trId1 = ViewCompat.getTransitionName(iv).toString()
+                    if (member.m_seq == my_m_seq) {
+                        activity?.supportFragmentManager
+                            ?.beginTransaction()
+                            ?.addSharedElement(tv, trId)
+                            ?.addSharedElement(iv, trId1)
+                            ?.addToBackStack("ProfileImg")
+                            ?.replace(
+                                R.id.frameLayout,
+                                ProfileFragment.newInstanceMember(member, trId, trId1)
+                            )
+                            ?.commit()
+                    } else {
+                        activity?.supportFragmentManager
+                            ?.beginTransaction()
+                            ?.addSharedElement(tv, trId)
+                            ?.addSharedElement(iv, trId1)
+                            ?.addToBackStack("ProfileImg")
+                            ?.replace(
+                                R.id.frameLayout,
+                                ProfileUsersFragment.newInstanceMember(member, trId, trId1)
+                            )
+                            ?.commit()
+                    }
+                }
 
-                    },object :SubscribersAdapter.OnEndlessScrollListener{
-                        override fun OnEndless(boolean_value: Boolean) {
-                            if (boolean_value == false) {
-                                EndlessScroll(false)
-                            } else if (boolean_value == true) {
-                                EndlessScroll(true)
-                            }
-                        }
+            },object :SubscribersAdapter.OnEndlessScrollListener{
+                override fun OnEndless(boolean_value: Boolean) {
+                    if (boolean_value == false) {
+                        EndlessScroll(false)
+                    } else if (boolean_value == true) {
+                        EndlessScroll(true)
+                    }
+                }
 
-                    })
+            })
 
-                    handlerFeed.postDelayed({
-                        mShimmerViewContainer.stopShimmerAnimation()
-                        mShimmerViewContainer.visibility = View.GONE
+            handlerFeed.postDelayed({
+                mShimmerViewContainer.stopShimmerAnimation()
+                mShimmerViewContainer.visibility = View.GONE
 
-                        recyclerView?.apply {
-                            this.layoutManager = linearLayoutManager
-                            this.itemAnimator = DefaultItemAnimator()
-                            this.adapter = mUserAdapter
-                        }
-                    },1000)
-               }
-                ,{
-                    mShimmerViewContainer?.visibility = View.GONE
-                    empty!!.visibility = View.VISIBLE
-                    Log.e("실패 Get Member", "" + it.message)
-
-                })
-
+                recyclerView?.apply {
+                    this.layoutManager = linearLayoutManager
+                    this.itemAnimator = DefaultItemAnimator()
+                    this.adapter = mUserAdapter
+                }
+            },1000)
+        })
     }
 
     fun EndlessScroll(isLoading: Boolean){
@@ -186,12 +174,10 @@ class SearchUserFragment(nick_name:String) : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        initData()
-        mShimmerViewContainer.startShimmerAnimation()
     }
 
     private fun addLimit() : Int{
-        limit += 20
+        limit += 50
         return limit
     }
 }

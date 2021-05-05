@@ -86,37 +86,28 @@ class MystoryActivity : AppCompatActivity() {
             richwysiwygeditor.tagName.text = "# "+TAG_NAME
         }else{
             Toast.makeText(this, "전달된 이름이 없습니다", Toast.LENGTH_SHORT).show()
-
         }
-
-        val single = MEMBER_SERVICE.getMember(M_SEQ)
-        single.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                tv_creater.text = it.nick_name
-                tv_gender.text = it.gender
-                tv_age.text = it.age
-                if(it.profile_img.toString().equals("null")){
-                    Glide.with(this)
-                        .load("http://storymaw.com/data/member/user.png")
-                        .apply(RequestOptions().circleCrop())
-                        .placeholder(android.R.color.transparent)
-                        .error(R.drawable.error_loading)
-                        .into(img_profile)
-                }else {
-                    Glide.with(this)
-                        .load(it.profile_img)
-                        .apply(RequestOptions().circleCrop())
-                        .placeholder(android.R.color.transparent)
-                        .error(R.drawable.error_loading)
-                        .into(img_profile)
-                }
-
-            },
-                {
-                    Log.e("errors", it.message)
-                })
-
+        memberViewModel.getMember(M_SEQ)
+        memberViewModel.memberLivedata.observe(this, androidx.lifecycle.Observer {
+            tv_creater.text = it.nick_name
+            tv_gender.text = it.gender
+            tv_age.text = it.age
+            if(it.profile_img.toString().equals("null")){
+                Glide.with(this)
+                    .load("http://storymaw.com/data/member/user.png")
+                    .apply(RequestOptions().circleCrop())
+                    .placeholder(android.R.color.transparent)
+                    .error(R.drawable.error_loading)
+                    .into(img_profile)
+            }else {
+                Glide.with(this)
+                    .load(it.profile_img)
+                    .apply(RequestOptions().circleCrop())
+                    .placeholder(android.R.color.transparent)
+                    .error(R.drawable.error_loading)
+                    .into(img_profile)
+            }
+        })
 
         //추가된 소스코드, Toolbar의 왼쪽에 버튼을 추가하고 버튼의 아이콘을 바꾼다.
 
@@ -164,7 +155,7 @@ class MystoryActivity : AppCompatActivity() {
             val requestFile: RequestBody =
                 RequestBody.create(MediaType.parse("multipart/form-data"), file)
             val body =
-                MultipartBody.Part.createFormData("uploaded_file", file?.name, requestFile)
+                MultipartBody.Part.createFormData("uploaded_file", file?.name.toString(), requestFile)
 
 
             val resultCall: Call<Feed> = FEED_SERVICE.uploadImage(EMAIL,body)
@@ -183,7 +174,7 @@ class MystoryActivity : AppCompatActivity() {
                             "http://www.storymaw.com/data/feed/" + EMAIL + "/" + file?.name,
                             file?.name
                         )
-                        increaseCount()
+//                        increaseCount()
 
                     }
                 }

@@ -10,15 +10,21 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dev_sheep.story_of_man_and_woman.R
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Tag
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
 import com.dev_sheep.story_of_man_and_woman.view.adapter.SearchCardAdapter
+import com.dev_sheep.story_of_man_and_woman.view.adapter.Tag_Select_Adapter
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_tag_select.*
 import kotlinx.android.synthetic.main.fragment_search.*
+import kotlinx.android.synthetic.main.fragment_search.progressBar_tag
+import kotlinx.android.synthetic.main.fragment_search.recyclerView_tag
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment: Fragment() {
@@ -27,11 +33,6 @@ class SearchFragment: Fragment() {
     lateinit var et_comment : EditText
     private val feedViewModel: FeedViewModel by viewModel()
     private var layoutManager_Tag : GridLayoutManager? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-//        layoutManager_Tag = GridLayoutManager(context,2 )
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,11 +67,10 @@ class SearchFragment: Fragment() {
         })
 
 
-        val single_tag = APIService.FEED_SERVICE.getTagList()
-        single_tag.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-
+        feedViewModel.getTagList()
+        //라이브데이터
+        feedViewModel.listTagOfFeed.observe(this, Observer(function = fun(tagList: MutableList<Tag>?) {
+            tagList?.let {
                 if (it.isNotEmpty()) {
                     if(context == null){
                     }else {
@@ -82,14 +82,8 @@ class SearchFragment: Fragment() {
                 }else {
                     progressBar_tag?.visibility = View.VISIBLE
                 }
-//                recyclerViewTag?.layoutManager = layoutManager_Tag
-//                recyclerViewTag?.adapter = Test_Searchtag_Adapter(it,view.context)
-//                mTagAdapter = object : Test_tag_Adapter(it,contexts)
-
             }
-                ,{
-
-                })
+        }))
 
         return view
     }

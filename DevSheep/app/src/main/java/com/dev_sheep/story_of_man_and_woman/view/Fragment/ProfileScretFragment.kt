@@ -47,7 +47,7 @@ class ProfileScretFragment: Fragment() {
     private val memberViewModel: MemberViewModel by viewModel()
     private var recyclerView: RecyclerView? = null
     lateinit var mFeedAdapter: FeedAdapter
-    private var limit: Int = 10
+    private var limit: Int = 50
     private var offset: Int = 0
     private var visibleItemCount = 0
     private var totalItemCount = 0
@@ -89,11 +89,11 @@ class ProfileScretFragment: Fragment() {
         val handlerFeed: Handler = Handler(Looper.myLooper())
         linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-        // 전체보기
-        val single = FEED_SERVICE.getListSecert(m_seq,offset,limit)
-        single.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
+
+        feedViewModel.getListSecert(m_seq,offset,limit)
+        //라이브 데이터
+        feedViewModel.listOfFeeds.observe(this, Observer(function = fun(feedList: MutableList<Feed>?) {
+            feedList?.let {
                 if (it.size > 0) {
                     empty!!.visibility = View.GONE
                     mFeedAdapter = FeedAdapter(
@@ -129,7 +129,7 @@ class ProfileScretFragment: Fragment() {
                             }
                         },
                         object : FeedAdapter.OnClickLikeListener {
-                                               override fun OnClickFeed(feed: Feed, boolean_value: String) {
+                            override fun OnClickFeed(feed: Feed, boolean_value: String) {
                                 feedViewModel.increaseLikeCount(feed.feed_seq, boolean_value)
                                 if(boolean_value.equals("true")) {
                                     memberViewModel.addNotifiaction(
@@ -142,7 +142,7 @@ class ProfileScretFragment: Fragment() {
                                                 " '\' 를 좋아합니다."
                                     )
                                 }
-                                }
+                            }
 
                         }, object : FeedAdapter.OnClickBookMarkListener {
                             override fun OnClickBookMark(
@@ -186,7 +186,6 @@ class ProfileScretFragment: Fragment() {
                             override fun OnClickDeleted(feed_seq: Int) {
                                 showDeletePopup(feedViewModel,feed_seq)
                                 onResume()
-
                             }
 
                         }, object : FeedAdapter.OnEndlessScrollListener {
@@ -197,7 +196,6 @@ class ProfileScretFragment: Fragment() {
                                     EndlessScroll(true)
                                 }
                             }
-
                         })
                     handlerFeed.postDelayed({
                         shimmer_view_container_profile_feed?.stopShimmerAnimation()
@@ -209,17 +207,12 @@ class ProfileScretFragment: Fragment() {
                             this.adapter = mFeedAdapter
                         }
                     },1000)
-                }else{
+                } else{
                     shimmer_view_container_profile_feed?.visibility = View.GONE
                     empty!!.visibility = View.VISIBLE
                 }
-
-            }, {
-                shimmer_view_container_profile_feed?.visibility = View.GONE
-                empty!!.visibility = View.VISIBLE
-                Log.e("feed 보기 실패함", "" + it.message)
-            })
-
+            }
+        }))
 
     }
 
@@ -296,12 +289,11 @@ class ProfileScretFragment: Fragment() {
 
     override fun onPause() {
         super.onPause()
-        initData()
         shimmer_view_container_profile_feed?.startShimmerAnimation()
     }
 
     private fun addLimit() : Int{
-        limit += 10
+        limit += 50
         return limit
     }
 }

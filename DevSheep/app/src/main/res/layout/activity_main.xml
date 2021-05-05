@@ -32,7 +32,7 @@
         android:layout_gravity="bottom"
         android:layout_marginStart="0dp"
         android:layout_marginEnd="0dp"
-        android:background="@color/white"
+        android:background="@color/main_Accent"
         app:itemIconTint="@drawable/nav_item_color_state"
         app:labelVisibilityMode="unlabeled"
         app:itemIconSize="24dp"

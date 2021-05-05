@@ -5,24 +5,16 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.text.Html
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.view.ViewCompat
-import androidx.core.widget.NestedScrollView
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
-import com.dev_sheep.story_of_man_and_woman.utils.BaseDiffUtil
-import com.dev_sheep.story_of_man_and_woman.utils.OnLoadMoreListener
 import kotlinx.android.synthetic.main.adapter_feed.view.bookmark
 import kotlinx.android.synthetic.main.adapter_feed.view.favorite_btn
 import kotlinx.android.synthetic.main.adapter_feed.view.img_profile
@@ -34,8 +26,7 @@ import kotlinx.android.synthetic.main.adapter_feed_rank.view.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.safety.Whitelist
-import java.text.SimpleDateFormat
-import java.util.*
+
 
 class FeedAdapterRank(
     private val list: MutableList<Feed>,
@@ -102,13 +93,17 @@ class FeedAdapterRank(
     }
 
     fun updateList(feeds: MutableList<Feed>) {
-        // diif util 리사이클러뷰 재활용 능력 향상시켜줌 깜빡임 현상없어짐
-        val diffUtil = BaseDiffUtil(feeds, this.list)
-        val diffResult = DiffUtil.calculateDiff(diffUtil)
 
         this.list.clear()
         this.list.addAll(feeds)
-        diffResult.dispatchUpdatesTo(this)
+        notifyItemInserted(this.list.size)
+        // diif util 리사이클러뷰 재활용 능력 향상시켜줌 깜빡임 현상없어짐
+//        val diffUtil = BaseDiffUtil(feeds, this.list)
+//        val diffResult = DiffUtil.calculateDiff(diffUtil)
+//
+//        this.list.clear()
+//        this.list.addAll(feeds)
+//        diffResult.dispatchUpdatesTo(this)
 
     }
     override fun getItemViewType(position: Int): Int {
@@ -142,8 +137,8 @@ class FeedAdapterRank(
         private var favoriteButton: CheckBox = itemView.findViewById(R.id.favorite_btn)
         private val favoriteValue: TextView = itemView.findViewById(R.id.like_count)
         private val bookmarkButton: CheckBox = itemView.findViewById(R.id.bookmark)
-        private val iv_feed_tag : ImageView = itemView.findViewById(R.id.iv_feed_tag)
-        private val recycler_layout : LinearLayout = itemView.findViewById(R.id.recycler_layout)
+//        private val iv_feed_tag : ImageView = itemView.findViewById(R.id.iv_feed_tag)
+//        private val recycler_layout : LinearLayout = itemView.findViewById(R.id.recycler_layout)
         private val tv_age : TextView = itemView.findViewById(R.id.tv_age)
         private val tv_gender : TextView = itemView.findViewById(R.id.tv_gender)
         private val tv_rank_num : TextView = itemView.findViewById(R.id.tv_rank_num)
@@ -171,6 +166,7 @@ class FeedAdapterRank(
 
             itemView.tv_m_nick.text = item.creater
             itemView.tv_title.text = item.title
+            itemView.tv_tag.text = "#"+item.tag_name
             itemView.view_count.text = item.view_no.toString()
             itemView.comment_count.text = item.comment_no.toString()
             itemView.like_count.text = item.like_no.toString()
@@ -186,24 +182,24 @@ class FeedAdapterRank(
                 .into(itemView.img_profile)
 
 
-            with(iv_feed_tag){
-                var requestOptions = RequestOptions()
-                requestOptions = requestOptions.transform(CenterCrop(), RoundedCorners(16))
-
-                if(item.images.size != 0) {
-                    Glide.with(itemView.context)
-                        .load(item.images.get(0).imagePath)
-                        .apply(requestOptions)
-                        .placeholder(android.R.color.transparent)
-                        .into(this)
-                }else{
-                    Glide.with(itemView.context)
-                        .load("http://storymaw.com/data/feed/empty_image.jpg")
-                        .apply(requestOptions)
-                        .placeholder(android.R.color.transparent)
-                        .into(this)
-                }
-            }
+//            with(iv_feed_tag){
+//                var requestOptions = RequestOptions()
+//                requestOptions = requestOptions.transform(CenterCrop(), RoundedCorners(16))
+//
+//                if(item.images.size != 0) {
+//                    Glide.with(itemView.context)
+//                        .load(item.images.get(0).imagePath)
+//                        .apply(requestOptions)
+//                        .placeholder(android.R.color.transparent)
+//                        .into(this)
+//                }else{
+//                    Glide.with(itemView.context)
+//                        .load("http://storymaw.com/data/feed/empty_image.jpg")
+//                        .apply(requestOptions)
+//                        .placeholder(android.R.color.transparent)
+//                        .into(this)
+//                }
+//            }
 
             // 자신의 seq 가져오기
             val preferences: SharedPreferences = itemView.context!!.getSharedPreferences(
@@ -304,18 +300,18 @@ class FeedAdapterRank(
                 }
             }
 
-            with(recycler_layout){
-                setOnClickListener {
-                    onClickFeedView.OnClickFeed(
-                        item,
-                        itemView.tv_m_nick,
-                        itemView.img_profile,
-                        itemView.favorite_btn,
-                        itemView.bookmark,
-                        position
-                    )
-                }
-            }
+//            with(recycler_layout){
+//                setOnClickListener {
+//                    onClickFeedView.OnClickFeed(
+//                        item,
+//                        itemView.tv_m_nick,
+//                        itemView.img_profile,
+//                        itemView.favorite_btn,
+//                        itemView.bookmark,
+//                        position
+//                    )
+//                }
+//            }
 
             with(feed_layout){
                 setOnClickListener {

@@ -13,4 +13,8 @@ class BaseDiffUtil<T>(private val newList: List<T>, private val oldList: List<T>
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
         newList[newItemPosition] == oldList[oldItemPosition]
+
+    override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
+        return super.getChangePayload(oldItemPosition, newItemPosition)
+    }
 }

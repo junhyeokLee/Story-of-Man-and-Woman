@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="32dp"
             android:text="구독중"
-            android:fontFamily="@font/apple_sd_gothic_neo_t"
+            android:fontFamily="@font/apple_sd_gothic_neo_l"
             android:textColor="@color/black"
             android:textSize="16sp" />
 
@@ -61,6 +61,8 @@
                 <include layout="@layout/feed_placeholder_item_subscriber" />
                 <include layout="@layout/feed_placeholder_item_subscriber" />
                 <include layout="@layout/feed_placeholder_item_subscriber" />
+                <include layout="@layout/feed_placeholder_item_subscriber" />
+                <include layout="@layout/feed_placeholder_item_subscriber" />
 
 
             </LinearLayout>
@@ -71,61 +73,12 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_subscribers"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:clipToPadding="false"
         android:paddingBottom="32dp" />
 
 
-        <LinearLayout
-            android:id="@+id/empty"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingBottom="64dp"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/emptyText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginRight="16dp"
-                    android:fontFamily="@font/apple_sd_gothic_neo_t"
-                    android:gravity="center"
-                    android:textAlignment="center"
-                    android:textColor="@color/gray"
-                    android:textColorHighlight="@color/gray"
-                    android:textColorHint="@color/gray"
-                    android:textColorLink="@color/gray"
-                    android:textSize="12sp"
-                    tools:text="Go do something..." />
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginRight="16dp"
-                    android:paddingLeft="32dp"
-                    android:paddingRight="32dp"
-                    android:scaleType="centerInside"
-                    app:srcCompat="@drawable/state_empty" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-        </LinearLayout>
 
     </LinearLayout>
 </LinearLayout>

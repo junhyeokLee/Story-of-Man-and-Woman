@@ -24,6 +24,7 @@ import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Search
 import com.dev_sheep.story_of_man_and_woman.view.adapter.SearchRecentAdapter
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
+import kotlinx.android.synthetic.main.fragment_search_title.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchTitleFragment: Fragment() , View.OnClickListener {
@@ -37,12 +38,10 @@ class SearchTitleFragment: Fragment() , View.OnClickListener {
     lateinit var layout_recyclerview : NestedScrollView
     lateinit var layout_search : LinearLayout
     lateinit var layout_delete: LinearLayout
+
     companion object{
         var TAG = "SearchTitleFragment"
-
     }
-
-//    lateinit var search : List<Search>
     private val feedViewModel: FeedViewModel by viewModel()
 
     override fun onCreateView(
@@ -62,18 +61,16 @@ class SearchTitleFragment: Fragment() , View.OnClickListener {
         recyclerViewTag?.layoutManager = layoutManager_Tag
         tv_search_result = view.findViewById<TextView>(R.id.tv_search_result)
 
-
         // Local DB 최근검색어 불러오기
         feedViewModel.getSearchList()
             .observe(this, object : Observer<List<Search>> {
                 override fun onChanged(t: List<Search>) {
                     mSearchRecentAdapter = SearchRecentAdapter(view.context,t,feedViewModel,activity!!)
-                    recyclerViewTag.apply {
-                        recyclerViewTag?.adapter = mSearchRecentAdapter
+                    recyclerView_tag.apply {
+                        recyclerView_tag?.adapter = mSearchRecentAdapter
                     }
                 }
             })
-
 
         layout_search.setOnClickListener(this)
         iv_search.setOnClickListener(this)
@@ -145,9 +142,6 @@ class SearchTitleFragment: Fragment() , View.OnClickListener {
 //                fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.replace(R.id.frameLayout, searchDetailFragment,TAG);
                 fragmentTransaction.commit()
-
-
-
             }
 
             R.id.layout_search ->{
@@ -157,8 +151,8 @@ class SearchTitleFragment: Fragment() , View.OnClickListener {
             R.id.layout_delete ->{
                 val builder: AlertDialog.Builder = AlertDialog.Builder(view!!.context)
                 val dialog: AlertDialog = builder.setTitle("검색 기록")
-     .setMessage("삭제 하시겠습니까?")     // 제목 부분 (직접 작성)
-     .setPositiveButton("확인", object: DialogInterface.OnClickListener {      // 버튼1 (직접 작성)
+            .setMessage("삭제 하시겠습니까?")     // 제목 부분 (직접 작성)
+            .setPositiveButton("확인", object: DialogInterface.OnClickListener {      // 버튼1 (직접 작성)
          override fun onClick(dialog: DialogInterface?, which: Int) {
              // RoomDataBase MainThread 클래스 적용해서 서치목록 삭제
              AppExecutors.getInstance().diskIO().execute(Runnable {

@@ -3,59 +3,27 @@
     <!-- Booleans -->
     <string name="pref_boolean1">boolean1</string>
     <bool name="pref_boolean1_default">true</bool>
-    <string name="boolean1_title">전체설정</string>
-    <string name="boolean1_desc"></string>
+    <string name="boolean1_title">공지사항 / 이벤트</string>
 
     <string name="pref_boolean2">boolean2</string>
     <bool name="pref_boolean2_default">true</bool>
     <string name="boolean2_title">나를 팔로우할 경우</string>
-    <string name="boolean2_desc">This toggles the second boolean</string>
 
     <string name="pref_boolean3">boolean3</string>
     <bool name="pref_boolean3_default">true</bool>
     <string name="boolean3_title">내 소식을 좋아하는 경우</string>
-    <string name="boolean3_desc">This toggles the second boolean</string>
+
+    <!--    <string name="pref_boolean4">boolean4</string>-->
+    <!--    <bool name="pref_boolean4_default">true</bool>-->
+    <!--    <string name="boolean4_title">내 댓글을 좋아하는 경우   </string>-->
 
     <string name="pref_boolean4">boolean4</string>
     <bool name="pref_boolean4_default">true</bool>
-    <string name="boolean4_title">내 댓글을 좋아하는 경우   </string>
-    <string name="boolean4_desc">This toggles the second boolean</string>
+    <string name="boolean4_title">내 소식에 댓글을 남긴 경우   </string>
 
     <string name="pref_boolean5">boolean5</string>
     <bool name="pref_boolean5_default">true</bool>
-    <string name="boolean5_title">내 소식에 댓글을 남긴 경우   </string>
-    <string name="boolean5_desc">This toggles the second boolean</string>
+    <string name="boolean5_title">내 댓글에 댓글을 남긴 경우   </string>
 
-    <string name="pref_boolean6">boolean6</string>
-    <bool name="pref_boolean6_default">true</bool>
-    <string name="boolean6_title">내 댓글에 댓글을 남긴 경우   </string>
-    <string name="boolean6_desc">This toggles the second boolean</string>
 
-    <!-- Strings -->
-    <string name="pref_string1">string1</string>
-    <string name="pref_string1_default">FirstDefault</string>
-    <string name="string1_title">String 1</string>
-    <string name="string1_desc">Set the first string</string>
-
-    <string name="pref_string2">string2</string>
-    <string name="pref_string2_default">SecondDefault</string>
-    <string name="string2_title">String 2</string>
-    <string name="string2_desc">Set the second string</string>
-
-    <!-- Int -->
-    <string name="pref_int1">int1</string>
-    <integer name="pref_int1_step">1</integer>
-    <integer name="pref_int1_min">0</integer>
-    <integer name="pref_int1_max">10</integer>
-    <integer name="pref_int1_default">10</integer>
-    <string name="int1_title">Int 1</string>
-    <string name="int1_desc">The first integer</string>
-
-    <string name="pref_int2">int2</string>
-    <integer name="pref_int2_step">1</integer>
-    <integer name="pref_int2_min">0</integer>
-    <integer name="pref_int2_max">10</integer>
-    <integer name="pref_int2_default">2</integer>
-    <string name="int2_title">Int 2</string>
-    <string name="int2_desc">The second integer</string>
 </resources>

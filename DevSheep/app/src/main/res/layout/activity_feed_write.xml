@@ -37,8 +37,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
-            android:fontFamily="@font/apple_sd_gothic_neo_t"
-            android:textColor="@color/main_Accent"
+            android:fontFamily="@font/apple_sd_gothic_neo_r"
+            android:textColor="@color/text_subscrib_color"
             android:text="(공개)"
             android:textSize="12sp" />
 
@@ -102,7 +102,7 @@
                         android:text="null"
                         android:textColor="@color/black"
                         android:textSize="12sp"
-                        app:fontFamily="@font/apple_sd_gothic_neo_t" />
+                        app:fontFamily="@font/apple_sd_gothic_neo_l" />
 
 
                     <LinearLayout
@@ -118,8 +118,8 @@
                             android:gravity="center"
                             android:text="남"
                             android:textSize="12sp"
-                            android:textColor="@color/blue_gray_light"
-                            android:fontFamily="@font/apple_sd_gothic_neo_t"
+                            android:textColor="@color/gray"
+                            android:fontFamily="@font/apple_sd_gothic_neo_l"
                             />
                         <TextView
                             android:layout_width="wrap_content"
@@ -128,7 +128,7 @@
                             android:layout_marginRight="4dp"
                             android:gravity="center"
                             android:layout_gravity="center"
-                            android:textColor="@color/blue_gray_light"
+                            android:textColor="@color/gray"
                             android:textSize="12sp"
                             android:text="/"
                             />
@@ -139,8 +139,8 @@
                             android:gravity="center"
                             android:text="20대"
                             android:textSize="12sp"
-                            android:textColor="@color/blue_gray_light"
-                            android:fontFamily="@font/apple_sd_gothic_neo_t"
+                            android:textColor="@color/gray"
+                            android:fontFamily="@font/apple_sd_gothic_neo_l"
                             />
 
                     </LinearLayout>

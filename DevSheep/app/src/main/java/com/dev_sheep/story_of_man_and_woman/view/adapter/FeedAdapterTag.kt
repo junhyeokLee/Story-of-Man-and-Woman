@@ -22,6 +22,7 @@ import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.utils.BaseDiffUtil
 import com.victor.loading.rotate.RotateLoading
+import kotlinx.android.synthetic.main.adapter_feed.view.*
 import kotlinx.android.synthetic.main.adapter_feed.view.bookmark
 import kotlinx.android.synthetic.main.adapter_feed.view.favorite_btn
 import kotlinx.android.synthetic.main.adapter_feed.view.img_profile
@@ -30,6 +31,7 @@ import kotlinx.android.synthetic.main.adapter_feed.view.tv_m_nick
 import kotlinx.android.synthetic.main.adapter_feed.view.tv_title
 import kotlinx.android.synthetic.main.adapter_feed.view.view_count
 import kotlinx.android.synthetic.main.adapter_feed_tag.view.*
+import kotlinx.android.synthetic.main.adapter_feed_tag.view.tv_feed_date
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.safety.Whitelist
@@ -50,7 +52,6 @@ class FeedAdapterTag(
     private val VIEW_TYPE_ITEM = 1
     private var isLoadingAdded = false
 
-//    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         mcontext = parent.context
@@ -104,13 +105,17 @@ class FeedAdapterTag(
     }
 
     fun updateList(feeds: MutableList<Feed>) {
-        // diif util 리사이클러뷰 재활용 능력 향상시켜줌 깜빡임 현상없어짐
-        val diffUtil = BaseDiffUtil(feeds, this.list)
-        val diffResult = DiffUtil.calculateDiff(diffUtil)
 
         this.list.clear()
         this.list.addAll(feeds)
-        diffResult.dispatchUpdatesTo(this)
+        notifyItemInserted(this.list.size)
+        // diif util 리사이클러뷰 재활용 능력 향상시켜줌 깜빡임 현상없어짐
+//        val diffUtil = BaseDiffUtil(feeds, this.list)
+//        val diffResult = DiffUtil.calculateDiff(diffUtil)
+//
+//        this.list.clear()
+//        this.list.addAll(feeds)
+//        diffResult.dispatchUpdatesTo(this)
 
     }
 
@@ -181,6 +186,8 @@ class FeedAdapterTag(
             itemView.tv_m_nick.text = item.creater
             itemView.tv_title.text = item.title
 //            content.text = Jsoup.parse(item.content).text()
+            itemView.tv_tag.text = "#"+item.tag_name
+            itemView.tv_feed_date.text = calculateTime(sdf.parse(item.feed_date))
             itemView.view_count.text = item.view_no.toString()
             itemView.comment_count.text = item.comment_no.toString()
             itemView.like_count.text = item.like_no.toString()
@@ -347,6 +354,41 @@ class FeedAdapterTag(
 
         }
 
+        private object TIME_MAXIMUM {
+            const val SEC = 60
+            const val MIN = 60
+            const val HOUR = 24
+            const val DAY = 30
+            const val MONTH = 12
+        }
+
+        fun calculateTime(date: Date): String? {
+            val curTime = System.currentTimeMillis()
+            val regTime = date.time
+            var diffTime = (curTime - regTime) / 1000
+            var msg: String? = null
+            if (diffTime < TIME_MAXIMUM.SEC) {
+                // sec
+                msg = diffTime.toString() + " 초전"
+            } else if (TIME_MAXIMUM.SEC.let { diffTime /= it; diffTime } < TIME_MAXIMUM.MIN) {
+                // min
+                println(diffTime)
+                msg = diffTime.toString() + " 분전"
+            } else if (TIME_MAXIMUM.MIN.let { diffTime /= it; diffTime } < TIME_MAXIMUM.HOUR) {
+                // hour
+                msg = diffTime.toString() + " 시간전"
+            } else if (TIME_MAXIMUM.HOUR.let { diffTime /= it; diffTime } < TIME_MAXIMUM.DAY) {
+                // day
+                msg = diffTime.toString() + " 일전"
+            } else if (TIME_MAXIMUM.DAY.let { diffTime /= it; diffTime } < TIME_MAXIMUM.MONTH) {
+                // day
+                msg = diffTime.toString() + " 달전"
+            } else {
+                msg = diffTime.toString() + " 년전"
+            }
+            return msg
+        }
+
 
         // html 태그 제거
         fun stripHtml(html: String) : String{
@@ -384,7 +426,6 @@ class FeedAdapterTag(
 
 
     }
-
 
 
 

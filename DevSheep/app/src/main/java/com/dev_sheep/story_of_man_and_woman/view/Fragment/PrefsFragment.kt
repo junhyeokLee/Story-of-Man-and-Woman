@@ -17,21 +17,6 @@ class PrefsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPref
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.preferences_ui)
         findPreference(getString(R.string.pref_show_values)).onPreferenceClickListener = showValuesListener
-        setupSeekbars()
-    }
-
-    private fun setupSeekbars() {
-        (findPreference(getString(R.string.pref_int1)) as SeekBarPreference).apply {
-            seekBarIncrement = resources.getInteger(R.integer.pref_int1_step)
-            min = resources.getInteger(R.integer.pref_int1_min)
-            max = resources.getInteger(R.integer.pref_int1_max)
-        }
-
-        (findPreference(getString(R.string.pref_int2)) as SeekBarPreference).apply {
-            seekBarIncrement = resources.getInteger(R.integer.pref_int2_step)
-            min = resources.getInteger(R.integer.pref_int2_min)
-            max = resources.getInteger(R.integer.pref_int2_max)
-        }
     }
 
     override fun onResume() {
@@ -45,25 +30,19 @@ class PrefsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPref
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-        when (key) {
-            getString(R.string.pref_string1) -> {
-                val pref = findPreference(key) as EditTextPreference
-                Toast.makeText(activity!!, "String changed to ${pref.text}", Toast.LENGTH_SHORT).show()
-            }
-        }
+
     }
 
     private val showValuesListener = Preference.OnPreferenceClickListener { _ ->
         val prefHelper = PreferenceHelper(activity!!)
         AlertDialog.Builder(activity!!)
-            .setTitle("환경설")
+            .setTitle("환경설정")
             .setMessage(String.format(getString(R.string.app_name),
                 prefHelper.getBooleanPref(PreferenceHelper.BooleanPref.setting1),
                 prefHelper.getBooleanPref(PreferenceHelper.BooleanPref.setting2),
-                prefHelper.getStringPref(PreferenceHelper.StringPref.setting1),
-                prefHelper.getStringPref(PreferenceHelper.StringPref.setting2),
-                prefHelper.getIntPref(PreferenceHelper.IntPref.setting1),
-                prefHelper.getIntPref(PreferenceHelper.IntPref.setting2)
+                prefHelper.getBooleanPref(PreferenceHelper.BooleanPref.setting3),
+                prefHelper.getBooleanPref(PreferenceHelper.BooleanPref.setting4),
+                prefHelper.getBooleanPref(PreferenceHelper.BooleanPref.setting5)
             ))
             .setPositiveButton("닫기") { _, _ -> }
             .show()

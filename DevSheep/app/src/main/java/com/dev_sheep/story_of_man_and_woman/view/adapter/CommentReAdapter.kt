@@ -47,11 +47,9 @@ class CommentReAdapter(private val commentList: MutableList<Comment>,
                 view = LayoutInflater.from(parent.context).inflate(R.layout.progress_loading, parent, false)
                 LoadingViewHolder(view, isLoadingAdded)
             }
-
             VIEW_TYPE_ITEM -> { view = LayoutInflater.from(context).inflate(R.layout.adapter_re_comment, parent, false)
                 ViewHolder(view, isLoadingAdded, onLastIndexListener)
             }
-
             else -> throw RuntimeException("알 수 없는 뷰 타입 에러")
         }
     }
@@ -62,24 +60,25 @@ class CommentReAdapter(private val commentList: MutableList<Comment>,
                 val viewHolder: LoadingViewHolder = holder as LoadingViewHolder
                 viewHolder.bindView()
             }
-
             VIEW_TYPE_ITEM -> {
                 val viewHolder: ViewHolder = holder as ViewHolder
                 val item = commentList[position]
                 val viewModel = feedViewModel
                 viewHolder.bindView(item,viewModel,context,onClickViewListener)
             }
-
         }
     }
     fun updateList(comments: MutableList<Comment>) {
-        // diif util 리사이클러뷰 재활용 능력 향상시켜줌 깜빡임 현상없어짐
-        val diffUtil = BaseDiffUtil(comments, this.commentList)
-        val diffResult = DiffUtil.calculateDiff(diffUtil)
-
         this.commentList.clear()
         this.commentList.addAll(comments)
-        diffResult.dispatchUpdatesTo(this)
+        notifyItemInserted(this.commentList.size)
+        // diif util 리사이클러뷰 재활용 능력 향상시켜줌 깜빡임 현상없어짐
+//        val diffUtil = BaseDiffUtil(comments, this.commentList)
+//        val diffResult = DiffUtil.calculateDiff(diffUtil)
+//
+//        this.commentList.clear()
+//        this.commentList.addAll(comments)
+//        diffResult.dispatchUpdatesTo(this)
 
     }
     override fun getItemViewType(position: Int): Int {
@@ -91,7 +90,7 @@ class CommentReAdapter(private val commentList: MutableList<Comment>,
 
     override fun getItemCount(): Int {
 
-        return commentList.size   // 7개 까지만
+        return commentList.size
     }
     class ViewHolder(itemView: View,isLoadingAdded: Boolean,  onLastIndexListener: OnLastIndexListener) : RecyclerView.ViewHolder(itemView) {
         lateinit var my_m_seq : String

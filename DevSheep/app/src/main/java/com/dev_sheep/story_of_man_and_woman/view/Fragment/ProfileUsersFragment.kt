@@ -131,8 +131,6 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
             Context.MODE_PRIVATE
         )
         my_m_seq = preferences.getString("inputMseq", "")
-
-
     }
 
     override fun onCreateView(
@@ -250,47 +248,43 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
 
         if(m_seq == "null") {
 
-            val single = APIService.MEMBER_SERVICE.getMember(feed_activity_m_seq)
-            single.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
+            memberViewModel.getMember(feed_activity_m_seq)
+            memberViewModel.memberLivedata.observe(this, androidx.lifecycle.Observer {
+                if(it.profile_img == null){
 
-                    if(it.profile_img == null){
+                    profile_img = "http://storymaw.com/data/member/user.png"
 
-                        profile_img = "http://storymaw.com/data/member/user.png"
+                    Glide.with(this)
+                        .load(profile_img)
+                        .apply(RequestOptions().circleCrop())
+                        .placeholder(android.R.color.transparent)
+                        .into(profileImage!!)
+                }else {
+                    profile_img = it.profile_img!!
+                    Glide.with(this)
+                        .load(profile_img)
+                        .apply(RequestOptions().circleCrop())
+                        .placeholder(android.R.color.transparent)
+                        .into(profileImage!!)
+                }
+                profileNickName!!.text = it.nick_name.toString()
+                nickname = it.nick_name.toString()
+                m_nick_name = it.nick_name.toString()
+                gender.text = it.gender.toString()
+                age.text = it.age.toString()
+                if(it.memo.toString().equals("null")){
+                    intro.text = ""
+                }else{
+                    intro.text = it.memo.toString()
+                }
+                if (it.background_img != null) {
+                    Glide.with(this)
+                        .load(it.background_img)
+                        .placeholder(android.R.color.transparent)
+                        .into(id_ProfileBackground_Image)
+                }
+            })
 
-                        Glide.with(this)
-                            .load(profile_img)
-                            .apply(RequestOptions().circleCrop())
-                            .placeholder(android.R.color.transparent)
-                            .into(profileImage!!)
-                    }else {
-                        profile_img = it.profile_img!!
-                        Glide.with(this)
-                            .load(profile_img)
-                            .apply(RequestOptions().circleCrop())
-                            .placeholder(android.R.color.transparent)
-                            .into(profileImage!!)
-                    }
-                    profileNickName!!.text = it.nick_name.toString()
-                    nickname = it.nick_name.toString()
-                    m_nick_name = it.nick_name.toString()
-                    gender.text = it.gender.toString()
-                    age.text = it.age.toString()
-                     if(it.memo.toString().equals("null")){
-                                intro.text = ""
-                            }else{
-                                intro.text = it.memo.toString()
-                            }
-                    if (it.background_img != null) {
-                        Glide.with(this)
-                            .load(it.background_img)
-                            .placeholder(android.R.color.transparent)
-                            .into(id_ProfileBackground_Image)
-                    }
-                }, {
-                    Log.e("실패 Get Member", "" + it.message)
-                })
         }else {
 
             profile_img = get_creater_img
@@ -312,28 +306,24 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
             nickname = get_creater_nick_name
             m_nick_name = get_creater_nick_name
 
-            val single = APIService.MEMBER_SERVICE.getMember(m_seq)
-            single.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    gender.text = it.gender.toString()
-                    age.text = it.age.toString()
-                     if(it.memo.toString().equals("null")){
-                                intro.text = ""
-                            }else{
-                                intro.text = it.memo.toString()
-                            }
-                    if (it.background_img != null) {
-                        Glide.with(this)
-                            .load(it.background_img)
-                            .placeholder(android.R.color.transparent)
-                            .into(id_ProfileBackground_Image)
-                    }
-                }, {
-                    Log.e("실패 Get Member", "" + it.message)
-                })
-        }
 
+            memberViewModel.getMember(m_seq)
+            memberViewModel.memberLivedata.observe(this, androidx.lifecycle.Observer {
+                gender.text = it.gender.toString()
+                age.text = it.age.toString()
+                if(it.memo.toString().equals("null")){
+                    intro.text = ""
+                }else{
+                    intro.text = it.memo.toString()
+                }
+                if (it.background_img != null) {
+                    Glide.with(this)
+                        .load(it.background_img)
+                        .placeholder(android.R.color.transparent)
+                        .into(id_ProfileBackground_Image)
+                }
+            })
+        }
     }
 
 

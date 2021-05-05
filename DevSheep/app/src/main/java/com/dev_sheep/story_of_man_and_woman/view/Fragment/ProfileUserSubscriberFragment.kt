@@ -48,7 +48,7 @@ class ProfileUserSubscriberFragment(get_m_seq : String): Fragment() {
     lateinit var mFeedAdapter: FeedAdapter
     private val get_m_seq = get_m_seq
     lateinit var m_seq : String
-    private var limit: Int = 10
+    private var limit: Int = 50
     private var offset: Int = 0
     private var visibleItemCount = 0
     private var totalItemCount = 0
@@ -92,11 +92,10 @@ class ProfileUserSubscriberFragment(get_m_seq : String): Fragment() {
         linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 
-        // 전체보기
-        val single = FEED_SERVICE.getListUserSubscribe(get_m_seq,m_seq,offset,limit)
-        single.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
+        feedViewModel.getListUserSubscribe(get_m_seq,m_seq,offset,limit)
+        //라이브 데이터
+        feedViewModel.listOfFeeds.observe(this, Observer(function = fun(feedList: MutableList<Feed>?) {
+            feedList?.let {
                 if (it.size > 0) {
                     empty!!.visibility = View.GONE
                     mFeedAdapter = FeedAdapter(
@@ -201,6 +200,7 @@ class ProfileUserSubscriberFragment(get_m_seq : String): Fragment() {
                             }
 
                         })
+
                     handlerFeed.postDelayed({
                         shimmer_view_container_profile_feed?.stopShimmerAnimation()
                         shimmer_view_container_profile_feed?.visibility = View.GONE
@@ -211,25 +211,17 @@ class ProfileUserSubscriberFragment(get_m_seq : String): Fragment() {
                             this.adapter = mFeedAdapter
                         }
                     },1000)
-
                 }else{
-
                     shimmer_view_container_profile_feed?.visibility = View.GONE
                     empty!!.visibility = View.VISIBLE
-
                 }
-
-            }, {
-                shimmer_view_container_profile_feed?.visibility = View.GONE
-                empty!!.visibility = View.VISIBLE
-                Log.e("feed 보기 실패함", "" + it.message)
-            })
+            }
+        }))
 
     }
 
     fun EndlessScroll(isLoading: Boolean){
         // 무한스크롤
-
         recyclerView!!.setOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (!recyclerView.canScrollVertically(1)) {
@@ -256,12 +248,11 @@ class ProfileUserSubscriberFragment(get_m_seq : String): Fragment() {
 
     override fun onPause() {
         super.onPause()
-        initData()
         shimmer_view_container_profile_feed?.startShimmerAnimation()
     }
 
     private fun addLimit() : Int{
-        limit += 10
+        limit += 50
         return limit
     }
 }

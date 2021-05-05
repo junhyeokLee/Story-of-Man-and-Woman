@@ -23,8 +23,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     val userProfileFragment = ProfileUsersFragment()
     val searchFragment = SearchFragment()
     val notificationFragment = NotificationFragment()
-    val commentFragment = CommentFragment()
-    val reCommentFragment = ReCommentFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

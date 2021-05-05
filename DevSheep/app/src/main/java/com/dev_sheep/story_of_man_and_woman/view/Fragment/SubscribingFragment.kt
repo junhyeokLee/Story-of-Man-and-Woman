@@ -16,6 +16,7 @@ import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,15 +42,11 @@ class SubscribingFragment(val m_seq: String): Fragment() {
     private val memberViewModel: MemberViewModel by viewModel()
     lateinit var BtnBack: ImageButton
     lateinit var mSubscribingAdapter: SubscribingAdapter
-    private var limit: Int = 20
+    private var limit: Int = 50
     private var offset: Int = 0
-    private var visibleItemCount = 0
-    private var totalItemCount = 0
-    private var lastVisibleItemPosition = 0
     private lateinit var linearLayoutManager: LinearLayoutManager
     private var shimmer_view_container_subscribing: ShimmerFrameLayout? = null
-    private var empty : View? = null
-    lateinit var tv_empty: TextView
+
     lateinit var contexts: Context
 
     override fun onCreateView(
@@ -61,12 +58,8 @@ class SubscribingFragment(val m_seq: String): Fragment() {
         rv_subscribers = view.findViewById<View>(R.id.rv_subscribers) as RecyclerView?
         BtnBack = view.findViewById(R.id.im_back) as ImageButton
         contexts = view.context
-        empty = view.findViewById(R.id.empty)
-        tv_empty = view.findViewById(R.id.emptyText) as TextView
-        tv_empty.setText(R.string.empty)
+
         shimmer_view_container_subscribing = view.findViewById(R.id.shimmer_view_container_subscribing)
-//        (activity as AppCompatActivity).supportActionBar!!.setDisplayShowHomeEnabled(true)
-//        (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         val layoutManager_Tag = GridLayoutManager(view.context, 1)
         rv_subscribers?.layoutManager = layoutManager_Tag
 
@@ -82,79 +75,70 @@ class SubscribingFragment(val m_seq: String): Fragment() {
 
     private fun initData(){
 
-        if(memberViewModel == null){
-            return
-        }
+        if(memberViewModel == null) return
 
         val handlerFeed: Handler = Handler(Looper.myLooper())
         linearLayoutManager = LinearLayoutManager(contexts)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 
-        val single = MEMBER_SERVICE.getSubscribing(m_seq,offset,limit)
-        single.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                Log.e("list member", "" + it)
+        memberViewModel.getSubscribing(m_seq,offset,limit)
+        memberViewModel.memberListLivedata.observe(this, Observer {
 
-                if (it.isNotEmpty()) {
-                    mSubscribingAdapter = SubscribingAdapter(it, contexts, memberViewModel,m_seq,object :SubscribingAdapter.OnClickProfileListener{
-                        override fun OnClickProfile(member: Member, tv: TextView, iv: ImageView) {
-                            val trId = ViewCompat.getTransitionName(tv).toString()
-                            val trId1 = ViewCompat.getTransitionName(iv).toString()
-                            if (member.m_seq == m_seq) {
-                                activity?.supportFragmentManager
-                                    ?.beginTransaction()
-                                    ?.addSharedElement(tv, trId)
-                                    ?.addSharedElement(iv, trId1)
-                                    ?.addToBackStack("ProfileImg")
-                                    ?.replace(
-                                        R.id.frameLayout,
-                                        ProfileFragment.newInstanceMember(member, trId, trId1)
-                                    )
-                                    ?.commit()
-                            } else {
-                                activity?.supportFragmentManager
-                                    ?.beginTransaction()
-                                    ?.addSharedElement(tv, trId)
-                                    ?.addSharedElement(iv, trId1)
-                                    ?.addToBackStack("ProfileImg")
-                                    ?.replace(
-                                        R.id.frameLayout,
-                                        ProfileUsersFragment.newInstanceMember(member, trId, trId1)
-                                    )
-                                    ?.commit()
-                            }
+            if (it.isNotEmpty()) {
+                mSubscribingAdapter = SubscribingAdapter(it, contexts, memberViewModel,m_seq,object :SubscribingAdapter.OnClickProfileListener{
+                    override fun OnClickProfile(member: Member, tv: TextView, iv: ImageView) {
+                        val trId = ViewCompat.getTransitionName(tv).toString()
+                        val trId1 = ViewCompat.getTransitionName(iv).toString()
+                        if (member.m_seq == m_seq) {
+                            activity?.supportFragmentManager
+                                ?.beginTransaction()
+                                ?.addSharedElement(tv, trId)
+                                ?.addSharedElement(iv, trId1)
+                                ?.addToBackStack("ProfileImg")
+                                ?.replace(
+                                    R.id.frameLayout,
+                                    ProfileFragment.newInstanceMember(member, trId, trId1)
+                                )
+                                ?.commit()
+                        } else {
+                            activity?.supportFragmentManager
+                                ?.beginTransaction()
+                                ?.addSharedElement(tv, trId)
+                                ?.addSharedElement(iv, trId1)
+                                ?.addToBackStack("ProfileImg")
+                                ?.replace(
+                                    R.id.frameLayout,
+                                    ProfileUsersFragment.newInstanceMember(member, trId, trId1)
+                                )
+                                ?.commit()
                         }
+                    }
 
-                    },object :SubscribersAdapter.OnEndlessScrollListener{
-                        override fun OnEndless(boolean_value: Boolean) {
-                            if (boolean_value == false) {
-                                EndlessScroll(false)
-                            } else if (boolean_value == true) {
-                                EndlessScroll(true)
-                            }
+                },object :SubscribersAdapter.OnEndlessScrollListener{
+                    override fun OnEndless(boolean_value: Boolean) {
+                        if (boolean_value == false) {
+                            EndlessScroll(false)
+                        } else if (boolean_value == true) {
+                            EndlessScroll(true)
                         }
+                    }
 
-                    })
-                    handlerFeed.postDelayed({
-                        shimmer_view_container_subscribing?.stopShimmerAnimation()
-                        shimmer_view_container_subscribing?.visibility = View.GONE
-                        rv_subscribers?.apply {
-                            this.layoutManager = linearLayoutManager
-                            this.itemAnimator = DefaultItemAnimator()
-                            this.adapter = mSubscribingAdapter
-                        }
-                    },1000)
-
-                } else {
+                })
+                handlerFeed.postDelayed({
+                    shimmer_view_container_subscribing?.stopShimmerAnimation()
                     shimmer_view_container_subscribing?.visibility = View.GONE
-                    empty!!.visibility = View.VISIBLE
-                }
-            }, {       shimmer_view_container_subscribing?.visibility = View.GONE
-                empty!!.visibility = View.VISIBLE
-                Log.d("실패 Get Member", "" + it.message)
-            })
+                    rv_subscribers?.apply {
+                        this.layoutManager = linearLayoutManager
+                        this.itemAnimator = DefaultItemAnimator()
+                        this.adapter = mSubscribingAdapter
+                    }
+                },1000)
 
+            } else {
+                shimmer_view_container_subscribing?.visibility = View.GONE
+
+            }
+        })
     }
 
 
@@ -192,7 +176,7 @@ class SubscribingFragment(val m_seq: String): Fragment() {
     }
 
     private fun addLimit() : Int{
-        limit += 20
+        limit += 50
         return limit
     }
 

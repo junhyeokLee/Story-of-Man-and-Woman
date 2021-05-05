@@ -68,13 +68,18 @@ class SubscribersAdapter(
     }
 
     fun updateList(members: MutableList<Member>) {
-        // diif util 리사이클러뷰 재활용 능력 향상시켜줌 깜빡임 현상없어짐
-        val diffUtil = BaseDiffUtil(members, this.member)
-        val diffResult = DiffUtil.calculateDiff(diffUtil)
 
         this.member.clear()
         this.member.addAll(members)
-        diffResult.dispatchUpdatesTo(this)
+        notifyItemInserted(this.member.size)
+
+        // diif util 리사이클러뷰 재활용 능력 향상시켜줌 깜빡임 현상없어짐
+//        val diffUtil = BaseDiffUtil(members, this.member)
+//        val diffResult = DiffUtil.calculateDiff(diffUtil)
+//
+//        this.member.clear()
+//        this.member.addAll(members)
+//        diffResult.dispatchUpdatesTo(this)
 
     }
     override fun getItemViewType(position: Int): Int {
@@ -138,28 +143,28 @@ class SubscribersAdapter(
                 itemView.check_follow.visibility = View.INVISIBLE
             }
             itemView.check_follow.apply {
-                memberViewModel.memberSubscribeChecked(
+
+                memberViewModel.memberSubscribeChecked2(
                     item.m_seq!!,
                     my_m_seq,
                     "checked",
                     this,
                     context
-                );
+                )
             }
+
 
             itemView.check_follow.setOnClickListener {
                 if (it.check_follow.isChecked == true) {
-                    it.check_follow.setTextColor(itemView.resources.getColor(R.color.white))
                     it.check_follow.text = "구독취소"
 //                    followerCount.setText("1")
+                    itemView.check_follow.setTextColor(itemView.resources.getColor(R.color.white))
                     memberViewModel.memberSubscribe2(item.m_seq!!, my_m_seq, "true")
                     memberViewModel.addNotifiaction(my_m_seq,item.m_seq!!,0,"구독알림","님이 구독중 입니다.")
-
-
                 } else {
-                    it.check_follow.setTextColor(itemView.resources.getColor(R.color.black))
                     it.check_follow.text = "구독하기"
 //                    followerCount.setText("0")
+                    itemView.check_follow.setTextColor(itemView.resources.getColor(R.color.black))
                     memberViewModel.memberSubscribe2(item.m_seq!!, my_m_seq, "false")
 
 

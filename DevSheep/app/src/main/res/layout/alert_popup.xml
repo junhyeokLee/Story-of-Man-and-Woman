@@ -16,6 +16,6 @@
         android:text="ddqw"
         android:textColor="@color/gray"
         android:textSize="12sp"
-        android:fontFamily="@font/apple_sd_gothic_neo_t"
+        android:fontFamily="@font/apple_sd_gothic_neo_l"
         ></TextView>
 </LinearLayout>

@@ -216,9 +216,9 @@ class FeedEditActivity : AppCompatActivity() {
                         stringBuffer.append(file.name).append("\n")
                         richwysiwygeditor.getContent().insertImage(
                             "http://www.storymaw.com/data/feed/" + EMAIL + "/" + file.name,
-                            ""+getCount()
+                            file.name
                         )
-                        increaseCount()
+//                        increaseCount()
                     }
                 }
                 override fun onFailure(

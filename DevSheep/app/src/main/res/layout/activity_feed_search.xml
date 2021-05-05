@@ -32,7 +32,7 @@
                 android:text="남과 여"
                 android:textSize="18sp"
                 android:textColor="@color/black"
-                android:fontFamily="@font/apple_sd_gothic_neo_t"
+                android:fontFamily="@font/apple_sd_gothic_neo_l"
                 android:layout_marginLeft="16dp"
                 android:transitionName="@string/tag_name"
                 />
@@ -45,21 +45,21 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:fontFamily="@font/apple_sd_gothic_neo_t"
+                    android:fontFamily="@font/apple_sd_gothic_neo_l"
                     android:gravity="center|right"
                     android:paddingRight="12dp"
                     android:text="남/여"
-                    android:textColor="@color/blue_gray_light"
+                    android:textColor="@color/gray"
                     android:textSize="11sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:fontFamily="@font/apple_sd_gothic_neo_t"
+                    android:fontFamily="@font/apple_sd_gothic_neo_l"
                     android:gravity="center|right"
                     android:paddingRight="4dp"
                     android:text="20대 / 30대"
-                    android:textColor="@color/blue_gray_light"
+                    android:textColor="@color/gray"
                     android:textSize="11sp" />
             </LinearLayout>
 

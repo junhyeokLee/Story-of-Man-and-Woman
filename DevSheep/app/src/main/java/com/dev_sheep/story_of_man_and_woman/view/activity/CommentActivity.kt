@@ -14,12 +14,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dev_sheep.story_of_man_and_woman.R
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Comment
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
 import com.dev_sheep.story_of_man_and_woman.view.adapter.CommentAdapter
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
@@ -46,7 +48,7 @@ class CommentActivity : AppCompatActivity(){
     lateinit var mShimmerViewContainer: ShimmerFrameLayout
     lateinit var iv_back : ImageView
     private var empty : View? = null
-    private var limit: Int = 15
+    private var limit: Int = 50
     private var offset: Int = 0
     private var visibleItemCount = 0
     private var totalItemCount = 0
@@ -138,11 +140,12 @@ class CommentActivity : AppCompatActivity(){
         linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 
-        val single = APIService.FEED_SERVICE.getComment(Integer.parseInt(feed_seq),offset,limit)
-        single.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
+        feedViewModel.getComment2(Integer.parseInt(feed_seq),offset,limit)
+        //라이브데이터
+        feedViewModel.listCommentOfFeed.observe(this, Observer(function = fun(commentList: MutableList<Comment>?) {
+            commentList?.let {
                 if(it.size > 0) {
+                    empty!!.visibility = View.GONE
                     mCommentAdapter = CommentAdapter(it, this, feedViewModel,memberViewModel,object :CommentAdapter.OnLastIndexListener{
                         override fun OnLastIndex(last_index: Boolean) {
                             if(last_index == false){
@@ -150,9 +153,7 @@ class CommentActivity : AppCompatActivity(){
                             }else if(last_index == true){
                                 EndlessScroll(true)
                             }
-
                         }
-
                     })
                     handlerFeed.postDelayed({
                         shimmer_view_container_comment?.stopShimmerAnimation()
@@ -170,14 +171,8 @@ class CommentActivity : AppCompatActivity(){
                     shimmer_view_container_comment?.visibility = View.GONE
                     empty!!.visibility = View.VISIBLE
                 }
-
-            },{
-                shimmer_view_container_comment?.visibility = View.GONE
-                empty!!.visibility = View.VISIBLE
-                Log.e("get comment 실패 = ",it.message.toString())
-
-            })
-
+            }
+        }))
 
         iv_back.apply {
             setOnClickListener {
@@ -192,7 +187,7 @@ class CommentActivity : AppCompatActivity(){
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (!recyclerView.canScrollVertically(1)) {
                     if (isLoading == false) {
-                        val single = APIService.FEED_SERVICE.getComment(Integer.parseInt(feed_seq),offset,addLimit())
+                        val single = APIService.FEED_SERVICE.getComment2(Integer.parseInt(feed_seq),offset,addLimit())
                         single.subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe({
@@ -217,12 +212,11 @@ class CommentActivity : AppCompatActivity(){
 
     override fun onPause() {
         super.onPause()
-        initData()
         shimmer_view_container_comment?.startShimmerAnimation()
     }
 
     private fun addLimit() : Int{
-        limit += 15
+        limit += 50
         return limit
     }
 

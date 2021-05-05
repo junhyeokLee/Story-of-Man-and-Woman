@@ -76,7 +76,8 @@
 
         <activity android:name=".view.activity.FeedSearchActivity">
         </activity>
-        <activity android:name=".view.activity.FeedActivity">
+        <activity android:name=".view.activity.FeedActivity"
+            >
         </activity>
         <activity android:name=".view.activity.FeedEditActivity"
             android:theme="@style/WriteTheme"

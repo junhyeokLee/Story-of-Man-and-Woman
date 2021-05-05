@@ -11,6 +11,7 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
+import android.text.method.TextKeyListener.clear
 import android.text.style.ClickableSpan
 import android.util.Log
 import android.view.*
@@ -31,6 +32,7 @@ import com.dev_sheep.story_of_man_and_woman.view.Assymetric.AsymmetricRecyclerVi
 import com.dev_sheep.story_of_man_and_woman.view.Assymetric.AsymmetricRecyclerViewAdapter
 import com.dev_sheep.story_of_man_and_woman.view.Assymetric.Utils
 import com.dev_sheep.story_of_man_and_woman.view.activity.CommentActivity
+import com.dev_sheep.story_of_man_and_woman.view.activity.FeedActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.FeedEditActivity
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import kotlinx.android.synthetic.main.adapter_feed.view.*
@@ -111,13 +113,31 @@ class FeedAdapter(
 
 
     fun updateList(feeds: MutableList<Feed>) {
-        // diif util 리사이클러뷰 재활용 능력 향상시켜줌 깜빡임 현상없어짐
-        val diffUtil = BaseDiffUtil(feeds, this.list)
-        val diffResult = DiffUtil.calculateDiff(diffUtil)
 
         this.list.clear()
         this.list.addAll(feeds)
-        diffResult.dispatchUpdatesTo(this)
+        notifyItemInserted(this.list.size)
+        // diif util 리사이클러뷰 재활용 능력 향상시켜줌 깜빡임 현상없어짐
+
+//        feeds?.let {
+//            val diffUtil = BaseDiffUtil(feeds, this.list)
+//            val diffResult = DiffUtil.calculateDiff(diffUtil)
+//
+//            this.list.run {
+//                clear()
+//                addAll(feeds)
+//                diffResult.dispatchUpdatesTo(this@FeedAdapter)
+//
+//            }
+//        }
+
+//        val diffUtil = BaseDiffUtil(feeds, this.list)
+//        val diffResult = DiffUtil.calculateDiff(diffUtil)
+//        this.list.clear()
+//        this.list.addAll(feeds)
+//
+//        diffResult.dispatchUpdatesTo(this)
+
 
     }
     fun clearList(){
@@ -176,19 +196,14 @@ class FeedAdapter(
         private var favoriteButton: CheckBox = itemView.findViewById(R.id.favorite_btn)
         private val favoriteValue: TextView = itemView.findViewById(R.id.like_count)
         private val bookmarkButton: CheckBox = itemView.findViewById(R.id.bookmark)
-        private val iv_comment : ImageView = itemView.findViewById(R.id.iv_comment)
         private val layout_comment : LinearLayout = itemView.findViewById(R.id.layout_comment)
         private val layout_view : LinearLayout = itemView.findViewById(R.id.layout_view)
-        private val layout_favorite : LinearLayout = itemView.findViewById(R.id.layout_favorite)
-        private val layout_bookmark : LinearLayout = itemView.findViewById(R.id.layout_bookmark)
-        private val tv_comment_count : TextView = itemView.findViewById(R.id.tv_comment_count)
-        private val img_profile : ImageView = itemView.findViewById(R.id.img_profile)
         private val m_nick : TextView = itemView.findViewById(R.id.tv_m_nick)
-        private val profile_layout : RelativeLayout = itemView.findViewById(R.id.profile_layout)
+        private val profile_layout : LinearLayout = itemView.findViewById(R.id.profile_layout)
         private val content : TextView = itemView.findViewById(R.id.tv_content)
         private val recycler_layout : LinearLayout = itemView.findViewById(R.id.recycler_layout)
-        private val ib_menu : ImageButton = itemView.findViewById(R.id.ib_menu)
-        //        private val content_img : ImageView = itemView.findViewById(R.id.content_img)
+        private val recycler_frame_layout: FrameLayout = itemView.findViewById(R.id.recycler_frame_layout)
+        private val recyclerView : AsymmetricRecyclerView = itemView.findViewById(R.id.recyclerView)
         private var sdf : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         private val onClickFeedView = onClickViewListener
         private val onClickFeedLike = onClickLikeListener
@@ -196,7 +211,6 @@ class FeedAdapter(
         private val onClickProfile = onClickProfileListener
         private val onClickDeleteFeed = onClickDeleteFeedListener
         private val onEndlessScrollListener = onEndlessScrollListener
-        private val recyclerView : AsymmetricRecyclerView = itemView.findViewById(R.id.recyclerView)
         lateinit var m_seq : String
         lateinit var my_m_seq:String
         private var isLoadingAdded = isLoadingAdded
@@ -225,12 +239,13 @@ class FeedAdapter(
             }
             bookmarkButton.setOnCheckedChangeListener(null)
             favoriteButton.setOnCheckedChangeListener(null)
+//            favoriteLayout.setOnClickListener(this)
             // 북마크 체크
 //            feedViewModel.onCheckedBookMark(m_seq,item.feed_seq,bookmarkButton)
 
             itemView.tv_m_nick.text = item.creater
             itemView.tv_title.text = item.title
-            content.text = Jsoup.parse(item.content).text()
+//            content.text = Jsoup.parse(item.content).text()
             itemView.tv_age.text = item.creater_age
             itemView.tag_id.text = "# "+item.tag_name
             itemView.tv_feed_date.text = calculateTime(sdf.parse(item.feed_date))
@@ -238,6 +253,12 @@ class FeedAdapter(
             itemView.tv_comment_count.text = item.comment_no.toString()
             itemView.like_count.text = item.like_no.toString()
             itemView.tv_gender.text = item.creater_gender
+
+            itemView.setOnClickListener {
+                Log.e("click evebt","dwqdqw")
+            onClickFeedView.OnClickFeed(item, itemView.tv_m_nick, itemView.img_profile, itemView.favorite_btn, itemView.bookmark, position)
+            }
+
             itemView.ib_menu.setOnClickListener {
                 val popupMenu = PopupMenu(itemView.context, itemView.ib_menu, Gravity.START)
                 popupMenu.menuInflater.inflate(R.menu.menu_popup, popupMenu.menu)
@@ -246,12 +267,10 @@ class FeedAdapter(
                     popupMenu.menu.findItem(R.id.item_alarm).setVisible(false) // 자신의 피드일경우 신고하기 안보이기
                     popupMenu.menu.findItem(R.id.item_edit).setVisible(true)  // 자신의 피드일경우 삭제하기 보이기
                     popupMenu.menu.findItem(R.id.item_delete).setVisible(true)  // 자신의 피드일경우 삭제하기 보이기
-
                 }else{
                     popupMenu.menu.findItem(R.id.item_alarm).setVisible(true)
                     popupMenu.menu.findItem(R.id.item_edit).setVisible(false)
                     popupMenu.menu.findItem(R.id.item_delete).setVisible(false)
-
                 }
                 popupMenu.setOnMenuItemClickListener { item_menu: MenuItem ->
                     when(item_menu?.itemId){
@@ -285,15 +304,16 @@ class FeedAdapter(
             }
 
 
-                itemView.recyclerView.apply {
-                    var adapter = ChildAdapter(item.images, 0, item.images.size)
+
+            itemView.recyclerView.apply {
+                    var adapter = ChildAdapter(item.images, 0, item.images.size,
+                    item,itemView.favorite_btn,itemView.bookmark,feedViewModel)
                     val currentOffset = 0
                     var isCol2Avail = false
                     var colSpan = if (Math.random() < 0.2f) 2 else 1
                     if (colSpan == 2 && !isCol2Avail) isCol2Avail =
                         true else if (colSpan == 2 && isCol2Avail) colSpan = 1
                     val rowSpan = colSpan
-
 
                     if (item.images.size >= 3 && item.images != null) {
                         setRequestedColumnCount(3)
@@ -309,7 +329,8 @@ class FeedAdapter(
                             item.images.get(2).setPosition(currentOffset + 2);
                         }
                         requestedHorizontalSpacing = Utils.dpToPx(itemView.context, 1F)
-                         adapter = ChildAdapter(item.images, 3, item.images.size)
+                         adapter = ChildAdapter(item.images, 3, item.images.size,
+                             item,itemView.favorite_btn,itemView.bookmark,feedViewModel)
 
                     } else if (item.images.size == 2 && item.images != null) {
                         setRequestedColumnCount(2)
@@ -322,7 +343,8 @@ class FeedAdapter(
                             item.images.get(1).setPosition(currentOffset + 1);
                         }
                         requestedHorizontalSpacing = Utils.dpToPx(itemView.context, 1F)
-                         adapter = ChildAdapter(item.images, 2, item.images.size)
+                         adapter = ChildAdapter(item.images, 2, item.images.size,
+                             item,itemView.favorite_btn,itemView.bookmark,feedViewModel)
 
                     } else if (item.images.size == 1 && item.images != null) {
                         setRequestedColumnCount(1)
@@ -333,22 +355,19 @@ class FeedAdapter(
                         }
 
                         requestedHorizontalSpacing = Utils.dpToPx(itemView.context, 1F)
-                         adapter = ChildAdapter(item.images, 1, item.images.size)
+                         adapter = ChildAdapter(item.images, 1, item.images.size,
+                             item,itemView.favorite_btn,itemView.bookmark,feedViewModel)
 
                     }
                     else if (item.images.size == 0 || item.images == null || item.images.isEmpty()) {
-                        adapter = ChildAdapter(item.images, 0, item.images.size)
+                        adapter = ChildAdapter(item.images, 0, item.images.size,
+                            item,itemView.favorite_btn,itemView.bookmark,feedViewModel)
                     }
 
                     this.setAdapter(AsymmetricRecyclerViewAdapter(itemView.context, this, adapter))
-
                     isDebugging = true
-                    addItemDecoration(
-                        SpacesItemDecoration(
-                            itemView.context.getResources()
-                                .getDimensionPixelSize(R.dimen.recycler_padding)
-                        )
-                    )
+                    addItemDecoration(SpacesItemDecoration(itemView.context.getResources()
+                                .getDimensionPixelSize(R.dimen.recycler_padding)))
 
                 }
 
@@ -364,6 +383,7 @@ class FeedAdapter(
                     .load(item.creater_image_url)
                     .apply(RequestOptions().circleCrop())
                     .placeholder(android.R.color.transparent)
+                    .error(R.drawable.error_loading)
                     .into(itemView.img_profile)
 
 
@@ -484,20 +504,7 @@ class FeedAdapter(
                     }
                 }
             }
-
-            with(layout_view){
-                setOnClickListener {
-                    onClickFeedView.OnClickFeed(
-                        item,
-                        itemView.tv_m_nick,
-                        itemView.img_profile,
-                        itemView.favorite_btn,
-                        itemView.bookmark,
-                        position
-                    )
-                }
-            }
-            with(recycler_layout){
+            with(recyclerView){
                 setOnClickListener {
                     onClickFeedView.OnClickFeed(
                         item,

@@ -13,10 +13,12 @@ import android.widget.*
 import androidx.core.view.ViewCompat
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dev_sheep.story_of_man_and_woman.R
+import com.dev_sheep.story_of_man_and_woman.data.database.entity.Comment
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService
 import com.dev_sheep.story_of_man_and_woman.view.activity.FeedActivity
@@ -36,11 +38,8 @@ class SearchFeedFragment(title:String) : Fragment() {
     private val feedViewModel: FeedViewModel by viewModel()
     private var recyclerView: RecyclerView? = null
     lateinit var mFeedAdapterTag: FeedAdapterTag
-    private var limit: Int = 20
+    private var limit: Int = 50
     private var offset: Int = 0
-    private var visibleItemCount = 0
-    private var totalItemCount = 0
-    private var lastVisibleItemPosition = 0
     private lateinit var linearLayoutManager: LinearLayoutManager
     private var shimmer_view_container_search_feed: ShimmerFrameLayout? = null
     lateinit var contexts: Context
@@ -48,10 +47,6 @@ class SearchFeedFragment(title:String) : Fragment() {
     lateinit var tv_empty: TextView
     var title = title
     lateinit var m_seq : String
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -88,12 +83,11 @@ class SearchFeedFragment(title:String) : Fragment() {
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 
         // 전체보기
-        val single = APIService.FEED_SERVICE.getFeedSearch(title,offset,limit)
-        single.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-
-                if(it.size > 0 || it.isNotEmpty()) {
+        feedViewModel.getFeedSearch(title,offset,limit)
+        //라이브데이터
+        feedViewModel.listOfFeeds.observe(this, Observer(function = fun(feedList: MutableList<Feed>?) {
+            feedList?.let {
+                if (it.isNotEmpty()) {
                     empty!!.visibility = View.GONE
                     mFeedAdapterTag = FeedAdapterTag(
                         it,
@@ -117,7 +111,6 @@ class SearchFeedFragment(title:String) : Fragment() {
                                 lintent.putExtra("bookmark_checked" + feed.feed_seq, cb2.isChecked)
                                 lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
 
-//                        context.transitionName = position.toString()
                                 context!!.startActivity(lintent)
                                 (context as Activity).overridePendingTransition(
                                     R.anim.fragment_fade_in,
@@ -194,17 +187,11 @@ class SearchFeedFragment(title:String) : Fragment() {
                     shimmer_view_container_search_feed?.visibility = View.GONE
                     empty!!.visibility = View.VISIBLE
                 }
-
-            }, {
-                shimmer_view_container_search_feed?.visibility = View.GONE
-                empty!!.visibility = View.VISIBLE
-                Log.d("feed 보기 실패함", "" + it.message)
-            })
-
+            }
+        }))
     }
     fun EndlessScroll(isLoading: Boolean){
         // 무한스크롤
-
         recyclerView!!.setOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (!recyclerView.canScrollVertically(1)) {
@@ -233,12 +220,10 @@ class SearchFeedFragment(title:String) : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        initData()
-        shimmer_view_container_search_feed?.startShimmerAnimation()
     }
 
     private fun addLimit() : Int{
-        limit += 10
+        limit += 50
         return limit
     }
 }

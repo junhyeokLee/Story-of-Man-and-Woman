@@ -17,6 +17,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -40,7 +41,7 @@ class ProfileSubscriberFragment: Fragment() {
     lateinit var mFeedAdapter: FeedAdapter
     private var empty : View? = null
     lateinit var tv_empty: TextView
-    private var limit: Int = 10
+    private var limit: Int = 50
     private var offset: Int = 0
     private var visibleItemCount = 0
     private var totalItemCount = 0
@@ -81,13 +82,10 @@ class ProfileSubscriberFragment: Fragment() {
         val handlerFeed: Handler = Handler(Looper.myLooper())
         linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-
-        // 전체보기
-        val single = FEED_SERVICE.getListSubscribe(m_seq,offset,limit)
-        single.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-
+        feedViewModel.getListSubscribe(m_seq,offset,limit)
+        //라이브 데이터
+        feedViewModel.listOfFeeds.observe(this, Observer(function = fun(feedList: MutableList<Feed>?) {
+            feedList?.let {
                 if (it.size > 0) {
                     empty!!.visibility = View.GONE
                     mFeedAdapter = FeedAdapter(
@@ -206,14 +204,10 @@ class ProfileSubscriberFragment: Fragment() {
                 }else{
                     shimmer_view_container_profile_feed?.visibility = View.GONE
                     empty!!.visibility = View.VISIBLE
-
                 }
+            }
+        }))
 
-            }, {
-                shimmer_view_container_profile_feed?.visibility = View.GONE
-                empty!!.visibility = View.VISIBLE
-                Log.d("feed 보기 실패함", "" + it.message)
-            })
     }
 
     fun EndlessScroll(isLoading: Boolean){
@@ -296,7 +290,7 @@ class ProfileSubscriberFragment: Fragment() {
     }
 
     private fun addLimit() : Int{
-        limit += 10
+        limit += 50
         return limit
     }
 }

@@ -1,6 +1,8 @@
 package com.dev_sheep.story_of_man_and_woman.data.remote.api
 
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.*
+import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.Single
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -32,6 +34,10 @@ interface MemberService {
     fun getMemberSeq(@Field("email") email: String, @Field("password") password: String): Single<Member>
 
     @FormUrlEncoded
+    @POST("delete_member.php")
+    fun deleteMember(@Field("m_seq") m_seq:String) : Completable
+
+    @FormUrlEncoded
     @POST("login_check.php")
     fun getMemberCheck(@Field("email") email: String, @Field("password") password: String): Single<String>
 
@@ -52,11 +58,11 @@ interface MemberService {
 
     @FormUrlEncoded
     @POST("member_edit_profile.php")
-    fun editMemberProfile(@Field("m_seq") m_seq:String,@Field("profile_img") profile_img:String ): Single<Member>
+    fun editMemberProfile(@Field("m_seq") m_seq:String,@Field("profile_img") profile_img:String ): Completable
 
     @FormUrlEncoded
     @POST("member_edit_profilebackground.php")
-    fun editMemberProfileBackground(@Field("m_seq") m_seq:String,@Field("background_img") background_img:String ): Single<Member>
+    fun editMemberProfileBackground(@Field("m_seq") m_seq:String,@Field("background_img") background_img:String ): Completable
 
     @FormUrlEncoded
     @POST("follow_member_request.php")
@@ -88,7 +94,7 @@ interface MemberService {
 
     @FormUrlEncoded
     @POST("update_profile.php")
-    fun updateProfile(@Field("m_seq") m_seq: String, @Field("memo") memo: String, @Field("gender") gender:String, @Field("age") age: String): Single<Void>
+    fun updateProfile(@Field("m_seq") m_seq: String, @Field("memo") memo: String, @Field("gender") gender:String, @Field("age") age: String):Completable
 
     @FormUrlEncoded
     @POST("password_search_send.php")
@@ -98,13 +104,13 @@ interface MemberService {
     @POST("notification_add.php")
     fun addNotification(@Field("m_seq") m_seq: String,@Field("target_m_seq") target_m_seq: String
     ,@Field("noti_content_seq") noti_content_seq: Int,@Field("noti_type") noti_type: String
-    ,@Field("noti_message") noti_message: String): Single<Notification>
+    ,@Field("noti_message") noti_message: String): Completable
 
     @GET("notification_get.php")
-    fun getNotification(@Query("target_m_seq") target_m_seq: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Single<MutableList<Notification>>
+    fun getNotification(@Query("target_m_seq") target_m_seq: String,@Query("offset") offset: Int,@Query("limit") limit: Int): Observable<MutableList<Notification>>
 
 
     @FormUrlEncoded
     @POST("notification_edit.php")
-    fun editNotification(@Field("noti_seq") noti_seq: Int): Single<Notification>
+    fun editNotification(@Field("noti_seq") noti_seq: Int): Completable
 }

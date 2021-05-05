@@ -20,8 +20,8 @@
 
         <ImageView
             android:id="@+id/iv_profile"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
             android:transitionName="@string/profile_img"
             ></ImageView>
 
@@ -37,7 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:fontFamily="@font/apple_sd_gothic_neo_b"
+                android:fontFamily="@font/apple_sd_gothic_neo_l"
                 android:gravity="center|left"
                 android:text="julia"
                 android:textColor="@color/black"
@@ -63,11 +63,11 @@
                         android:id="@+id/tv_gender"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/apple_sd_gothic_neo_t"
+                        android:fontFamily="@font/apple_sd_gothic_neo_l"
                         android:gravity="center"
                         android:text="남"
-                        android:textColor="@color/blue_gray_light"
-                        android:textSize="13sp" />
+                        android:textColor="@color/gray"
+                        android:textSize="12sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -77,18 +77,18 @@
                         android:layout_marginRight="4dp"
                         android:gravity="center"
                         android:text="/"
-                        android:textColor="@color/blue_gray_light"
-                        android:textSize="13sp" />
+                        android:textColor="@color/gray"
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/tv_age"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/apple_sd_gothic_neo_t"
+                        android:fontFamily="@font/apple_sd_gothic_neo_l"
                         android:gravity="center"
                         android:text="20대"
-                        android:textColor="@color/blue_gray_light"
-                        android:textSize="13sp" />
+                        android:textColor="@color/gray"
+                        android:textSize="12sp" />
 
 
                 </LinearLayout>
@@ -103,14 +103,14 @@
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:background="@drawable/background_follow_rounded"
             android:button="@null"
-            android:fontFamily="@font/apple_sd_gothic_neo_t"
+            android:fontFamily="@font/apple_sd_gothic_neo_l"
             android:gravity="center"
             android:orientation="vertical"
-            android:text="구독하기"
             android:textColor="@color/black"
-            android:textSize="11sp"></CheckBox>
+            android:text="구독하기"
+            android:background="@drawable/background_follow_rounded"
+            android:textSize="12sp"></CheckBox>
 
     </LinearLayout>
 

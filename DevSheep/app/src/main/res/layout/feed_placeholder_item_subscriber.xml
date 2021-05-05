@@ -7,8 +7,8 @@
 
     <View
         android:id="@+id/thumbnail"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
         android:layout_marginRight="@dimen/activity_padding"
         android:background="@drawable/shape" />
 
@@ -16,7 +16,7 @@
         android:id="@+id/name"
         android:layout_width="150dp"
         android:layout_height="12dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="4dp"
         android:layout_toRightOf="@id/thumbnail"
         android:background="@color/placeholder_bg" />
 
@@ -35,7 +35,7 @@
         android:layout_marginLeft="60dp"
         android:layout_marginRight="@dimen/activity_padding"
         android:layout_toEndOf="@id/name"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="2dp"
         android:layout_alignParentRight="true"
         android:background="@drawable/background_follow_rounded_placeholder" />
 

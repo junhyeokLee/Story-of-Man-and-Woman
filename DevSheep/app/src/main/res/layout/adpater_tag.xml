@@ -14,9 +14,9 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="#사연/이별"
-        android:textColor="@color/sub_Accent"
+        android:textColor="@color/gray"
         android:textSize="14sp"
-        app:fontFamily="@font/apple_sd_gothic_neo_t"
+        app:fontFamily="@font/apple_sd_gothic_neo_l"
         tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

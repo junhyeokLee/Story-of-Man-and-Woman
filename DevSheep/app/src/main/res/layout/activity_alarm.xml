@@ -36,7 +36,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/apple_sd_gothic_neo_t"
+                android:fontFamily="@font/apple_sd_gothic_neo_l"
                 android:text="알림"
                 android:textColor="#000000"
                 android:textSize="18sp"

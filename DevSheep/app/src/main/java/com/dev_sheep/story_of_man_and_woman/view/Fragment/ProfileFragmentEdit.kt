@@ -148,59 +148,53 @@ class ProfileFragmentEdit(my_m_seq:String): Fragment(),View.OnClickListener {
 
     private fun initData(){
 
-        if(memberViewModel == null){
-            return
-        }
+        if(memberViewModel == null) return
 
-        val single = MEMBER_SERVICE.getMember(m_seq)
-        single.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                profileNickname.text = it.nick_name.toString()
-                profileEmail.text = it.email.toString()
-                gender.text = it.gender.toString()
-                age.text = it.age.toString()
-                if(it.memo.toString().equals("null")){
-                    intro.text = ""
-                }else{
-                    intro.text = it.memo.toString()
-                }
+        memberViewModel.getMember(m_seq)
+        memberViewModel.memberLivedata.observe(this, androidx.lifecycle.Observer {
+            profileNickname.text = it.nick_name.toString()
+            profileEmail.text = it.email.toString()
+            gender.text = it.gender.toString()
+            age.text = it.age.toString()
+            if(it.memo.toString().equals("null")){
+                intro.text = ""
+            }else{
+                intro.text = it.memo.toString()
+            }
 
-                if(it.profile_img == "null"){
-                    profile_img = "http://storymaw.com/data/member/user.png"
-                    Glide.with(this)
-                        .load(profile_img)
-                        .apply(RequestOptions().circleCrop())
-                        .placeholder(android.R.color.transparent)
-                        .into(profileImage)
-                }
-                else if(it.profile_img == null){
-                    profile_img = "http://storymaw.com/data/member/user.png"
-                    Glide.with(this)
-                        .load(profile_img)
-                        .apply(RequestOptions().circleCrop())
-                        .placeholder(android.R.color.transparent)
-                        .into(profileImage)
-                }
-                else {
-                    profile_img = it.profile_img!!
-                    Glide.with(this)
-                        .load(profile_img)
-                        .apply(RequestOptions().circleCrop())
-                        .placeholder(android.R.color.transparent)
-                        .into(profileImage)
-                }
+            if(it.profile_img == "null"){
+                profile_img = "http://storymaw.com/data/member/user.png"
+                Glide.with(this)
+                    .load(profile_img)
+                    .apply(RequestOptions().circleCrop())
+                    .placeholder(android.R.color.transparent)
+                    .into(profileImage)
+            }
+            else if(it.profile_img == null){
+                profile_img = "http://storymaw.com/data/member/user.png"
+                Glide.with(this)
+                    .load(profile_img)
+                    .apply(RequestOptions().circleCrop())
+                    .placeholder(android.R.color.transparent)
+                    .into(profileImage)
+            }
+            else {
+                profile_img = it.profile_img!!
+                Glide.with(this)
+                    .load(profile_img)
+                    .apply(RequestOptions().circleCrop())
+                    .placeholder(android.R.color.transparent)
+                    .into(profileImage)
+            }
 
-                if (it.background_img != null) {
-                    Glide.with(this)
-                        .load(it.background_img)
-                        .placeholder(android.R.color.transparent)
-                        .into(profileBackground)
-                }
+            if (it.background_img != null) {
+                Glide.with(this)
+                    .load(it.background_img)
+                    .placeholder(android.R.color.transparent)
+                    .into(profileBackground)
+            }
+        })
 
-            }, {
-                Log.e("실패 Get Member", "" + it.message)
-            })
 
     }
 

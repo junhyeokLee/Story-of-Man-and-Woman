@@ -17,14 +17,14 @@
             android:layout_height="wrap_content"
             android:background="@drawable/bottom_border_white"
             android:hint="@string/headline"
-            android:fontFamily="@font/roboto_regular"
-            android:textColor="@color/black"
-            android:textColorHint="@color/sub_Accent"
+            android:fontFamily="@font/apple_sd_gothic_neo_b"
+            android:textColor="@color/title_color"
+            android:textColorHint="@color/main_gray"
             android:paddingStart="12dp"
             android:paddingTop="8dp"
             android:paddingEnd="0dp"
             android:paddingBottom="8dp"
-            android:textSize="24sp" />
+            android:textSize="18sp" />
 
         <HorizontalScrollView
             android:id="@+id/write_center_toolbar"
@@ -67,9 +67,9 @@
                 android:layout_height="match_parent"
                 android:layout_margin="12dp"
                 android:text="# 태그"
-                android:textColor="@color/sub_Accent"
-                android:textSize="18sp"
-                android:fontFamily="@font/ridi_batang">
+                android:textColor="@color/main_Accent3"
+                android:textSize="14sp"
+                android:fontFamily="@font/apple_sd_gothic_neo_l">
             </TextView>
 
         </LinearLayout>
@@ -107,7 +107,7 @@
                         android:background="?attr/selectableItemBackground"
                         android:contentDescription="@string/ImageUpload"
                         android:scaleType="fitCenter"
-                        android:tint="@color/sub_Accent"
+                        android:tint="@color/gray"
                         android:src="@drawable/ic_photo"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -124,7 +124,7 @@
                         android:contentDescription="@string/videoUpload"
                         android:scaleType="fitCenter"
                         android:layout_marginLeft="12dp"
-                        android:tint="@color/sub_Accent"
+                        android:tint="@color/gray"
                         android:src="@drawable/ic_youtube"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -142,7 +142,7 @@
                         android:background="?attr/selectableItemBackground"
                         android:contentDescription="@string/textSize"
                         android:scaleType="fitCenter"
-                        android:tint="@color/sub_Accent"
+                        android:tint="@color/gray"
                         android:src="@drawable/headline" />
 
                     <com.lumyjuwon.richwysiwygeditor.WriteCustomButton
@@ -154,7 +154,7 @@
                         android:background="?attr/selectableItemBackground"
                         android:contentDescription="@string/textColor"
                         android:scaleType="fitCenter"
-                        android:tint="@color/sub_Accent"
+                        android:tint="@color/gray"
                         android:src="@drawable/baseline_format_color_text_black_48" />
 
                     <com.lumyjuwon.richwysiwygeditor.WriteCustomButton
@@ -162,7 +162,7 @@
                         android:layout_width="@dimen/toolbar_icon_width_size"
                         android:layout_height="@dimen/toolbar_icon_height_size"
                         android:layout_marginLeft="12dp"
-                        android:tint="@color/sub_Accent"
+                        android:tint="@color/gray"
                         android:background="?attr/selectableItemBackground"
                         android:contentDescription="@string/textBold"
                         android:scaleType="fitCenter"
@@ -216,7 +216,7 @@
                         android:contentDescription="@string/textAlign"
                         android:scaleType="fitCenter"
                         android:layout_marginLeft="12dp"
-                        android:tint="@color/sub_Accent"
+                        android:tint="@color/gray"
                         android:src="@drawable/outline_format_align_left_black_48" />
 
 
@@ -225,7 +225,7 @@
                         android:layout_width="@dimen/toolbar_icon_width_size"
                         android:layout_height="@dimen/toolbar_icon_height_size"
                         android:layout_marginLeft="12dp"
-                        android:tint="@color/sub_Accent"
+                        android:tint="@color/gray"
                         android:background="?attr/selectableItemBackground"
                         android:contentDescription="@string/textColor"
                         android:scaleType="fitCenter"
@@ -240,7 +240,7 @@
                         android:background="?attr/selectableItemBackground"
                         android:contentDescription="@string/textItalic"
                         android:layout_marginLeft="12dp"
-                        android:tint="@color/sub_Accent"
+                        android:tint="@color/gray"
                         android:scaleType="fitCenter"
                         android:src="@drawable/outline_format_italic_black_48" />
 

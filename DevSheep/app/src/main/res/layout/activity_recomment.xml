@@ -41,7 +41,7 @@
                 android:text="답글"
                 android:textSize="18sp"
                 android:textColor="@color/black"
-                android:fontFamily="@font/apple_sd_gothic_neo_t"
+                android:fontFamily="@font/apple_sd_gothic_neo_l"
                 android:layout_marginLeft="16dp"
                 />
 
@@ -67,8 +67,8 @@
 
                     <ImageView
                         android:id="@+id/img_profile"
-                        android:layout_width="38dp"
-                        android:layout_height="38dp"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:layout_alignParentStart="true"
                         android:layout_gravity="center|top"
                         android:src="@drawable/user"
@@ -97,7 +97,7 @@
                                 android:layout_marginLeft="8dp"
                                 android:maxLines="1"
                                 android:text="null"
-                                android:fontFamily="@font/apple_sd_gothic_neo_t"
+                                android:fontFamily="@font/apple_sd_gothic_neo_l"
                                 android:textColor="@color/black"
                                 android:transitionName="@string/profile_name"
                                 android:textSize="14sp" />
@@ -117,9 +117,9 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:text="남"
-                                android:textSize="13sp"
-                                android:textColor="@color/blue_gray_light"
-                                android:fontFamily="@font/ridi_batang"
+                                android:textSize="12sp"
+                                android:textColor="@color/gray"
+                                android:fontFamily="@font/apple_sd_gothic_neo_l"
                                 />
                             <TextView
                                 android:layout_width="wrap_content"
@@ -127,10 +127,10 @@
                                 android:layout_marginLeft="4dp"
                                 android:layout_marginRight="4dp"
                                 android:gravity="center"
-                                android:fontFamily="@font/apple_sd_gothic_neo_t"
+                                android:fontFamily="@font/apple_sd_gothic_neo_l"
                                 android:layout_gravity="center"
-                                android:textColor="@color/blue_gray_light"
-                                android:textSize="13sp"
+                                android:textColor="@color/gray"
+                                android:textSize="12sp"
                                 android:text="/"
                                 />
                             <TextView
@@ -140,8 +140,8 @@
                                 android:gravity="center"
                                 android:text="20대"
                                 android:textSize="13sp"
-                                android:textColor="@color/blue_gray_light"
-                                android:fontFamily="@font/apple_sd_gothic_neo_t"
+                                android:textColor="@color/gray"
+                                android:fontFamily="@font/apple_sd_gothic_neo_l"
                                 />
 
                         </LinearLayout>
@@ -160,8 +160,8 @@
                                 android:layout_marginTop="6dp"
                                 android:layout_marginBottom="6dp"
                                 android:layout_weight="1"
-                                android:fontFamily="@font/apple_sd_gothic_neo_t"
-                                android:textSize="14sp"
+                                android:fontFamily="@font/apple_sd_gothic_neo_l"
+                                android:textSize="12sp"
                                 android:textColor="@color/black"
                                 android:text="댓글" />
                         </LinearLayout>
@@ -179,8 +179,9 @@
                                 android:layout_alignParentStart="true"
                                 android:gravity="center|left"
                                 android:layout_marginLeft="8dp"
-                                android:textSize="13sp"
-                                android:textColor="@color/blue_gray_light"
+                                android:textSize="11sp"
+                                android:fontFamily="@font/apple_sd_gothic_neo_l"
+                                android:textColor="@color/gray"
                                 android:text="시간 전" />
 
 
@@ -195,11 +196,11 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:fontFamily="@font/apple_sd_gothic_neo_t"
+                                    android:fontFamily="@font/apple_sd_gothic_neo_l"
                                     android:gravity="right"
                                     android:text="좋아요"
                                     android:layout_marginRight="6dp"
-                                    android:textColor="@color/blue_gray_light"
+                                    android:textColor="@color/gray"
                                     android:textSize="11sp" />
                                 <CheckBox
                                     android:id="@+id/favorite_btn"
@@ -213,12 +214,12 @@
                                     android:id="@+id/like_count"
                                     android:layout_width="wrap_content"
                                     android:layout_height="match_parent"
-                                    android:fontFamily="@font/apple_sd_gothic_neo_t"
+                                    android:fontFamily="@font/apple_sd_gothic_neo_l"
                                     android:gravity="center"
-                                    android:textColor="@color/sub_Accent"
-                                    android:layout_marginLeft="12dp"
+                                    android:textColor="@color/gray"
+                                    android:layout_marginLeft="4dp"
                                     android:text="0"
-                                    android:textSize="14sp" />
+                                    android:textSize="12sp" />
                             </LinearLayout>
 
                         </LinearLayout>

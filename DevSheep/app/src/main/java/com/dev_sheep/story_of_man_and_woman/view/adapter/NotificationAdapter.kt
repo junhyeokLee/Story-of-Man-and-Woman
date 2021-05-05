@@ -207,13 +207,17 @@ class NotificationAdapter(private val notiList: MutableList<Notification>,
     }
 
     fun updateList(notis: MutableList<Notification>) {
-        // diif util 리사이클러뷰 재활용 능력 향상시켜줌 깜빡임 현상없어짐
-        val diffUtil = BaseDiffUtil(notis, this.notiList)
-        val diffResult = DiffUtil.calculateDiff(diffUtil)
-
         this.notiList.clear()
         this.notiList.addAll(notis)
-        diffResult.dispatchUpdatesTo(this)
+        notifyItemInserted(this.notiList.size)
+
+        // diif util 리사이클러뷰 재활용 능력 향상시켜줌 깜빡임 현상없어짐
+//        val diffUtil = BaseDiffUtil(notis, this.notiList)
+//        val diffResult = DiffUtil.calculateDiff(diffUtil)
+//
+//        this.notiList.clear()
+//        this.notiList.addAll(notis)
+//        diffResult.dispatchUpdatesTo(this)
 
     }
 

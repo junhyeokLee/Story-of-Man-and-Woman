@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,13 +17,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.preference.EditTextPreference
+import androidx.fragment.app.FragmentTransaction
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.dev_sheep.story_of_man_and_woman.R
-import com.dev_sheep.story_of_man_and_woman.view.activity.FeedActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.LoginActivity
-import com.dev_sheep.story_of_man_and_woman.view.activity.MainActivity
+import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class PreferenceFragment : Fragment(),View.OnClickListener {
@@ -49,47 +52,46 @@ class PreferenceFragment : Fragment(),View.OnClickListener {
 
     class PrefsFragment : PreferenceFragmentCompat(),
         SharedPreferences.OnSharedPreferenceChangeListener {
-
+        lateinit var my_m_seq : String
+        private val memberViewModel: MemberViewModel by viewModel()
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             addPreferencesFromResource(R.xml.preferences_ui)
-
 //            findPreference(getString(R.string.pref_show_values)).onPreferenceClickListener =
 //                showValuesListener
-
         }
-
-
         override fun onPreferenceTreeClick(preference: Preference?): Boolean {
+
+            val preferences: SharedPreferences = context!!.getSharedPreferences(
+                "m_seq",
+                Context.MODE_PRIVATE
+            )
+                 my_m_seq = preferences.getString("inputMseq", "")
+
                 val key = preference?.key
                 if(key.equals("logout")){
                     showLogOutPopup()
                 }
-//                else if(key.equals("delete")){
-//                    Toast.makeText(activity!!, "계정삭제함", Toast.LENGTH_SHORT)
-//                        .show()
-//                }
+                else if(key.equals("delete")){
+                    showDeletePopup()
+
+                }
+            else if(key.equals("profile")){
+                    ProfileCommit(my_m_seq)
+                }else if(key.equals("email_supprot")){
+//                    Email_support()
+                    sendEmail()
+                }
             return false
         }
-
-
         override fun onResume() {
             super.onResume()
             preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
         }
-
         override fun onPause() {
             super.onPause()
             preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
         }
-
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-            when (key) {
-                getString(R.string.pref_string1) -> {
-                    val pref = findPreference(key) as EditTextPreference
-                    Toast.makeText(activity!!, "String changed to ${pref.text}", Toast.LENGTH_SHORT)
-                        .show()
-                }
-            }
         }
 
         private fun showLogOutPopup(){
@@ -102,9 +104,13 @@ class PreferenceFragment : Fragment(),View.OnClickListener {
             val alertDialog = AlertDialog.Builder(activity!!)
                 .setTitle("로그아웃")
                 .setPositiveButton("네") { dialog, which ->
-                    val editor: SharedPreferences.Editor =  activity?.getSharedPreferences("autoLogin",AppCompatActivity.MODE_PRIVATE)!!.edit()
+                    val editor: SharedPreferences.Editor =  activity?.getSharedPreferences(
+                        "autoLogin",
+                        AppCompatActivity.MODE_PRIVATE
+                    )!!.edit()
                     editor.clear()
                     editor.commit()
+                    FirebaseAuth.getInstance().signOut()
 
                     val lintent = Intent(context, LoginActivity::class.java)
                     (context as Activity).startActivity(lintent)
@@ -129,31 +135,37 @@ class PreferenceFragment : Fragment(),View.OnClickListener {
             val btn_color_cancel : Button = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)
 
             if(btn_color != null){
-                btn_color.setTextColor(resources.getColor(R.color.main_Accent))
+                btn_color.setTextColor(resources.getColor(R.color.main_Accent3))
             }
             if(btn_color_cancel != null){
-                btn_color_cancel.setTextColor(resources.getColor(R.color.main_Accent))
+                btn_color_cancel.setTextColor(resources.getColor(R.color.main_Accent3))
             }
 
         }
 
+        // 구글Firebase계정과 서버계정을 함께 지워함
         private fun showDeletePopup(){
             val inflater = activity?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val view = inflater.inflate(R.layout.alert_popup, null)
             val textView: TextView = view.findViewById(R.id.textView)
-
-            textView.text = "회원탈퇴 하시겠습니까?"
-
+            textView.text = "계정을 삭제 하시겠습니까?"
             val alertDialog = AlertDialog.Builder(activity!!)
-                .setTitle("회원탈퇴")
+                .setTitle("계정삭제")
                 .setPositiveButton("네") { dialog, which ->
-//                    Toast.makeText(activity?.applicationContext, "회원탈퇴", Toast.LENGTH_SHORT).show()
-                    val editor: SharedPreferences.Editor =  activity?.getSharedPreferences("autoLogin",AppCompatActivity.MODE_PRIVATE)!!.edit()
+                    val editor: SharedPreferences.Editor =  activity?.getSharedPreferences(
+                        "autoLogin",
+                        AppCompatActivity.MODE_PRIVATE
+                    )!!.edit()
                     editor.clear()
                     editor.commit()
-
-
-
+                    memberViewModel.deleteMember(my_m_seq)
+                    FirebaseAuth.getInstance().currentUser!!.delete().addOnCompleteListener { task ->
+                        if(task.isSuccessful){
+                            Toast.makeText(context, "아이디 삭제가 완료되었습니다", Toast.LENGTH_LONG).show()
+                            //로그아웃처리
+                            FirebaseAuth.getInstance().signOut()
+                        }
+                    }
 
                     val lintent = Intent(context, LoginActivity::class.java)
                     (context as Activity).startActivity(lintent)
@@ -178,38 +190,58 @@ class PreferenceFragment : Fragment(),View.OnClickListener {
             val btn_color_cancel : Button = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)
 
             if(btn_color != null){
-                btn_color.setTextColor(resources.getColor(R.color.main_Accent))
+                btn_color.setTextColor(resources.getColor(R.color.main_Accent3))
             }
             if(btn_color_cancel != null){
-                btn_color_cancel.setTextColor(resources.getColor(R.color.main_Accent))
+                btn_color_cancel.setTextColor(resources.getColor(R.color.main_Accent3))
             }
 
         }
 
-        private val showValuesListener = Preference.OnPreferenceClickListener { _ ->
-            val prefHelper = PreferenceHelper(activity!!)
-            AlertDialog.Builder(activity!!)
-                .setTitle("환경설정")
-                .setMessage(
-                    String.format(
-                        getString(R.string.app_name),
-                        prefHelper.getBooleanPref(PreferenceHelper.BooleanPref.setting1),
-                        prefHelper.getBooleanPref(PreferenceHelper.BooleanPref.setting2),
-                        prefHelper.getStringPref(PreferenceHelper.StringPref.setting1),
-                        prefHelper.getStringPref(PreferenceHelper.StringPref.setting2),
-                        prefHelper.getIntPref(PreferenceHelper.IntPref.setting1),
-                        prefHelper.getIntPref(PreferenceHelper.IntPref.setting2)
-                    )
-                )
-                .setPositiveButton("닫기") { _, _ -> }
-                .show()
-            true
+        private fun ProfileCommit(my_m_seq: String){
+
+            val ProfileFragmentEdit = ProfileFragmentEdit(my_m_seq);
+            var ProfileFragmnet = (context as AppCompatActivity).supportFragmentManager
+            var fragmentTransaction: FragmentTransaction = ProfileFragmnet.beginTransaction()
+            fragmentTransaction.setReorderingAllowed(true)
+            fragmentTransaction.setCustomAnimations(
+                R.anim.fragment_fade_in,
+                R.anim.fragment_fade_out
+            )
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.replace(R.id.frameLayout, ProfileFragmentEdit);
+            fragmentTransaction.commit()
+
         }
 
+        fun sendEmail() {
+            val intent = Intent(Intent.ACTION_SENDTO)
+            intent.data = Uri.parse("mailto: junhyeoklee616@gmail.com")
+//            intent.putExtra(Intent.EXTRA_EMAIL, "junhyeoklee616@gmail.com")
+//            intent.putExtra(Intent.EXTRA_SUBJECT, "사연남녀 문의사항 :")
+            startActivity(intent)
+        }
+
+//        private val showValuesListener = Preference.OnPreferenceClickListener { _ ->
+//            val prefHelper = PreferenceHelper(activity!!)
+//            AlertDialog.Builder(activity!!)
+//                .setTitle("환경설정")
+//                .setMessage(
+//                    String.format(
+//                        getString(R.string.app_name),
+//                        prefHelper.getBooleanPref(PreferenceHelper.BooleanPref.setting1),
+//                        prefHelper.getBooleanPref(PreferenceHelper.BooleanPref.setting2),
+//                        prefHelper.getBooleanPref(PreferenceHelper.BooleanPref.setting3),
+//                        prefHelper.getBooleanPref(PreferenceHelper.BooleanPref.setting4),
+//                        prefHelper.getBooleanPref(PreferenceHelper.BooleanPref.setting5)
+//                    )
+//                )
+//                .setPositiveButton("닫기") { _, _ -> }
+//                .show()
+//            true
+//        }
 
     }
-
-
 
     override fun onClick(v: View?) {
 

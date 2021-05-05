@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="MainActivity"
+    tools:context=".view.activity.MainActivity"
     tools:showIn="@layout/activity_main"
     android:padding="1dp"
     android:id="@+id/main_container">
@@ -68,7 +68,7 @@
             android:layout_gravity="end"
             android:adjustViewBounds="true"
             android:gravity="center|right"
-            app:fontFamily="@font/circularstd_bold"
+            app:fontFamily="@font/apple_sd_gothic_neo_l"
             android:text="사연남녀"
             android:textSize="26sp" />
 
