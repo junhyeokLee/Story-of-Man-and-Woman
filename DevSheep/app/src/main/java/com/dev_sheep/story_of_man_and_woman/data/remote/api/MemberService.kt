@@ -34,6 +34,14 @@ interface MemberService {
     fun getMemberSeq(@Field("email") email: String, @Field("password") password: String): Single<Member>
 
     @FormUrlEncoded
+    @POST("member_set_user_token.php")
+    fun setUserToken(@Field("token") token: String, @Field("m_seq") m_seq: String): Completable
+
+    @FormUrlEncoded
+    @POST("member_push.php")
+    fun memberPush(@Field("target_m_seq") target_m_seq:String,@Field("m_seq") m_seq:String,@Field("type") type: String): Completable
+
+    @FormUrlEncoded
     @POST("delete_member.php")
     fun deleteMember(@Field("m_seq") m_seq:String) : Completable
 

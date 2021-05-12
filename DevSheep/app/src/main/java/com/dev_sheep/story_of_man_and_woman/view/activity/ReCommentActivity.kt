@@ -246,14 +246,10 @@ class ReCommentActivity : AppCompatActivity() {
                         editText.text.toString()
                     )
                     // 댓글단 사람의
-                    memberViewModel.addNotifiaction(
-                        m_seq,
-                        writer_seq,
-                        Integer.parseInt(feed_seq),
-                        "대댓글 알림",
-                        "님이 '\' " + comment_text + " '\' 에 댓글을 남겼습니다."+
-                                "  -  "+editText.text.toString()
-                    )
+                    if(!writer_seq.equals(m_seq)) {
+                        memberViewModel.addNotifiaction(m_seq, writer_seq, Integer.parseInt(feed_seq), "대댓글 알림", "님이 '\' " + comment_text + " '\' 에 댓글을 남겼습니다."+ "  -  "+editText.text.toString())
+                        memberViewModel.memberPush(writer_seq,m_seq, "feedrecomment")
+                    }
 
                     Toast.makeText(this, "댓글등록.", Toast.LENGTH_SHORT).show();
 

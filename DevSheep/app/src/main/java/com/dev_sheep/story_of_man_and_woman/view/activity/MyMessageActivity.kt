@@ -169,8 +169,7 @@ class MyMessageActivity  : AppCompatActivity() {
     }
 
     private fun verifyUserIsLoggedIn() {
-        val uid = FirebaseAuth.getInstance().uid
-        if (uid == null) {
+        if (myId == null) {
             val intent = Intent(this, SignUpActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
             Toast.makeText(
@@ -182,11 +181,7 @@ class MyMessageActivity  : AppCompatActivity() {
         }
     }
 
-    private fun showDeletePopup(
-        position: Int,
-        fromId: String,
-        toId: String
-    ){
+    private fun showDeletePopup(position: Int, fromId: String, toId: String){
         val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = inflater.inflate(R.layout.alert_popup,null)
         val textView: TextView = view.findViewById(R.id.textView)

@@ -112,15 +112,10 @@ class CommentActivity : AppCompatActivity(){
                         Integer.parseInt(feed_seq),
                         editText.text.toString()
                     )
-                    memberViewModel.addNotifiaction(
-                        m_seq,
-                        feed_creater,
-                        Integer.parseInt(feed_seq),
-                        "댓글알림",
-                        "님이 '\' " + feed_title + " '\' 에 댓글을 남겼습니다."+
-                                "  -  "+editText.text.toString()
-                    )
-                    Log.e("이모지 데이터",""+editText.toString())
+                    if(!feed_creater.equals(m_seq)) {
+                        memberViewModel.addNotifiaction(m_seq, feed_creater, Integer.parseInt(feed_seq), "댓글알림", "님이 '\' " + feed_title + " '\' 에 댓글을 남겼습니다."+ "  -  "+editText.text.toString())
+                        memberViewModel.memberPush(feed_creater,m_seq, "feedcomment")
+                    }
                     Toast.makeText(this, "댓글등록.", Toast.LENGTH_SHORT).show();
 
                     initData()

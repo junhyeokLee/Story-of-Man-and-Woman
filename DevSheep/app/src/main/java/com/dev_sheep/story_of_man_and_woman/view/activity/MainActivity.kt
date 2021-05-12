@@ -1,7 +1,7 @@
 package com.dev_sheep.story_of_man_and_woman.view.activity
 
-import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
@@ -10,7 +10,9 @@ import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.view.Fragment.*
 import com.dev_sheep.story_of_man_and_woman.view.dialog.WriteDialog
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -27,16 +29,21 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         // 자동로그인 email password 정보 가져와서 m_seq 저장하기
         val auto = getSharedPreferences("autoLogin", AppCompatActivity.MODE_PRIVATE)
         var loginEmail = auto.getString("inputEmail", null)
         var loginPassword = auto.getString("inputPassword", null)
 
-        if (loginEmail != null && loginPassword != null) {
-            memberViewModel.getMemberSeq(loginEmail, loginPassword, this) // viewModel에서 Mseq 정보저장하기
-        }
 
+
+        if (loginEmail != null && loginPassword != null) {
+            memberViewModel.getMemberSeq(loginEmail, loginPassword,memberViewModel, this) // viewModel에서 Mseq,firebase Token 정보저장하기
+
+//            val getM_seq = getSharedPreferences("m_seq", AppCompatActivity.MODE_PRIVATE)
+//            val my_m_seq = getM_seq.getString("inputMseq", null)
+//            updateFirebaseToken(my_m_seq)
+
+        }
 
         val bottomNavigation = bottomNavigationView
 
@@ -142,6 +149,19 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
         return true
     }
+
+//    private fun updateFirebaseToken(m_seq:String) {
+//
+//        FirebaseMessaging.getInstance().getToken()
+//            .addOnCompleteListener(OnCompleteListener<String?> { task ->
+//                if (!task.isSuccessful) {
+//                    Log.w("ActivityMainWebView", "Fetching FCM registration token failed", task.exception)
+//                    return@OnCompleteListener
+//                }
+//                val token = task.result
+//                memberViewModel.setUserToken(token!!,m_seq)
+//            })
+//    }
 
 
 

@@ -27,8 +27,11 @@ import com.dev_sheep.story_of_man_and_woman.view.activity.AlarmActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.LoginActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.MainActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.SignUpStartActivity
+import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.messaging.FirebaseMessaging
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -37,6 +40,7 @@ class MemberRepository(private val memberService: MemberService) {
     val memberListLiveData = MutableLiveData<MutableList<Member>>()
     val memberLiveData = MutableLiveData<Member>()
     val memberListNotiLiveData = MutableLiveData<MutableList<Notification>>()
+
 
 
     fun insertMember(email: String, password: String, nick_name: String, context: Context){
@@ -51,8 +55,8 @@ class MemberRepository(private val memberService: MemberService) {
                     val auto = context.getSharedPreferences("autoLogin", AppCompatActivity.MODE_PRIVATE)
                     // auto의 loginEmail , loginPassword에 값을 저장해 줍니다.
                     val autoLogin : SharedPreferences.Editor = auto.edit()
-                    autoLogin.putString("inputEmail", email);
-                    autoLogin.putString("inputPassword",password);
+                    autoLogin.putString("inputEmail", email)
+                    autoLogin.putString("inputPassword",password)
                     //꼭 commit()을 해줘야 값이 저장됩니다 ㅎㅎ
                     autoLogin.commit();
                     val intent = Intent(context, SignUpStartActivity::class.java)
@@ -93,7 +97,21 @@ class MemberRepository(private val memberService: MemberService) {
             })
     }
 
-    fun getMemberSeq(email: String,password: String,context: Context){
+    fun setUserToken(token:String,m_seq: String){
+        val complate = memberService.setUserToken(token,m_seq)
+        complate.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+    }
+
+    fun memberPush(target_m_seq: String,m_seq:String,type: String){
+        val complate = memberService.memberPush(target_m_seq,m_seq,type)
+        complate.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+    }
+
+    fun getMemberSeq(email: String,password: String,memberViewModel: MemberViewModel,context: Context){
         val single = memberService.getMemberSeq(email,password)
         single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -110,6 +128,9 @@ class MemberRepository(private val memberService: MemberService) {
                 getSeq.putString("inputGender", gender);
                 //꼭 commit()을 해줘야 값이 저장됩니다 ㅎㅎ
                 getSeq.commit();
+
+                // 파이어베이스 토큰 업데이트
+                updateFirebaseToken(it.m_seq!!,memberViewModel)
 
             },{
                 Log.d("실패 Get Member", "" + it.message)
@@ -509,6 +530,20 @@ class MemberRepository(private val memberService: MemberService) {
             .addOnFailureListener {
                 Log.d(SearchTitleFragment.TAG, "파이어베이스 유저 저장실패: ${it.message}")
             }
+    }
+
+    // 파이어베이스 토큰
+    private fun updateFirebaseToken(m_seq:String,memberViewModel:MemberViewModel) {
+
+        FirebaseMessaging.getInstance().getToken()
+            .addOnCompleteListener(OnCompleteListener<String?> { task ->
+                if (!task.isSuccessful) {
+                    Log.w("ActivityMainWebView", "Fetching FCM registration token failed", task.exception)
+                    return@OnCompleteListener
+                }
+                val token = task.result
+                memberViewModel.setUserToken(token!!,m_seq)
+            })
     }
 
 }

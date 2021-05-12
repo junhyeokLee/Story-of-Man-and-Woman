@@ -14,6 +14,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
@@ -171,10 +172,7 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
         tablayout?.apply {
             addTab(this.newTab().setIcon(R.drawable.ic_write).setText("나의 이야기"))
             addTab(this.newTab().setIcon(R.drawable.ic_heart_empty).setText("구독자 에게"))
-
         }
-        Log.e("m_seq userfragment",""+m_seq)
-        Log.e("feed_activity_m_seq userfragment",""+feed_activity_m_seq)
 
 
         if(m_seq == "null") {
@@ -192,7 +190,6 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
                 memberViewModel.memberSubscribeChecked2(m_seq,my_m_seq,"checked",this,context);
                 memberViewModel.memberMySubscribeCount(m_seq,followCount)
                 memberViewModel.memberUserSubscribeCount(m_seq,followerCount)
-
             }
         }
         viewpager?.adapter = viewPagerAdapter
@@ -424,6 +421,8 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
                 ImageDialog(context!!,profile_img).start("")
             }
             R.id.check_follow -> {
+                // 환경설정 스위치
+                val preferences_push: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
                 if(m_seq == "null") {
                     if (followChecked.isChecked == true) {
@@ -432,6 +431,8 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
 //                    followerCount.setText("1")
                         memberViewModel.memberSubscribe(feed_activity_m_seq, my_m_seq, "true", followerCount)
                         memberViewModel.addNotifiaction(my_m_seq,feed_activity_m_seq,0,"구독알림","님이 구독중 입니다.")
+              
+                        memberViewModel.memberPush(feed_activity_m_seq,my_m_seq,"subscriber")
 
                     } else {
                         followChecked.setTextColor(resources.getColor(R.color.black))
@@ -446,6 +447,8 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
 //                    followerCount.setText("1")
                         memberViewModel.memberSubscribe(m_seq, my_m_seq, "true", followerCount)
                         memberViewModel.addNotifiaction(my_m_seq,m_seq,0,"구독알림","님이 구독중 입니다.")
+                        //구독하기 push
+                        memberViewModel.memberPush(m_seq,my_m_seq,"subscriber")
 
 
                     } else {

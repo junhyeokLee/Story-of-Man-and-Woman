@@ -25,7 +25,7 @@ class WriteDialog : BottomSheetDialogFragment() {
         val subscribeStory: LinearLayout = contentView.findViewById(R.id.subscribe_layout)
 
         myStory.setOnClickListener {
-            val lintent = Intent(context, SelectTagActivity::class.java)
+            val lintent = Intent(context, MystoryActivity::class.java)
             lintent.putExtra("type",TYPE_PUBLIC)
             startActivity(lintent)
             (context as Activity).overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
@@ -34,7 +34,7 @@ class WriteDialog : BottomSheetDialogFragment() {
         }
 
         subscribeStory.setOnClickListener {
-            val lintent = Intent(context, SelectTagActivity::class.java)
+            val lintent = Intent(context, MystoryActivity::class.java)
             lintent.putExtra("type",TYPE_SUBSCRIBER)
             startActivity(lintent)
             (context as Activity).overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
@@ -43,7 +43,7 @@ class WriteDialog : BottomSheetDialogFragment() {
         }
 
         scretStory.setOnClickListener {
-            val lintent = Intent(context, SelectTagActivity::class.java)
+            val lintent = Intent(context, MystoryActivity::class.java)
             lintent.putExtra("type",TYPE_PRIVATE)
             startActivity(lintent)
             (context as Activity).overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)

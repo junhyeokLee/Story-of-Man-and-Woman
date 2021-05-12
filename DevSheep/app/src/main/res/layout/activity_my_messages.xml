@@ -37,9 +37,9 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/apple_sd_gothic_neo_l"
                 android:text="쪽지함"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                android:layout_marginLeft="16dp" />
+                android:textColor="@color/main_Accent3"
+                android:textSize="14sp"
+                android:layout_marginLeft="14dp" />
 
         </androidx.appcompat.widget.Toolbar>
 

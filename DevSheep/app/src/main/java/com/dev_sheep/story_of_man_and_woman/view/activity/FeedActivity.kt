@@ -42,17 +42,16 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
     var feed_seq: Int? = null
     var feed_creater : String? = null
     var feed_title: String? = null
+    var tag_seq: Int = 0
     lateinit var type : String
     private var limit: Int = 5
     private var offset: Int = 0
     private var sdf : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
     companion object {
-
         const val EXTRA_POSITION = "extra_position"
         const val DEFAULT_POSITION = -1
-         var FEED_SEQ =  1
-
+        var FEED_SEQ =  1
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -112,6 +111,10 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
         if(intent.hasExtra("feed_seq")) {
             feed_seq = intent.getIntExtra("feed_seq", 0)
             FEED_SEQ = intent.getIntExtra("feed_seq", 0)
+        }
+
+        if(intent.hasExtra("tag_seq")) {
+            tag_seq = intent.getIntExtra("tag_seq", 0)
         }
 
         if(intent.hasExtra("creater_seq")) {
@@ -230,6 +233,12 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                                 favCount = it.like_no?.plus(1).toString()
                                 editor.putBoolean("checked" + feed_seq, true)
                                 editor.apply()
+
+                                if(!it.creater_seq.equals(m_seq)) {
+                                    memberViewModel.addNotifiaction(m_seq, it.creater_seq!!, it.feed_seq, "피드알림", "님이 '\' " + it.title + " '\' 를 좋아합니다.")
+                                    memberViewModel.memberPush(it.creater_seq!!, m_seq, "feedlike")
+                                }
+
                             } else {
                                 feedViewModel.increaseLikeCount(feed_seq!!, "false")
                                 favCount = it.like_no.toString()
@@ -328,6 +337,8 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                     check_follow.text = "구독취소"
                     memberViewModel.memberSubscribe(m_seq, my_m_seq, "true", check_follow)
                     memberViewModel.addNotifiaction(my_m_seq,m_seq,0,"구독알림","님이 구독중 입니다.")
+                    memberViewModel.memberPush(m_seq,my_m_seq,"subscriber")
+
                 } else {
                     check_follow.text = "구독하기"
                     memberViewModel.memberSubscribe(m_seq, my_m_seq, "false", check_follow)
@@ -338,6 +349,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
                 val intent = Intent(this, FeedEditActivity::class.java)
                 intent.putExtra("feed_seq", feed_seq)
                 intent.putExtra("type",type)
+                intent.putExtra("tag_seq",tag_seq)
 
                 startActivity(intent)
                 overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)

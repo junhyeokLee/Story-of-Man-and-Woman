@@ -37,7 +37,8 @@ interface FeedService {
         @Field("feed_seq") feed_seq: Int,
         @Field("title") title: String,
         @Field("content") content: String,
-        @Field("type") type: String
+        @Field("type") type: String,
+        @Field("tag_seq") tag_seq: Int
     ): Completable // 특정값을 반환할 필요없음
 
     @FormUrlEncoded

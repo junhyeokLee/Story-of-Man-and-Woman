@@ -53,10 +53,20 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
     var memberListLivedata = memberRepository.memberListLiveData
     // Member Notification List
     var memberListNotiLiveData = memberRepository.memberListNotiLiveData
+
     init {
         memberLivedata.value = Member()
         memberListLivedata.value = mutableListOf()
         memberListNotiLiveData.value = mutableListOf()
+    }
+
+    // 파이어베이스 토큰
+    fun setUserToken(token:String,m_seq: String){
+        memberRepository.setUserToken(token,m_seq)
+    }
+    // 파이어베이스 푸쉬
+    fun memberPush(target_m_seq: String,m_seq:String,type: String){
+        memberRepository.memberPush(target_m_seq,m_seq,type)
     }
 
     // userSearch 리스트
@@ -94,8 +104,8 @@ class MemberViewModel(private val memberService: MemberService) :  ViewModel(){
         memberRepository.deleteFollowMember(m_seq)
     }
     // 회원가져오기
-    fun getMemberSeq(email: String,password: String,context: Context){
-        memberRepository.getMemberSeq(email,password,context)
+    fun getMemberSeq(email: String,password: String,memberViewModel:MemberViewModel,context: Context){
+        memberRepository.getMemberSeq(email,password,memberViewModel,context)
     }
     // 회원 정보 가져오기
     fun getMember(m_seq: String){

@@ -109,6 +109,7 @@ class SearchFeedFragment(title:String) : Fragment() {
                                 lintent.putExtra("creater_seq", feed.creater_seq)
                                 lintent.putExtra("feed_title",feed.title)
                                 lintent.putExtra("bookmark_checked" + feed.feed_seq, cb2.isChecked)
+                                lintent.putExtra("tag_seq",feed.tag_seq)
                                 lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
 
                                 context!!.startActivity(lintent)

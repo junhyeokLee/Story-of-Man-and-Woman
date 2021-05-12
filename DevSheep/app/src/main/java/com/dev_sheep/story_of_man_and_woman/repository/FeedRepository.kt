@@ -272,8 +272,8 @@ val feedTagListLiveData = MutableLiveData<MutableList<Tag>>()
         single.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe()
     }
 
-    fun updateFeed(feed_seq: Int,title:String,content:String,type:String) {
-        val single = feedService.updateFeed(feed_seq, title, content, type)
+    fun updateFeed(feed_seq: Int,title:String,content:String,type:String,tag_seq: Int) {
+        val single = feedService.updateFeed(feed_seq, title, content, type,tag_seq)
         single.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe()
     }
 

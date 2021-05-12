@@ -150,6 +150,7 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
                             lintent.putExtra("checked" + feed.feed_seq, cb.isChecked)
                             lintent.putExtra("creater_seq", feed.creater_seq)
                             lintent.putExtra("bookmark_checked" + feed.feed_seq, cb2.isChecked)
+                            lintent.putExtra("tag_seq",feed.tag_seq)
                             lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
 //                        context.transitionName = position.toString()
                             startActivity(lintent)

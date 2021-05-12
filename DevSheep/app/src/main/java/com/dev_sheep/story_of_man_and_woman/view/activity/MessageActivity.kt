@@ -51,8 +51,12 @@ class MessageActivity : AppCompatActivity(){
         iv_back.setOnClickListener {
             onBackPressed()
         }
-        tv_user_nickname.text = toUser.username
 
+        if(toUser.username == null){
+         tv_user_nickname.text = "탈퇴한 회원입니다."
+        }else {
+        tv_user_nickname.text = toUser.username
+        }
         fetchCurrentUser()
         listenForMessages()
         message_ReadUpdate()

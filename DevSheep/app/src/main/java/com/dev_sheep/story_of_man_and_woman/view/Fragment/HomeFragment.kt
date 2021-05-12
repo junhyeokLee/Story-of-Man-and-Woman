@@ -8,36 +8,32 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.paging.PagedList
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
-import com.dev_sheep.story_of_man_and_woman.data.database.entity.Tag
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
 import com.dev_sheep.story_of_man_and_woman.view.activity.FeedActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.FeedRankActivity
-import com.dev_sheep.story_of_man_and_woman.view.adapter.*
+import com.dev_sheep.story_of_man_and_woman.view.adapter.FeedAdapter
+import com.dev_sheep.story_of_man_and_woman.view.adapter.TodayMainAdapter
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import com.facebook.shimmer.ShimmerFrameLayout
+import com.google.firebase.messaging.FirebaseMessaging
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.iv_alarm
 import kotlinx.android.synthetic.main.fragment_home.iv_alarm_dot
 import kotlinx.android.synthetic.main.fragment_home3.*
@@ -73,6 +69,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     private var offset: Int = 0
     private lateinit var linearLayoutManager: LinearLayoutManager // 태그 자동스크롤 위한 초기화 제한
     private lateinit var linearLayoutManagerToday: LinearLayoutManager // 태그 자동스크롤 위한 초기화 제한
+    val firebaseMessaging = FirebaseMessaging.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -80,6 +77,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home3, null)
         contexts = view.context
+
 
         setHasOptionsMenu(true);
 
@@ -105,6 +103,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         memberViewModel.getNotificationCount(m_seq, iv_alarm, iv_alarm_dot, contexts)
         if(contexts != null) {
             initData()
+            getPreference()
         }
     }
 
@@ -159,24 +158,23 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                                 lintent.putExtra("checked" + feed.feed_seq, cb.isChecked)
                                 lintent.putExtra("creater_seq", feed.creater_seq)
                                 lintent.putExtra("feed_title", feed.title)
-                                lintent.putExtra(
-                                    "bookmark_checked" + feed.feed_seq,
-                                    cb2.isChecked
-                                )
+                                lintent.putExtra("tag_seq",feed.tag_seq)
+                                lintent.putExtra("bookmark_checked" + feed.feed_seq, cb2.isChecked)
                                 lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
 //                        context.transitionName = position.toString()
                                 (context as Activity).startActivity(lintent)
-                                (context as Activity).overridePendingTransition(
-                                    R.anim.fragment_fade_in,
-                                    R.anim.fragment_fade_out
-                                )
+                                (context as Activity).overridePendingTransition(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
 
                             }
                         },
                         object : FeedAdapter.OnClickLikeListener {
                             override fun OnClickFeed(feed: Feed, boolean_value: String) {
                                 feedViewModel.increaseLikeCount(feed.feed_seq, boolean_value)
-                                if (boolean_value.equals("true")) { memberViewModel.addNotifiaction(m_seq, feed.creater_seq!!, feed.feed_seq, "피드알림", "님이 '\' " + feed.title + " '\' 를 좋아합니다.")
+                                if (boolean_value.equals("true")) {
+                                    if(!feed.creater_seq.equals(m_seq)) {
+                                        memberViewModel.addNotifiaction(m_seq, feed.creater_seq!!, feed.feed_seq, "피드알림", "님이 '\' " + feed.title + " '\' 를 좋아합니다.")
+                                        memberViewModel.memberPush(feed.creater_seq!!, m_seq, "feedlike")
+                                    }
                                 }
                             }
 
@@ -273,6 +271,35 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             }
         })
     }
+
+    private fun getPreference(){
+        val sharedPref =
+            PreferenceManager.getDefaultSharedPreferences(context)
+        //설정 불러오기
+
+        if (sharedPref.getBoolean("boolean2", true) == true) {
+            firebaseMessaging.subscribeToTopic("subscriber")
+        } else {
+            firebaseMessaging.unsubscribeFromTopic("subscriber")
+        }
+        if (sharedPref.getBoolean("boolean3", true) == true) {
+            firebaseMessaging.subscribeToTopic("feedlike")
+        } else {
+            firebaseMessaging.unsubscribeFromTopic("feedlike")
+        }
+        if (sharedPref.getBoolean("boolean3", true) == true) {
+            firebaseMessaging.subscribeToTopic("feedcomment")
+        } else {
+            firebaseMessaging.unsubscribeFromTopic("feedcomment")
+        }
+        if (sharedPref.getBoolean("boolean3", true) == true) {
+            firebaseMessaging.subscribeToTopic("feedRecomment")
+        } else {
+            firebaseMessaging.unsubscribeFromTopic("feedRecomment")
+        }
+
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
 //        inflater.inflate(R.menu.menu_search, menu)

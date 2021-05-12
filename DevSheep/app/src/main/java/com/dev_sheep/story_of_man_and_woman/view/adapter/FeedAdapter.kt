@@ -25,14 +25,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
-import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
-import com.dev_sheep.story_of_man_and_woman.utils.BaseDiffUtil
 import com.dev_sheep.story_of_man_and_woman.utils.SpacesItemDecoration
 import com.dev_sheep.story_of_man_and_woman.view.Assymetric.AsymmetricRecyclerView
 import com.dev_sheep.story_of_man_and_woman.view.Assymetric.AsymmetricRecyclerViewAdapter
 import com.dev_sheep.story_of_man_and_woman.view.Assymetric.Utils
 import com.dev_sheep.story_of_man_and_woman.view.activity.CommentActivity
-import com.dev_sheep.story_of_man_and_woman.view.activity.FeedActivity
 import com.dev_sheep.story_of_man_and_woman.view.activity.FeedEditActivity
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import kotlinx.android.synthetic.main.adapter_feed.view.*
@@ -284,6 +281,7 @@ class FeedAdapter(
                             val intent = Intent(itemView.context, FeedEditActivity::class.java)
                             intent.putExtra("feed_seq", item.feed_seq)
                             intent.putExtra("type", item.type)
+                            intent.putExtra("tag_seq",item.tag_seq)
                             (itemView.context as Activity).startActivity(intent)
                             (itemView.context as Activity).overridePendingTransition(
                                 R.anim.fragment_fade_in,

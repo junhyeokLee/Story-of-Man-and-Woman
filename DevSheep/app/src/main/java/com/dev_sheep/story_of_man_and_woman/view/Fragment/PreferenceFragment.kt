@@ -25,7 +25,7 @@ import com.dev_sheep.story_of_man_and_woman.view.activity.LoginActivity
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -40,15 +40,9 @@ class PreferenceFragment : Fragment(),View.OnClickListener {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_preference, null)
         iv_back = view.findViewById(R.id.iv_back)
-        activity?.supportFragmentManager
-            ?.beginTransaction()
-            ?.replace(R.id.settings, PrefsFragment())
-            ?.commit()
-
+        activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.settings, PrefsFragment())?.commit()
         iv_back.setOnClickListener(this)
-
         return view
-
     }
 
     class PrefsFragment : PreferenceFragmentCompat(),
@@ -56,31 +50,103 @@ class PreferenceFragment : Fragment(),View.OnClickListener {
         lateinit var my_m_seq : String
         private val memberViewModel: MemberViewModel by viewModel()
         private val feedViewModel: FeedViewModel by viewModel()
+        var TOPICK_Subscriber = "subscriber"
+        var TOPICK_FeedLike = "feedlike"
+        var TOPICK_FeedComment = "feedcomment"
+        var TOPICK_FeedReComment = "feedrecomment"
+        val firebaseMessaging = FirebaseMessaging.getInstance()
+
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             addPreferencesFromResource(R.xml.preferences_ui)
 //            findPreference(getString(R.string.pref_show_values)).onPreferenceClickListener =
 //                showValuesListener
+
+            // 구독알림
+            val pushSubcriberNotification = findPreference("boolean2")
+            pushSubcriberNotification.setOnPreferenceChangeListener { preference, newValue ->
+                if(newValue == false){
+                    firebaseMessaging.unsubscribeFromTopic(TOPICK_Subscriber)
+                }else{
+                    firebaseMessaging.subscribeToTopic(TOPICK_Subscriber)
+                }
+                true
+            }
+
+            val pushFeedLikeNotification = findPreference("boolean3")
+            pushFeedLikeNotification.setOnPreferenceChangeListener { preference, newValue ->
+                if(newValue == false){
+                    firebaseMessaging.unsubscribeFromTopic(TOPICK_FeedLike)
+                }else{
+                    firebaseMessaging.subscribeToTopic(TOPICK_FeedLike)
+                }
+                true
+            }
+
+            val pushFeedCommentNotification = findPreference("boolean4")
+            pushFeedCommentNotification.setOnPreferenceChangeListener { preference, newValue ->
+                if(newValue == false){
+                    firebaseMessaging.unsubscribeFromTopic(TOPICK_FeedComment)
+                }else{
+                    firebaseMessaging.subscribeToTopic(TOPICK_FeedComment)
+                }
+                true
+            }
+
+            val pushFeedReCommentNotification = findPreference("boolean5")
+            pushFeedReCommentNotification.setOnPreferenceChangeListener { preference, newValue ->
+                if(newValue == false){
+                    firebaseMessaging.unsubscribeFromTopic(TOPICK_FeedReComment)
+                }else{
+                    firebaseMessaging.subscribeToTopic(TOPICK_FeedReComment)
+                }
+                true
+            }
+
+
         }
         override fun onPreferenceTreeClick(preference: Preference?): Boolean {
 
-            val preferences: SharedPreferences = context!!.getSharedPreferences(
-                "m_seq",
-                Context.MODE_PRIVATE
-            )
+            val preferences: SharedPreferences = context!!.getSharedPreferences("m_seq", Context.MODE_PRIVATE)
                  my_m_seq = preferences.getString("inputMseq", "")
 
                 val key = preference?.key
+                if(key.equals("boolean1") == true){
+                    firebaseMessaging.subscribeToTopic("notice")
+                }else{
+                    firebaseMessaging.unsubscribeFromTopic("notice")
+                }
+                if(key.equals("boolean2") == true){
+                    firebaseMessaging.subscribeToTopic("subscriber")
+                }else{
+                    firebaseMessaging.unsubscribeFromTopic("subscriber")
+                }
+                if(key.equals("boolean3") == true){
+                    firebaseMessaging.subscribeToTopic("feedlike")
+                }else{
+                    firebaseMessaging.unsubscribeFromTopic("feedlike")
+                }
+                if(key.equals("boolean4") == true){
+                    firebaseMessaging.subscribeToTopic("feedcomment")
+                }else{
+                    firebaseMessaging.unsubscribeFromTopic("feedcomment")
+                }
+                if(key.equals("boolean5") == true){
+                    firebaseMessaging.subscribeToTopic("feedrecomment")
+                }else{
+                    firebaseMessaging.unsubscribeFromTopic("feedrecomment")
+                }
+
                 if(key.equals("logout")){
                     showLogOutPopup()
                 }
-                else if(key.equals("delete")){
+                 if(key.equals("delete")){
                     showDeletePopup()
-
                 }
-            else if(key.equals("profile")){
+                 if(key.equals("profile")){
                     ProfileCommit(my_m_seq)
-                }else if(key.equals("email_supprot")){
+                 }
+                 if(key.equals("email_supprot")){
 //                    Email_support()
                     sendEmail()
                 }

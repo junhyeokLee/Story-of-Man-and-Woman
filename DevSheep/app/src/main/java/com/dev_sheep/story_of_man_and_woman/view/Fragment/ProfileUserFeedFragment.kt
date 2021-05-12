@@ -117,6 +117,7 @@ class ProfileUserFeedFragment(get_m_seq : String): Fragment() {
                                 lintent.putExtra("creater_seq", feed.creater_seq)
                                 lintent.putExtra("feed_title",feed.title)
                                 lintent.putExtra("bookmark_checked" + feed.feed_seq, cb2.isChecked)
+                                lintent.putExtra("tag_seq",feed.tag_seq)
                                 lintent.putExtra(FeedActivity.EXTRA_POSITION, position)
 
 //                        context.transitionName = position.toString()
@@ -132,15 +133,11 @@ class ProfileUserFeedFragment(get_m_seq : String): Fragment() {
                             override fun OnClickFeed(feed: Feed, boolean_value: String) {
                                 feedViewModel.increaseLikeCount(feed.feed_seq, boolean_value)
                                 if(boolean_value.equals("true")) {
-                                    memberViewModel.addNotifiaction(
-                                        m_seq,
-                                        feed.creater_seq!!,
-                                        feed.feed_seq,
-                                        "피드알림",
-                                        "님이 '\' "
-                                                + feed.title +
-                                                " '\' 를 좋아합니다."
-                                    )
+                                    if(!feed.creater_seq.equals(m_seq)) {
+                                        memberViewModel.addNotifiaction(
+                                            m_seq, feed.creater_seq!!, feed.feed_seq, "피드알림", "님이 '\' " + feed.title + " '\' 를 좋아합니다.")
+                                        memberViewModel.memberPush(feed.creater_seq!!, m_seq, "feedlike")
+                                    }
                                 }
                             }
 

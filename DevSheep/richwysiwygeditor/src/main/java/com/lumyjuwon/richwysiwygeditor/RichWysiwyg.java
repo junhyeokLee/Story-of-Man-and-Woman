@@ -1,10 +1,12 @@
 package com.lumyjuwon.richwysiwygeditor;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -15,8 +17,10 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 
 import com.lumyjuwon.richwysiwygeditor.RichEditor.RichEditor;
@@ -33,6 +37,12 @@ public class RichWysiwyg extends LinearLayout {
 
     private EditText headline;
     private TextView tagName;
+    private int tagSeq;
+    private String typeValue = "";
+    private LinearLayout layout_iv_lock;
+    private LinearLayout layout_iv_lock_sub_open;
+    private LinearLayout layout_iv_lock_open;
+
     private RichEditor content;
     private View popupView;
     private PopupWindow mPopupWindow;
@@ -53,6 +63,8 @@ public class RichWysiwyg extends LinearLayout {
     private ArrayList<WriteCustomButton> popupButtons;
     private ArrayList<WriteCustomButton> Buttons;
     private LayoutInflater layoutInflater;
+    final CharSequence[] oItems = {"전체공개", "구독자 공개", "비공개"};
+    final CharSequence[] tagItems = {"#일상", "#남과 여", "#고민 있어요","#남자 이야기","#여자 이야기","#사랑 이야기","#연애 이야기","#아무 이야기","#질문","#잡담","#이별","#사랑과 전쟁","#결혼 이야기","#취업"};
 
     public RichWysiwyg(Context context) {
         super(context);
@@ -98,6 +110,7 @@ public class RichWysiwyg extends LinearLayout {
             }
         }
     }
+
 
     class DecorationButtonListener implements OnClickListener{
         @Override
@@ -145,9 +158,196 @@ public class RichWysiwyg extends LinearLayout {
             setNestedScrollingEnabled(false);
         }
 
+
         // Html WebView
         headline = findViewById(R.id.write_headline);
         tagName = findViewById(R.id.tv_wysiwyg_tag_name);
+        layout_iv_lock = findViewById(R.id.layout_iv_lock);
+        layout_iv_lock_open = findViewById(R.id.layout_iv_lock_open);
+        layout_iv_lock_sub_open = findViewById(R.id.layout_iv_lock_sub_open);
+
+        tagName.setText(tagItems[0]);
+        tagSeq = 1;
+
+
+        tagName.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder oDialog = new AlertDialog.Builder(getContext(),
+                        android.R.style.Theme_DeviceDefault_Light_Dialog_Alert);
+
+                oDialog.setTitle("태그선택")
+                        .setItems(tagItems, new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                if(which == 0) {
+                                    tagName.setText(tagItems[0]);
+                                    tagSeq = 1;
+                                }else if(which == 1){
+                                    tagName.setText(tagItems[1]);
+                                    tagSeq = 2;
+                                }else if(which == 2){
+                                    tagName.setText(tagItems[2]);
+                                    tagSeq = 3;
+                                }else if(which == 3){
+                                    tagName.setText(tagItems[3]);
+                                    tagSeq = 4;
+                                }else if(which == 4){
+                                    tagName.setText(tagItems[4]);
+                                    tagSeq = 5;
+                                }else if(which == 5){
+                                    tagName.setText(tagItems[5]);
+                                    tagSeq = 6;
+                                }else if(which == 6){
+                                    tagName.setText(tagItems[6]);
+                                    tagSeq = 7;
+                                }else if(which == 7){
+                                    tagName.setText(tagItems[7]);
+                                    tagSeq = 8;
+                                }else if(which == 8){
+                                    tagName.setText(tagItems[8]);
+                                    tagSeq = 9;
+                                }else if(which == 9){
+                                    tagName.setText(tagItems[9]);
+                                    tagSeq = 10;
+                                }else if(which == 10){
+                                    tagName.setText(tagItems[10]);
+                                    tagSeq = 11;
+                                }else if(which == 11){
+                                    tagName.setText(tagItems[11]);
+                                    tagSeq = 12;
+                                }else if(which == 12){
+                                    tagName.setText(tagItems[12]);
+                                    tagSeq = 13;
+                                }
+                                else if(which == 13){
+                                    tagName.setText(tagItems[13]);
+                                    tagSeq = 14;
+                                }
+
+                            }
+                        })
+                        .setCancelable(false)
+                        .show();
+
+            }
+        });
+
+
+
+
+        layout_iv_lock.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                  AlertDialog.Builder oDialog = new AlertDialog.Builder(getContext(),
+                        android.R.style.Theme_DeviceDefault_Light_Dialog_Alert);
+
+                oDialog.setItems(oItems, new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                if(which == 0) {
+                                    typeValue = "public";
+                                    layout_iv_lock_open.setVisibility(View.VISIBLE);
+                                    layout_iv_lock.setVisibility(View.GONE);
+                                    layout_iv_lock_sub_open.setVisibility(View.GONE);
+                                }else if(which == 1){
+                                    typeValue = "subscriber";
+                                    layout_iv_lock_sub_open.setVisibility(View.VISIBLE);
+                                    layout_iv_lock_open.setVisibility(View.GONE);
+                                    layout_iv_lock.setVisibility(View.GONE);
+
+                                }else if(which == 2){
+                                    typeValue = "private";
+                                    layout_iv_lock.setVisibility(View.VISIBLE);
+                                    layout_iv_lock_sub_open.setVisibility(View.GONE);
+                                    layout_iv_lock_open.setVisibility(View.GONE);
+                                }
+
+                            }
+                        })
+                        .setCancelable(false)
+                        .show();
+            }
+        });
+
+        layout_iv_lock_sub_open.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder oDialog = new AlertDialog.Builder(getContext(),
+                        android.R.style.Theme_DeviceDefault_Light_Dialog_Alert);
+
+                oDialog.setItems(oItems, new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        if(which == 0) {
+                            typeValue = "public";
+                            layout_iv_lock_open.setVisibility(View.VISIBLE);
+                            layout_iv_lock.setVisibility(View.GONE);
+                            layout_iv_lock_sub_open.setVisibility(View.GONE);
+                        }else if(which == 1){
+                            typeValue = "subscriber";
+                            layout_iv_lock_sub_open.setVisibility(View.VISIBLE);
+                            layout_iv_lock_open.setVisibility(View.GONE);
+                            layout_iv_lock.setVisibility(View.GONE);
+
+                        }else if(which == 2){
+                            typeValue = "private";
+                            layout_iv_lock.setVisibility(View.VISIBLE);
+                            layout_iv_lock_sub_open.setVisibility(View.GONE);
+                            layout_iv_lock_open.setVisibility(View.GONE);
+                        }
+
+                    }
+                })
+                        .setCancelable(false)
+                        .show();
+            }
+        });
+
+
+        layout_iv_lock_open.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder oDialog = new AlertDialog.Builder(getContext(),
+                        android.R.style.Theme_DeviceDefault_Light_Dialog_Alert);
+
+                oDialog.setItems(oItems, new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        if(which == 0) {
+                            typeValue = "public";
+                            layout_iv_lock_open.setVisibility(View.VISIBLE);
+                            layout_iv_lock.setVisibility(View.GONE);
+                            layout_iv_lock_sub_open.setVisibility(View.GONE);
+                        }else if(which == 1){
+                            typeValue = "subscriber";
+                            layout_iv_lock_sub_open.setVisibility(View.VISIBLE);
+                            layout_iv_lock_open.setVisibility(View.GONE);
+                            layout_iv_lock.setVisibility(View.GONE);
+
+                        }else if(which == 2){
+                            typeValue = "private";
+                            layout_iv_lock.setVisibility(View.VISIBLE);
+                            layout_iv_lock_sub_open.setVisibility(View.GONE);
+                            layout_iv_lock_open.setVisibility(View.GONE);
+                        }
+
+                    }
+                })
+                        .setCancelable(false)
+                        .show();
+            }
+        });
+
+
         content = findViewById(R.id.write_content);
         content.setLayerType(View.LAYER_TYPE_HARDWARE, null); // sdk 19 이상은 ChromeWebView를 사용해서 ChromeWebView로 설정
 
@@ -505,6 +705,18 @@ public class RichWysiwyg extends LinearLayout {
 
     public TextView getTagName(){return tagName; }
 
+    public int getTagSeq() {
+        return tagSeq;
+    }
+
+    public void setTagName(TextView tagName) {
+        this.tagName = tagName;
+    }
+
+    public void setTagSeq(int tagSeq) {
+        this.tagSeq = tagSeq;
+    }
+
     public ImageButton getInsertImageButton() {
         return insertImageButton;
     }
@@ -517,4 +729,35 @@ public class RichWysiwyg extends LinearLayout {
         return content.getHtml();
     }
 
+    public String getTypeValue() {
+        return typeValue;
+    }
+
+    public void setTypeValue(String typeValue) {
+        this.typeValue = typeValue;
+    }
+
+    public LinearLayout getLayout_iv_lock() {
+        return layout_iv_lock;
+    }
+
+    public void setLayout_iv_lock(LinearLayout layout_iv_lock) {
+        this.layout_iv_lock = layout_iv_lock;
+    }
+
+    public LinearLayout getLayout_iv_lock_open() {
+        return layout_iv_lock_open;
+    }
+
+    public void setLayout_iv_lock_open(LinearLayout layout_iv_lock_open) {
+        this.layout_iv_lock_open = layout_iv_lock_open;
+    }
+
+    public LinearLayout getLayout_iv_lock_sub_open() {
+        return layout_iv_lock_sub_open;
+    }
+
+    public void setLayout_iv_lock_sub_open(LinearLayout layout_iv_lock_sub_open) {
+        this.layout_iv_lock_sub_open = layout_iv_lock_sub_open;
+    }
 }

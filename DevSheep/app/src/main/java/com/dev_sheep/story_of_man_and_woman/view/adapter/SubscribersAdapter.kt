@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -113,11 +114,11 @@ class SubscribersAdapter(
             }
 
             // my_m_seq 가져오기
-            val preferences: SharedPreferences = itemView.context.getSharedPreferences(
-                "m_seq",
-                Context.MODE_PRIVATE
-            )
+            val preferences: SharedPreferences = itemView.context.getSharedPreferences("m_seq", Context.MODE_PRIVATE)
             my_m_seq = preferences.getString("inputMseq", "")
+
+            // 환경설정 스위치
+            val preferences_push: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(itemView.context)
 
             Log.e("어답터실행됨", "실행")
             itemView.tv_profile_nick.text = item.nick_name
@@ -144,15 +145,9 @@ class SubscribersAdapter(
             }
             itemView.check_follow.apply {
 
-                memberViewModel.memberSubscribeChecked2(
-                    item.m_seq!!,
-                    my_m_seq,
-                    "checked",
-                    this,
-                    context
-                )
-            }
+                memberViewModel.memberSubscribeChecked2(item.m_seq!!, my_m_seq, "checked", this, context)
 
+            }
 
             itemView.check_follow.setOnClickListener {
                 if (it.check_follow.isChecked == true) {
@@ -161,6 +156,8 @@ class SubscribersAdapter(
                     itemView.check_follow.setTextColor(itemView.resources.getColor(R.color.white))
                     memberViewModel.memberSubscribe2(item.m_seq!!, my_m_seq, "true")
                     memberViewModel.addNotifiaction(my_m_seq,item.m_seq!!,0,"구독알림","님이 구독중 입니다.")
+                    //구독하기 push
+                        memberViewModel.memberPush(item.m_seq!!,my_m_seq,"subscriber")
                 } else {
                     it.check_follow.text = "구독하기"
 //                    followerCount.setText("0")

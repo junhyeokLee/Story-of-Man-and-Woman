@@ -116,8 +116,8 @@ class FeedViewModel(private val searchDAO: SearchDAO, private val feedService: F
         feedRepository.insertFeed(title,content,tag_seq,creater,type)
     }
     // 피드 수정
-    fun updateFeed(feed_seq: Int,title:String,content:String,type:String){
-        feedRepository.updateFeed(feed_seq,title,content,type)
+    fun updateFeed(feed_seq: Int,title:String,content:String,type:String,tag_seq: Int){
+        feedRepository.updateFeed(feed_seq,title,content,type,tag_seq)
     }
     // 피드 삭제
     fun deleteFeed(feed_seq: Int){

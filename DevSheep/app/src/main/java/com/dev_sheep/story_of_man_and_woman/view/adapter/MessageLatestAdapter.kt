@@ -41,14 +41,18 @@ class MessageLatestAdapter(val FBChatMessage: FB_ChatMessage, val memberViewMode
   override fun bind(viewHolder: ViewHolder, position: Int) {
 
     viewHolder.itemView.layout_item.setOnClickListener {
-      val intent = Intent(viewHolder.itemView.context, MessageActivity::class.java)
-      intent.putExtra(ProfileUsersFragment.USER_ID, chatPartnerUser)
+      if(chatPartnerUser == null){
+        Toast.makeText(context, "탈퇴한 회원 입니다 삭제해주세요.", Toast.LENGTH_SHORT).show()
+      }else {
+        val intent = Intent(viewHolder.itemView.context, MessageActivity::class.java)
+        intent.putExtra(ProfileUsersFragment.USER_ID, chatPartnerUser)
+        (viewHolder.itemView.context as Activity).startActivity(intent)
+        (viewHolder.itemView.context as Activity).overridePendingTransition(
+          R.anim.fragment_fade_in,
+          R.anim.fragment_fade_out
+        )
+      }
 
-      (viewHolder.itemView.context as Activity).startActivity(intent)
-      (viewHolder.itemView.context as Activity).overridePendingTransition(
-        R.anim.fragment_fade_in,
-        R.anim.fragment_fade_out
-      )
 
     }
 
@@ -93,11 +97,24 @@ class MessageLatestAdapter(val FBChatMessage: FB_ChatMessage, val memberViewMode
     ref.addListenerForSingleValueEvent(object: ValueEventListener {
       override fun onDataChange(p0: DataSnapshot) {
         chatPartnerUser = p0.getValue(FB_User::class.java)
-        viewHolder.itemView.username_textview_latest_message.text = chatPartnerUser?.username
 
-        memberViewModel.getMemberProfileImgFromNickName(chatPartnerUser?.username!!,viewHolder.itemView.imageview_latest_message,viewHolder.itemView.context)
-        memberViewModel.getMemberProfileImgFromNickNameDot(chatPartnerUser?.username!!,viewHolder.itemView.imageview_latest_message_dot,viewHolder.itemView.context)
-
+        if(chatPartnerUser == null){
+          viewHolder.itemView.username_textview_latest_message.text = "탈퇴한 회원 입니다."
+        }else {
+          viewHolder.itemView.username_textview_latest_message.text = chatPartnerUser?.username
+        }
+        if(chatPartnerUser != null) {
+          memberViewModel.getMemberProfileImgFromNickName(
+            chatPartnerUser?.username!!,
+            viewHolder.itemView.imageview_latest_message,
+            viewHolder.itemView.context
+          )
+          memberViewModel.getMemberProfileImgFromNickNameDot(
+            chatPartnerUser?.username!!,
+            viewHolder.itemView.imageview_latest_message_dot,
+            viewHolder.itemView.context
+          )
+        }
       }
       override fun onCancelled(p0: DatabaseError) {
 
@@ -127,7 +144,8 @@ class MessageLatestAdapter(val FBChatMessage: FB_ChatMessage, val memberViewMode
     val alertDialog = AlertDialog.Builder(context)
       .setTitle("대화방 삭제")
       .setPositiveButton("네"){
-          dialog,which -> Toast.makeText(context,"삭제하기", Toast.LENGTH_SHORT).show()
+          dialog,which ->
+//        Toast.makeText(context,"대화방 삭제", Toast.LENGTH_SHORT).show()
         latestMessageRef.removeValue()
         reference.removeValue()
         MyMessageActivity.adapter.removeGroup(position) // group library 스와이프 아이템 삭제

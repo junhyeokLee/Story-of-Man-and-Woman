@@ -157,6 +157,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.firebaseui:firebase-ui-database:3.1.0'
 
+    implementation 'com.google.firebase:firebase-messaging:21.0.1'
+    implementation platform('com.google.firebase:firebase-bom:26.7.0')
+    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-core:16.0.0'
 
 
     //group adapter

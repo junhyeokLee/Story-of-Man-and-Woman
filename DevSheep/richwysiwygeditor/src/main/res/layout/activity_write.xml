@@ -99,10 +99,11 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/layout_iv_lockopen"
+                android:id="@+id/layout_iv_lock_sub_open"
                 android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:visibility="gone"
                 android:layout_gravity="center">
                 <ImageView
                     android:id="@+id/iv_lockopen"
@@ -112,6 +113,23 @@
                     android:visibility="visible"
                     android:backgroundTint="@color/main_Accent3"
                     android:background="@drawable/ic_open_padlock"
+                    />
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/layout_iv_lock_open"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:layout_gravity="center">
+                <ImageView
+                    android:id="@+id/iv_unlock"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center"
+                    android:visibility="visible"
+                    android:backgroundTint="@color/main_Accent3"
+                    android:background="@drawable/ic_unlocked"
                     />
 
             </LinearLayout>

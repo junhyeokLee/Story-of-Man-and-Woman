@@ -34,7 +34,7 @@ class AlarmActivity : AppCompatActivity() {
     lateinit var m_seq : String // 자신의 seq
     lateinit var context: Context
     private lateinit var linearLayoutManager: LinearLayoutManager
-    private var limit: Int = 100
+    private var limit: Int = 50
     private var offset: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +43,6 @@ class AlarmActivity : AppCompatActivity() {
         context = this
 
         initData()
-
         iv_back.setOnClickListener {
             onBackPressed()
         }
@@ -52,13 +51,9 @@ class AlarmActivity : AppCompatActivity() {
     private fun initData(){
 
         // my_m_seq 가져오기
-        val preferences: SharedPreferences = this!!.getSharedPreferences(
-            "m_seq",
-            Context.MODE_PRIVATE
-        )
+        val preferences: SharedPreferences = this!!.getSharedPreferences("m_seq", Context.MODE_PRIVATE)
 
         m_seq = preferences.getString("inputMseq", "")
-
         linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 
@@ -158,7 +153,7 @@ class AlarmActivity : AppCompatActivity() {
 
 
     private fun addLimit() : Int{
-        limit += 100
+        limit += 50
         return limit
     }
 }

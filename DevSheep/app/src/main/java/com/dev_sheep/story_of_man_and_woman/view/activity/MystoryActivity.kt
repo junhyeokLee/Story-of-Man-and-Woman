@@ -5,12 +5,15 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.text.format.Formatter
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -18,15 +21,11 @@ import com.bumptech.glide.request.RequestOptions
 import com.dev_sheep.story_of_man_and_woman.R
 import com.dev_sheep.story_of_man_and_woman.data.database.entity.Feed
 import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.FEED_SERVICE
-import com.dev_sheep.story_of_man_and_woman.data.remote.APIService.MEMBER_SERVICE
 import com.dev_sheep.story_of_man_and_woman.viewmodel.FeedViewModel
 import com.dev_sheep.story_of_man_and_woman.viewmodel.MemberViewModel
 import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.model.Image
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_feed_write.*
-import kotlinx.android.synthetic.main.adapter_feed.view.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -46,7 +45,6 @@ class MystoryActivity : AppCompatActivity() {
     private val feedViewModel: FeedViewModel by viewModel()
     private val memberViewModel: MemberViewModel by viewModel()
     private val REQ_CODE_SELECT_IMAGE = 1001
-    lateinit var TYPE_VALUE : String
     lateinit var TAG_SEQ : String
     lateinit var TAG_NAME : String
     lateinit var EMAIL : String
@@ -68,25 +66,44 @@ class MystoryActivity : AppCompatActivity() {
         EMAIL = getEMAIL.getString("inputEmail", null)
 
         if (intent.hasExtra("type")) {
-            TYPE_VALUE = intent.getStringExtra("type")
+            richwysiwygeditor.typeValue = intent.getStringExtra("type")
 
-            tv_public.text = "("+TYPE_VALUE+")"
+            if(richwysiwygeditor.typeValue == "public"){
+                richwysiwygeditor.layout_iv_lock_open.visibility = View.VISIBLE
+                richwysiwygeditor.layout_iv_lock.visibility = View.GONE
+                richwysiwygeditor.layout_iv_lock_sub_open.visibility = View.GONE
+
+            }else if(richwysiwygeditor.typeValue == "subscriber"){
+                richwysiwygeditor.layout_iv_lock_sub_open.visibility = View.VISIBLE
+                richwysiwygeditor.layout_iv_lock.visibility = View.GONE
+                richwysiwygeditor.layout_iv_lock_open.visibility = View.GONE
+            }else if(richwysiwygeditor.typeValue == "private"){
+                richwysiwygeditor.layout_iv_lock.visibility = View.VISIBLE
+                richwysiwygeditor.layout_iv_lock_open.visibility = View.GONE
+                richwysiwygeditor.layout_iv_lock_sub_open.visibility = View.GONE
+
+            }
+
         } else {
             Toast.makeText(this, "전달된 이름이 없습니다", Toast.LENGTH_SHORT).show()
         }
 
-        if(intent.hasExtra("tag_seq")){
-            TAG_SEQ = intent.getStringExtra("tag_seq")
-        }else{
-            Toast.makeText(this, "전달된 이름이 없습니다", Toast.LENGTH_SHORT).show()
 
-        }
-        if(intent.hasExtra("tag_name")){
-            TAG_NAME = intent.getStringExtra("tag_name")
-            richwysiwygeditor.tagName.text = "# "+TAG_NAME
-        }else{
-            Toast.makeText(this, "전달된 이름이 없습니다", Toast.LENGTH_SHORT).show()
-        }
+
+        Log.e("TypeValue = ",""+richwysiwygeditor.typeValue)
+
+//        if(intent.hasExtra("tag_seq")){
+//            TAG_SEQ = intent.getStringExtra("tag_seq")
+//        }else{
+//            Toast.makeText(this, "전달된 이름이 없습니다", Toast.LENGTH_SHORT).show()
+//
+//        }
+//        if(intent.hasExtra("tag_name")){
+//            TAG_NAME = intent.getStringExtra("tag_name")
+//            richwysiwygeditor.tagName.text = "# "+TAG_NAME
+//        }else{
+//            Toast.makeText(this, "전달된 이름이 없습니다", Toast.LENGTH_SHORT).show()
+//        }
         memberViewModel.getMember(M_SEQ)
         memberViewModel.memberLivedata.observe(this, androidx.lifecycle.Observer {
             tv_creater.text = it.nick_name
@@ -116,6 +133,7 @@ class MystoryActivity : AppCompatActivity() {
 
         // 글 작성할때는 이미지 클릭 제어
         richwysiwygeditor.content.feedActivityType = 999
+
 
         richwysiwygeditor.getContent()
             .setEditorFontSize(16)
@@ -196,6 +214,12 @@ class MystoryActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_write, menu)
+        val positionOfMenuItem = 0 // or whatever...
+
+        val item = menu!!.getItem(positionOfMenuItem)
+        val s = SpannableString("업로드")
+        s.setSpan(ForegroundColorSpan(resources.getColor(R.color.text_subscrib_color)), 0, s.length, 0)
+        item.setTitle(s)
         return true
     }
 
@@ -206,9 +230,6 @@ class MystoryActivity : AppCompatActivity() {
                 true
             }
             R.id.next -> {
-
-                Toast.makeText(applicationContext, "완료.", Toast.LENGTH_SHORT).show()
-
                 if(richwysiwygeditor.getHeadlineEditText().getText().toString() == ""){
                     Toast.makeText(applicationContext, "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
                     return false
@@ -218,20 +239,18 @@ class MystoryActivity : AppCompatActivity() {
                     return false
                 }
 
-                if(TYPE_VALUE == "공개"){
-                    TYPE_VALUE = "public"
-                }else if(TYPE_VALUE == "구독자에게 공개"){
-                    TYPE_VALUE = "subscriber"
-                }else{
-                    TYPE_VALUE = "private"
-                }
+
+
                 feedViewModel.insertFeed(
                     richwysiwygeditor.getHeadlineEditText().getText().toString(),
                     richwysiwygeditor.getContent().getHtml().plus("<br>"),
-                    Integer.parseInt(TAG_SEQ),
+                    richwysiwygeditor.tagSeq,
                     M_SEQ,
-                    TYPE_VALUE
+                    richwysiwygeditor.typeValue
                 )
+
+                Toast.makeText(applicationContext, "업로드 성공.", Toast.LENGTH_SHORT).show()
+
                 finish()
 
                 Log.i(
