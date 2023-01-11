@@ -221,7 +221,7 @@ class FeedAdapter(
                 "m_seq",
                 Context.MODE_PRIVATE
             )
-            m_seq = preferences.getString("inputMseq", "")
+            m_seq = preferences.getString("inputMseq", "")!!
 
             ViewCompat.setTransitionName(itemView.tv_m_nick, position.toString() + "Text")
             ViewCompat.setTransitionName(itemView.img_profile, (position).toString() + "Img")

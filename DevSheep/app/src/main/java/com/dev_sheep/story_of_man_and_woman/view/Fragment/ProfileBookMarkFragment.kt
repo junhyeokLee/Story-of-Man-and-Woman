@@ -1,5 +1,6 @@
 package com.dev_sheep.story_of_man_and_woman.view.Fragment
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
@@ -67,16 +68,17 @@ class ProfileBookMarkFragment: Fragment() {
 
         // 저장된 m_seq 가져오기
         val preferences: SharedPreferences = context!!.getSharedPreferences("m_seq", Context.MODE_PRIVATE)
-        m_seq = preferences.getString("inputMseq", "")
+        m_seq = preferences.getString("inputMseq", "")!!
         initData()
         return view
     }
 
+    @SuppressLint("FragmentLiveDataObserve")
     private fun initData() {
 
         if(feedViewModel == null || memberViewModel == null) return
 
-        val handlerFeed: Handler = Handler(Looper.myLooper())
+        val handlerFeed: Handler = Handler(Looper.myLooper()!!)
         linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 

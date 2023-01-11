@@ -77,7 +77,7 @@ class SubscribingFragment(val m_seq: String): Fragment() {
 
         if(memberViewModel == null) return
 
-        val handlerFeed: Handler = Handler(Looper.myLooper())
+        val handlerFeed: Handler = Handler(Looper.myLooper()!!)
         linearLayoutManager = LinearLayoutManager(contexts)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 

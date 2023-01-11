@@ -41,7 +41,7 @@ val feedTagListLiveData = MutableLiveData<MutableList<Tag>>()
                     }
                 }
             }, {
-                Log.d("error",it.message)
+                Log.d("error", it.message.toString())
             })
     }
     fun getTodayFeedList(){
@@ -56,7 +56,7 @@ val feedTagListLiveData = MutableLiveData<MutableList<Tag>>()
                     }
                 }
             }, {
-                Log.d("error",it.message)
+                Log.d("error",it.message.toString())
             })
     }
     fun getComment(feed_seq: Int,offset: Int,limit:Int){
@@ -71,7 +71,7 @@ val feedTagListLiveData = MutableLiveData<MutableList<Tag>>()
                 }
             },
                 {
-                    Log.d("error",it.message)
+                    Log.d("error",it.message.toString())
                 })
     }
     fun getComment2(feed_seq: Int,offset: Int,limit:Int){
@@ -86,7 +86,7 @@ val feedTagListLiveData = MutableLiveData<MutableList<Tag>>()
                 }
             },
                 {
-                    Log.d("error",it.message)
+                    Log.d("error",it.message.toString())
                 })
     }
 
@@ -99,7 +99,7 @@ val feedTagListLiveData = MutableLiveData<MutableList<Tag>>()
                 feedCommentLiveData.postValue(it)
             },
                 {
-                    Log.d("error",it.message)
+                    Log.d("error",it.message.toString())
                 })
     }
 
@@ -135,7 +135,7 @@ val feedTagListLiveData = MutableLiveData<MutableList<Tag>>()
                     }
                 }
             }, {
-                Log.d("error",it.message)
+                Log.d("error",it.message.toString())
             })
     }
     fun getBookMark(m_seq:String,offset:Int,limit:Int){
@@ -150,7 +150,7 @@ val feedTagListLiveData = MutableLiveData<MutableList<Tag>>()
                     }
                 }
             }, {
-                Log.d("error",it.message)
+                Log.d("error",it.message.toString())
             })
     }
     fun getFeedSearch(title:String,offset: Int,limit: Int){
@@ -165,7 +165,7 @@ val feedTagListLiveData = MutableLiveData<MutableList<Tag>>()
                     }
                 }
             }, {
-                Log.d("error",it.message)
+                Log.d("error",it.message.toString())
             })
     }
     fun getListMystory(m_seq:String,offset:Int,limit:Int){
@@ -180,7 +180,7 @@ val feedTagListLiveData = MutableLiveData<MutableList<Tag>>()
                     }
                 }
             }, {
-                Log.d("error",it.message)
+                Log.d("error",it.message.toString())
             })
     }
     fun getListSecert(m_seq:String,offset:Int,limit:Int){
@@ -195,7 +195,7 @@ val feedTagListLiveData = MutableLiveData<MutableList<Tag>>()
                     }
                 }
             }, {
-                Log.d("error",it.message)
+                Log.d("error",it.message.toString())
             })
     }
 
@@ -211,7 +211,7 @@ val feedTagListLiveData = MutableLiveData<MutableList<Tag>>()
                     }
                 }
             }, {
-                Log.d("error",it.message)
+                Log.d("error",it.message.toString())
             })
     }
 
@@ -227,7 +227,7 @@ val feedTagListLiveData = MutableLiveData<MutableList<Tag>>()
                     }
                 }
             }, {
-                Log.d("error",it.message)
+                Log.d("error",it.message.toString())
             })
     }
 
@@ -243,7 +243,7 @@ val feedTagListLiveData = MutableLiveData<MutableList<Tag>>()
                 }
             },
                 {
-                    Log.d("error",it.message)
+                    Log.d("error",it.message.toString())
                 })
     }
 
@@ -259,7 +259,7 @@ val feedTagListLiveData = MutableLiveData<MutableList<Tag>>()
                 }
             },
                 {
-                    Log.d("error",it.message)
+                    Log.d("error",it.message.toString())
                 })
     }
 

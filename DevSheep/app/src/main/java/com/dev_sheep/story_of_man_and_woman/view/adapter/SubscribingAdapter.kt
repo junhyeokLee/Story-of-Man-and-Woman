@@ -117,7 +117,7 @@ class SubscribingAdapter(
 
             // my_m_seq 가져오기
             val preferences: SharedPreferences = itemView.context.getSharedPreferences("m_seq", Context.MODE_PRIVATE)
-            my_m_seq = preferences.getString("inputMseq", "")
+            my_m_seq = preferences.getString("inputMseq", "")!!
 
             // 환경설정 스위치
             val preferences_push: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(itemView.context)

@@ -60,13 +60,13 @@ class MystoryActivity : AppCompatActivity() {
 
         // 저장된 m_seq 가져오기
         val getMSEQ = getSharedPreferences("m_seq", AppCompatActivity.MODE_PRIVATE)
-        M_SEQ = getMSEQ.getString("inputMseq", null)
+        M_SEQ = getMSEQ.getString("inputMseq", null)!!
 
         val getEMAIL = getSharedPreferences("autoLogin", AppCompatActivity.MODE_PRIVATE)
-        EMAIL = getEMAIL.getString("inputEmail", null)
+        EMAIL = getEMAIL.getString("inputEmail", null)!!
 
         if (intent.hasExtra("type")) {
-            richwysiwygeditor.typeValue = intent.getStringExtra("type")
+            richwysiwygeditor.typeValue = intent.getStringExtra("type")!!
 
             if(richwysiwygeditor.typeValue == "public"){
                 richwysiwygeditor.layout_iv_lock_open.visibility = View.VISIBLE
@@ -202,7 +202,7 @@ class MystoryActivity : AppCompatActivity() {
                 ) {
                     Toast.makeText(applicationContext, "이미지 업로드 실패.", Toast.LENGTH_SHORT).show()
 
-                    Log.e("에러",t.message)
+                    Log.e("에러",t.message!!)
                 }
             })
 
@@ -223,7 +223,7 @@ class MystoryActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item!!.itemId) {
             android.R.id.home -> {
                 onBackPressed()
@@ -296,7 +296,7 @@ class MystoryActivity : AppCompatActivity() {
             val o2: BitmapFactory.Options = BitmapFactory.Options()
             o2.inSampleSize = scale
             inputStream = FileInputStream(file)
-            val selectedBitmap: Bitmap = BitmapFactory.decodeStream(inputStream, null, o2)
+            val selectedBitmap: Bitmap = BitmapFactory.decodeStream(inputStream, null, o2)!!
             inputStream.close()
 
             // here i override the original image file

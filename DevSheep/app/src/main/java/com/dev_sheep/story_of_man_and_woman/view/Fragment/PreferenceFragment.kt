@@ -108,7 +108,7 @@ class PreferenceFragment : Fragment(),View.OnClickListener {
         override fun onPreferenceTreeClick(preference: Preference?): Boolean {
 
             val preferences: SharedPreferences = context!!.getSharedPreferences("m_seq", Context.MODE_PRIVATE)
-                 my_m_seq = preferences.getString("inputMseq", "")
+                 my_m_seq = preferences.getString("inputMseq", "")!!
 
                 val key = preference?.key
                 if(key.equals("boolean1") == true){

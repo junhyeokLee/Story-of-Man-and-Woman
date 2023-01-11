@@ -130,7 +130,7 @@ class CommentAdapter(private val commentList: MutableList<Comment>,
 
             // 저장된 m_seq 가져오기
             val getM_seq = context.getSharedPreferences("m_seq", AppCompatActivity.MODE_PRIVATE)
-            my_m_seq = getM_seq.getString("inputMseq", null)
+            my_m_seq = getM_seq.getString("inputMseq", null)!!
 
             // 댓글 일때
             if(item.depth!!.equals(0)) {

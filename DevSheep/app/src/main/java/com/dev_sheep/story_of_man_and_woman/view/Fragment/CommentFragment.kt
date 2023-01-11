@@ -106,7 +106,7 @@ class CommentFragment : Fragment() {
             "m_seq",
             Context.MODE_PRIVATE
         )
-        m_seq = preferences.getString("inputMseq", "")
+        m_seq = preferences.getString("inputMseq", "").toString()
 
 
         initData()
@@ -150,7 +150,7 @@ class CommentFragment : Fragment() {
 
         var lastIndex:Boolean? = null
 
-        val handlerFeed: Handler = Handler(Looper.myLooper())
+        val handlerFeed: Handler = Handler(Looper.myLooper()!!)
         linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 

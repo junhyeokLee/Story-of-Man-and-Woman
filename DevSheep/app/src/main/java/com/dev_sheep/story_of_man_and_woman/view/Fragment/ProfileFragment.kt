@@ -169,7 +169,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
             "m_seq",
             Context.MODE_PRIVATE
         )
-        my_m_seq = preferences.getString("inputMseq", "")
+        my_m_seq = preferences.getString("inputMseq", "")!!
 
 
     }
@@ -605,7 +605,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                         }
 
                         override fun onFailure(call: Call<Member?>, t: Throwable) {
-                            Log.d("에러", t.message)
+                            Log.d("에러", t.message!!)
                         }
 
                     })
@@ -642,7 +642,7 @@ class ProfileFragment: Fragment(),View.OnClickListener {
                         }
 
                         override fun onFailure(call: Call<Member?>, t: Throwable) {
-                            Log.d("에러", t.message)
+                            Log.d("에러", t.message!!)
                         }
                     })
                 }

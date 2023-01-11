@@ -100,7 +100,7 @@ class ReCommentFragment : Fragment() ,SwipeRefreshLayout.OnRefreshListener {
             "m_seq",
             Context.MODE_PRIVATE
         )
-        m_seq = preferences.getString("inputMseq", "")
+        m_seq = preferences.getString("inputMseq", "")!!
 
 
         initData()
@@ -141,7 +141,7 @@ class ReCommentFragment : Fragment() ,SwipeRefreshLayout.OnRefreshListener {
         }
 
         comment_seq = arguments?.getString("comment_seq").toString()
-        val handlerFeed: Handler = Handler(Looper.myLooper())
+        val handlerFeed: Handler = Handler(Looper.myLooper()!!)
         var sdf : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
         val single = FEED_SERVICE.getCommentItem(Integer.parseInt(comment_seq))

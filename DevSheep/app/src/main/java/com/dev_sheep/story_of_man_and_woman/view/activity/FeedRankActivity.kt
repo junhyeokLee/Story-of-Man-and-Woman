@@ -67,8 +67,8 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
             "m_seq",
             Context.MODE_PRIVATE
         )
-        m_seq = preferences.getString("inputMseq", "")
-        my_Age = preferences.getString("inputAge", "")
+        m_seq = preferences.getString("inputMseq", "")!!
+        my_Age = preferences.getString("inputAge", "")!!
 
         initData()
     }
@@ -77,7 +77,7 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
     private fun initData(){
 
         if(intent.hasExtra("now")) {
-            tv_name = intent.getStringExtra("now")
+            tv_name = intent.getStringExtra("now")!!
             tv_tag_rank_name.text = tv_name
             cb_now.isChecked = true
             cb_now.setTextColor(resources.getColor(R.color.white))
@@ -101,7 +101,7 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
     fun tagSelectList(tagName:String){
 
         // display loading indicator
-        val handlerFeed: Handler = Handler(Looper.myLooper())
+        val handlerFeed: Handler = Handler(Looper.myLooper()!!)
         linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 
@@ -252,8 +252,8 @@ class FeedRankActivity: AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
         })
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        super.onOptionsItemSelected(item)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        super.onOptionsItemSelected(item!!)
         when(item?.itemId){
             android.R.id.home ->{
                 finish()

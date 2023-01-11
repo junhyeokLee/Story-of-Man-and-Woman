@@ -63,13 +63,13 @@ class CommentActivity : AppCompatActivity(){
 
 
         if(intent.hasExtra("feed_seq")) {
-            feed_seq = intent.getStringExtra("feed_seq")
+            feed_seq = intent.getStringExtra("feed_seq")!!
         }
         if(intent.hasExtra("feed_creater")) {
-            feed_creater = intent.getStringExtra("feed_creater")
+            feed_creater = intent.getStringExtra("feed_creater")!!
         }
         if(intent.hasExtra("feed_title")) {
-            feed_title = intent.getStringExtra("feed_title")
+            feed_title = intent.getStringExtra("feed_title")!!
         }
 
         recyclerview_comments = findViewById(R.id.recyclerview_comments)
@@ -91,7 +91,7 @@ class CommentActivity : AppCompatActivity(){
             "m_seq",
             Context.MODE_PRIVATE
         )
-        m_seq = preferences.getString("inputMseq", "")
+        m_seq = preferences.getString("inputMseq", "")!!
 
 
 
@@ -131,7 +131,7 @@ class CommentActivity : AppCompatActivity(){
     private fun initData(){
 
 
-        val handlerFeed: Handler = Handler(Looper.myLooper())
+        val handlerFeed: Handler = Handler(Looper.myLooper()!!)
         linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 

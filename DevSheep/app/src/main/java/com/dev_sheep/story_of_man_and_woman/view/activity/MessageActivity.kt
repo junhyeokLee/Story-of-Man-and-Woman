@@ -47,7 +47,7 @@ class MessageActivity : AppCompatActivity(){
 
         chat.adapter = adapter
 
-        toUser = intent.getParcelableExtra(ProfileUsersFragment.USER_ID)
+        toUser = intent.getParcelableExtra(ProfileUsersFragment.USER_ID)!!
         iv_back.setOnClickListener {
             onBackPressed()
         }
@@ -149,7 +149,7 @@ class MessageActivity : AppCompatActivity(){
         val currentTime: Date = Calendar.getInstance().getTime()
         val fromId = FirebaseAuth.getInstance().uid
         val user = intent.getParcelableExtra<FB_User>(ProfileUsersFragment.USER_ID) // userID 유저프로필에서 가져오기
-        val toId = user.uid
+        val toId = user!!.uid
         val username = tv_user_nickname.text.toString()
 
         val current = LocalDateTime.now()
@@ -255,7 +255,7 @@ class MessageActivity : AppCompatActivity(){
 
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item?.itemId ?: 0 == R.id.filter){
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Sign Out")

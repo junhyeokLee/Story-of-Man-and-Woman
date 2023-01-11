@@ -1,5 +1,6 @@
 package com.dev_sheep.story_of_man_and_woman.view.Fragment
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -71,7 +72,7 @@ class SubscribersFragment(val m_seq: String) : Fragment() {
             "m_seq",
             Context.MODE_PRIVATE
         )
-        my_m_seq = preferences.getString("inputMseq", "")
+        my_m_seq = preferences.getString("inputMseq", "")!!
 
 
         initData()
@@ -82,13 +83,14 @@ class SubscribersFragment(val m_seq: String) : Fragment() {
         return view
     }
 
+    @SuppressLint("FragmentLiveDataObserve")
     private fun initData(){
 
         if(memberViewModel == null){
             return
         }
 
-        val handlerFeed: Handler = Handler(Looper.myLooper())
+        val handlerFeed: Handler = Handler(Looper.myLooper()!!)
         linearLayoutManager = LinearLayoutManager(contexts)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 

@@ -102,10 +102,10 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
 
     fun getIntents(){
         if(intent.hasExtra("creater_seq")) {
-            m_seq = intent.getStringExtra("creater_seq")
+            m_seq = intent.getStringExtra("creater_seq")!!
             // 저장된 m_seq 가져오기
             val getM_seq = getSharedPreferences("m_seq", AppCompatActivity.MODE_PRIVATE)
-            my_m_seq = getM_seq.getString("inputMseq", null)
+            my_m_seq = getM_seq.getString("inputMseq", null)!!
         }
 
         if(intent.hasExtra("feed_seq")) {
@@ -282,7 +282,7 @@ class FeedActivity : AppCompatActivity() ,View.OnClickListener{
 
             },
                 {
-                    Log.e("errors", it.message)
+                    Log.e("errors", it.message!!)
                 })
 
 

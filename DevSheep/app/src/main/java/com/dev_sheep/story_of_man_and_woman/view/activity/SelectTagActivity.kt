@@ -81,7 +81,7 @@ class SelectTagActivity : AppCompatActivity(){
 
 
         if (intent.hasExtra("type")) {
-            TYPE_VALUE = intent.getStringExtra("type")
+            TYPE_VALUE = intent.getStringExtra("type")!!
             Log.e("TYPE 테스트 ", "" + TYPE_VALUE)
         } else {
             Toast.makeText(this, "전달된 이름이 없습니다", Toast.LENGTH_SHORT).show()
@@ -95,7 +95,7 @@ class SelectTagActivity : AppCompatActivity(){
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item!!.itemId){
 
             android.R.id.home -> {

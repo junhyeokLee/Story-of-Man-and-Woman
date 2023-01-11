@@ -227,7 +227,7 @@ class FeedAdapterTag(
                 "m_seq",
                 Context.MODE_PRIVATE
             )
-            m_seq = preferences.getString("inputMseq", "")
+            m_seq = preferences.getString("inputMseq", "")!!
 
             with(profile_layout){
                 setOnClickListener {

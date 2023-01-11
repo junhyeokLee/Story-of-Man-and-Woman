@@ -63,14 +63,14 @@ class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshList
             "m_seq",
             Context.MODE_PRIVATE
         )
-        m_seq = preferences.getString("inputMseq", "")
+        m_seq = preferences.getString("inputMseq", "")!!
 
         if(intent.hasExtra("tag_seq")) {
-            tag_seq = intent.getStringExtra("tag_seq")
+            tag_seq = intent.getStringExtra("tag_seq")!!
             Log.e(TAG+"tag_seq", tag_seq.toString())
         }
         if(intent.hasExtra("tag_name")) {
-            tag_name = intent.getStringExtra("tag_name")
+            tag_name = intent.getStringExtra("tag_name")!!
             tv_tag_search_name.text = tag_name
             Log.e(TAG+"tag_name", tag_name.toString())
 
@@ -83,7 +83,7 @@ class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshList
 
     private fun initData(){
         // display loading indicator
-        val handlerFeed: Handler = Handler(Looper.myLooper())
+        val handlerFeed: Handler = Handler(Looper.myLooper()!!)
         // tag_search
         feedViewModel.getTagSearch(Integer.parseInt(tag_seq),offset,limit)
         //라이브데이터
@@ -205,8 +205,8 @@ class FeedSearchActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshList
 
 
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        super.onOptionsItemSelected(item)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        super.onOptionsItemSelected(item!!)
         when(item?.itemId){
             android.R.id.home ->{
                 finish()

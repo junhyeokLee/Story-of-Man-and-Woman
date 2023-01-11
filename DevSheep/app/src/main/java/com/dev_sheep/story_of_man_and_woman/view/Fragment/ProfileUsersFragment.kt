@@ -131,7 +131,7 @@ class ProfileUsersFragment: Fragment(),View.OnClickListener {
             "m_seq",
             Context.MODE_PRIVATE
         )
-        my_m_seq = preferences.getString("inputMseq", "")
+        my_m_seq = preferences.getString("inputMseq", "")!!
     }
 
     override fun onCreateView(

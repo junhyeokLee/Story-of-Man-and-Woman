@@ -28,7 +28,7 @@ class SignUpStartActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_sign_up_start)
 
         val auto = getSharedPreferences("autoLogin", AppCompatActivity.MODE_PRIVATE)
-         loginEmail = auto.getString("inputEmail", null)
+         loginEmail = auto.getString("inputEmail", null)!!
 
         checkedListener()
         btn_signup.setOnClickListener(this)

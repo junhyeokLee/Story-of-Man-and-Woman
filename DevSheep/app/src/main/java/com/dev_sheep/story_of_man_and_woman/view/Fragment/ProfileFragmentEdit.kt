@@ -347,7 +347,7 @@ class ProfileFragmentEdit(my_m_seq:String): Fragment(),View.OnClickListener {
                         }
 
                         override fun onFailure(call: Call<Member?>, t: Throwable) {
-                            Log.e("에러", t.message)
+                            Log.e("에러", t.message!!)
                         }
 
                     })
@@ -379,7 +379,7 @@ class ProfileFragmentEdit(my_m_seq:String): Fragment(),View.OnClickListener {
                         }
 
                         override fun onFailure(call: Call<Member?>, t: Throwable) {
-                            Log.e("에러", t.message)
+                            Log.e("에러", t.message!!)
                         }
                     })
                 }

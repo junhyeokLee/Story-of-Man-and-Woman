@@ -53,7 +53,7 @@ class AlarmActivity : AppCompatActivity() {
         // my_m_seq 가져오기
         val preferences: SharedPreferences = this!!.getSharedPreferences("m_seq", Context.MODE_PRIVATE)
 
-        m_seq = preferences.getString("inputMseq", "")
+        m_seq = preferences.getString("inputMseq", "")!!
         linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 

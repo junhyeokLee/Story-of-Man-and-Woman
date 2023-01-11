@@ -63,10 +63,10 @@ class FeedEditActivity : AppCompatActivity() {
 
         // 저장된 m_seq 가져오기
         val getM_seq = getSharedPreferences("m_seq", AppCompatActivity.MODE_PRIVATE)
-        M_SEQ = getM_seq.getString("inputMseq", null)
+        M_SEQ = getM_seq.getString("inputMseq", null)!!
 
         val getEMAIL = getSharedPreferences("autoLogin", AppCompatActivity.MODE_PRIVATE)
-        EMAIL = getEMAIL.getString("inputEmail", null)
+        EMAIL = getEMAIL.getString("inputEmail", null)!!
 
         getExtraData()
 
@@ -240,7 +240,7 @@ class FeedEditActivity : AppCompatActivity() {
                 ) {
                     Toast.makeText(applicationContext, "이미지 업로드 실패.", Toast.LENGTH_SHORT).show()
 
-                    Log.e("에러",t.message)
+                    Log.e("에러",t.message!!)
                 }
             })
 
@@ -262,7 +262,7 @@ class FeedEditActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item!!.itemId) {
             android.R.id.home -> {
                 onBackPressed()

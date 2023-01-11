@@ -1,5 +1,6 @@
 package com.dev_sheep.story_of_man_and_woman.view.Fragment
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
@@ -69,12 +70,13 @@ class NotificationFragment :  Fragment()  {
     }
 
 
+    @SuppressLint("FragmentLiveDataObserve")
     private fun initData(){
         if(feedViewModel == null || memberViewModel == null) return
 
         // my_m_seq 가져오기
         val preferences: SharedPreferences = context!!.getSharedPreferences("m_seq", Context.MODE_PRIVATE)
-        m_seq = preferences.getString("inputMseq", "")
+        m_seq = preferences.getString("inputMseq", "")!!
 
         feedViewModel.getListNotificationSubscribe(m_seq,offset,limit)
         //라이브데이터

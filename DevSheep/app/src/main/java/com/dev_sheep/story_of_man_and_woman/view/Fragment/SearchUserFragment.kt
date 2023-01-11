@@ -71,7 +71,7 @@ class SearchUserFragment(nick_name:String) : Fragment() {
         // 저장된 m_seq 가져오기
         val preferences: SharedPreferences =
             contexts.getSharedPreferences("m_seq", Context.MODE_PRIVATE)
-        my_m_seq = preferences.getString("inputMseq", "")
+        my_m_seq = preferences.getString("inputMseq", "")!!
 
         initData()
 
@@ -83,7 +83,7 @@ class SearchUserFragment(nick_name:String) : Fragment() {
 
         if(memberViewModel == null) return
 
-        val handlerFeed: Handler = Handler(Looper.myLooper())
+        val handlerFeed: Handler = Handler(Looper.myLooper()!!)
         linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 

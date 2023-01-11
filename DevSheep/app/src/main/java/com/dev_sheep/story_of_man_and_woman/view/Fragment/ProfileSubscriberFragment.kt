@@ -67,7 +67,7 @@ class ProfileSubscriberFragment: Fragment() {
         // 저장된 m_seq 가져오기
         val preferences: SharedPreferences =
             context!!.getSharedPreferences("m_seq", Context.MODE_PRIVATE)
-        m_seq = preferences.getString("inputMseq", "")
+        m_seq = preferences.getString("inputMseq", "")!!
 
         initData()
         return view
@@ -79,7 +79,7 @@ class ProfileSubscriberFragment: Fragment() {
             return
         }
 
-        val handlerFeed: Handler = Handler(Looper.myLooper())
+        val handlerFeed: Handler = Handler(Looper.myLooper()!!)
         linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         feedViewModel.getListSubscribe(m_seq,offset,limit)

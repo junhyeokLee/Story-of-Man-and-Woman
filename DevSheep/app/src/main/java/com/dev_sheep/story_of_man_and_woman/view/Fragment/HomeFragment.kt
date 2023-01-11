@@ -99,7 +99,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         super.onViewCreated(view, savedInstanceState)
         // my_m_seq 가져오기
         val preferences: SharedPreferences = context!!.getSharedPreferences("m_seq", Context.MODE_PRIVATE)
-        m_seq = preferences.getString("inputMseq", "")
+        m_seq = preferences.getString("inputMseq", "")!!
         memberViewModel.getNotificationCount(m_seq, iv_alarm, iv_alarm_dot, contexts)
         if(contexts != null) {
             initData()
@@ -111,7 +111,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     private fun initData(){
         if(feedViewModel == null || memberViewModel == null) return
 
-        val handlerFeed = Handler(Looper.myLooper())
+        val handlerFeed = Handler(Looper.myLooper()!!)
         linearLayoutManager = LinearLayoutManager(contexts)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         linearLayoutManagerToday = LinearLayoutManager(context)
@@ -144,7 +144,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
         feedViewModel.getInitFeedList(offset,limit)
         //라이브 데이터
-        feedViewModel.listOfFeeds.observe(this, Observer(function = fun(feedList: MutableList<Feed>?) {
+        feedViewModel.listOfFeeds.observe(this!!, Observer(function = fun(feedList: MutableList<Feed>?) {
             feedList?.let {
                 if(it.size > 0) {
                     mFeedAdapter = FeedAdapter(feedList, contexts,
